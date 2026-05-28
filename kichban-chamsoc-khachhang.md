@@ -14,7 +14,7 @@
 
 ---
 
-## Tổng Quan 5 Nhóm Khách Hàng
+## Tổng Quan 6 Nhóm Khách Hàng
 
 | # | Nhóm khách hàng | Đặc điểm | Ngọc chủ động nhắn | Phản hồi khi khách nhắn | Kết nối dược sĩ ngay khi |
 |---|-----------------|----------|--------------------|--------------------------|-----------------------------|
@@ -23,6 +23,7 @@
 | 3 | Khách mua thuốc theo đơn bác sĩ | Có đơn bác sĩ, thuốc chuyên khoa — tuân thủ đúng liều trình rất quan trọng | Nhắc thuốc theo lịch đơn + hỏi thăm 1 lần sau 5–7 ngày | Ngay lập tức | Bất kỳ phản ứng lạ sau dùng thuốc, yêu cầu đổi thuốc thay thế |
 | 4 | Khách mua thực phẩm chức năng và dụng cụ y tế | Chăm sóc sức khỏe chủ động, phòng bệnh — không cần theo dõi sát như dùng thuốc | Hỏi thăm sau 7 ngày + nhắc mua lại khi sắp hết | Ngay lập tức | Muốn tư vấn chuyên sâu về sản phẩm phù hợp với bệnh lý cụ thể |
 | 5 | Khách hỏi thăm / phản ánh sau khi mua | Đã mua về rồi mới liên hệ — thắc mắc cách dùng, phản ứng có hại, hoặc khiếu nại chất lượng | Không — khách chủ động nhắn trước | **Ngay lập tức — ưu tiên cao nhất, bỏ việc khác để reply** | Phản ứng có hại thuốc (dù nhẹ), khiếu nại chất lượng |
+| 6 | Khách không ghi được thông tin triệu chứng / bệnh | Tình huống cắt ngang nhiều nhóm — khách từ chối cung cấp thông tin, mua hộ người khác, đang vội, hoặc gặp khó khăn giao tiếp | Chỉ gửi hướng dẫn dùng thuốc tối giản ngay sau mua; không chủ động nhắn thêm; hoặc dược viên quên nhập liệu | Ngay lập tức | Khách nhắn lại có triệu chứng bất thường sau dùng thuốc |
 
 ---
 
@@ -621,6 +622,92 @@ Nhà thuốc Trúc Tâm luôn cố gắng hết sức để xứng đáng với 
 
 ---
 
+## NHÓM 6 — Khách Không Ghi Được Thông Tin Triệu Chứng / Bệnh
+
+> **Đặc điểm:** Tình huống xảy ra khi nhân viên không thể thu thập thông tin triệu chứng hoặc bệnh trạng của người dùng thuốc — do khách từ chối, mua hộ người khác, đang vội vàng, hoặc gặp khó khăn trong giao tiếp. Mục tiêu: vẫn đảm bảo an toàn dùng thuốc mà không gây khó chịu hay áp lực cho khách.
+
+---
+
+### 6.1 — Khách từ chối cung cấp thông tin sức khỏe / lo ngại quyền riêng tư
+
+```
+Dạ, em hiểu ạ — thông tin sức khỏe là riêng tư, anh/chị không nhất thiết phải chia sẻ đâu ạ.
+
+Em chỉ nhắn lại để anh/chị tiện tham khảo khi cần:
+– Hướng dẫn dùng thuốc đã có trên nhãn và tờ hướng dẫn trong hộp
+– Nếu có bất kỳ điều gì bất thường sau khi dùng — dù nhỏ — anh/chị có thể nhắn em bất kỳ lúc nào ạ
+
+Nhà thuốc Trúc Tâm không lưu hay chia sẻ thông tin sức khỏe của anh/chị ra bên ngoài ạ 🙏
+```
+
+---
+
+### 6.2 — Khách mua thay cho người khác, không rõ bệnh trạng người dùng
+
+```
+Dạ, anh/chị [TÊN] ơi!
+
+Nếu được, anh/chị hỏi lại người thân/bạn bè về mấy điều nhỏ — em kiểm tra thêm cho chắc ạ:
+
+1. Người dùng đang có triệu chứng gì? (ví dụ: ho, sốt, đau bụng...)
+2. Đang dùng thêm thuốc nào khác không?
+3. Có dị ứng với thuốc gì không?
+
+Không nhất thiết phải có đủ ngay đâu ạ — nhưng nếu có, em kiểm tra để đảm bảo thuốc phù hợp và không tương tác với thuốc khác.
+
+Anh/chị cứ nhắn em khi nào có thêm thông tin nhé 🙏
+```
+
+---
+
+### 6.3 — Khách đang vội, không có thời gian trao đổi tại quầy (gửi ngay sau khi khách mua)
+
+```
+Dạ, anh/chị [TÊN] ơi — em Ngọc nhắn nhanh ạ!
+
+Biết anh/chị đang bận nên em gửi mấy điểm quan trọng nhất về [TÊN THUỐC]:
+
+⚡ Liều dùng: [LIỀU DÙNG] — [THỜI ĐIỂM UỐNG, VD: sau ăn sáng]
+⚡ Lưu ý: [1–2 CÂU NGẮN, VD: "Không uống rượu bia khi dùng thuốc này" / "Có thể buồn ngủ — tránh lái xe"]
+
+Khi nào anh/chị rảnh, nhắn em nếu cần tư vấn thêm nhé — em trả lời ngay ạ 🙏
+```
+
+---
+
+### 6.4 — Khách cao tuổi khó giao tiếp — nhắn cho người thân đi cùng hoặc người liên lạc hộ
+
+```
+Dạ, anh/chị [TÊN — người thân / người đi cùng] ơi!
+
+Cảm ơn anh/chị đã đưa [ba/mẹ/ông/bà] đến nhà thuốc hôm nay ạ. Em Ngọc gửi thông tin thuốc để anh/chị tiện nhắc và theo dõi ở nhà:
+
+💊 [TÊN THUỐC]
+– Liều dùng: [LIỀU DÙNG]
+– Thời điểm: [VD: sáng sau ăn + tối sau ăn]
+– Lưu ý đặc biệt: [LƯU Ý QUAN TRỌNG NHẤT]
+
+Nếu [ba/mẹ/ông/bà] có biểu hiện lạ nào sau khi dùng — dù nhẹ — anh/chị nhắn em ngay nhé, em kết nối dược sĩ hỗ trợ liền ạ 🙏
+```
+
+---
+
+### 6.5 — Khách lần đầu ghé qua, không cung cấp thông tin tại quầy (gửi sau khi khách rời quầy)
+
+```
+Dạ, em chào anh/chị [TÊN] — cảm ơn anh/chị đã ghé nhà thuốc Trúc Tâm lần đầu ạ!
+
+Em là Ngọc. Về [TÊN THUỐC/SẢN PHẨM] vừa mua, anh/chị có thắc mắc gì cứ nhắn em nhé ạ.
+
+Nếu tiện, anh/chị cho em biết thêm hai điều nhỏ này — để em hỗ trợ an toàn hơn:
+– Anh/chị đang dùng thêm thuốc gì khác không? (em kiểm tra tương tác thuốc)
+– Có dị ứng với thuốc hoặc thực phẩm nào không?
+
+Không bắt buộc đâu ạ — khi nào tiện thì chia sẻ nhé. Em lưu lại để phục vụ chu đáo hơn lần sau 🙏
+```
+
+---
+
 ## Quy Tắc Vận Hành
 
 ### Thời gian phản hồi
@@ -652,6 +739,7 @@ Nhà thuốc Trúc Tâm luôn cố gắng hết sức để xứng đáng với 
 | Khách mua thuốc theo đơn bác sĩ | Theo lịch đơn thuốc + tối đa 1 tin chăm sóc/tuần |
 | Khách mua thực phẩm chức năng và dụng cụ | Tối đa 2 tin/tuần; 1 tin gợi ý sản phẩm/tháng |
 | Khách sau bán | Không giới hạn cho xử lý sự cố; 1 tin hỏi thăm chủ động/đơn hàng |
+| Khách không ghi được thông tin | Tối đa 1–2 tin ngay sau mua (hướng dẫn dùng thuốc tối giản); không chủ động nhắn thêm trừ khi khách phản hồi |
 
 ---
 

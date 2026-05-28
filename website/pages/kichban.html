@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Kịch Bản Chăm Sóc Khách Hàng | MeCare × Nhà Thuốc Trúc Tâm</title>
+  <meta name="description" content="Kịch bản tin nhắn Zalo cá nhân cho Nhà Thuốc Trúc Tâm — 6 nhóm khách hàng, 28 kịch bản chăm sóc." />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="language" content="vi" />
+  <meta name="theme-color" content="#0E9E8E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
+  <link rel="stylesheet" href="../css/design-system.css?v=202605270615" />
+  <link rel="stylesheet" href="../css/animations.css?v=202605270615" />
+  <style>
+    /* ── Page layout ── */
+    .kb-layout { display: flex; gap: 0; min-height: 100vh; }
+    .kb-sidebar {
+      width: 260px; flex-shrink: 0;
+      position: sticky; top: 72px; height: calc(100vh - 72px);
+      overflow-y: auto; background: var(--color-white);
+      border-right: 1px solid var(--color-border);
+      padding: 24px 0;
+    }
+    .kb-sidebar::-webkit-scrollbar { width: 4px; }
+    .kb-sidebar::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 4px; }
+    .kb-main { flex: 1; min-width: 0; padding: 40px 48px 80px; }
+    @media (max-width: 1024px) { .kb-sidebar { display: none; } .kb-main { padding: 24px 20px 80px; } }
+
+    /* ── Sidebar TOC ── */
+    .toc-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-muted); padding: 0 20px 8px; }
+    .toc-item { display: block; padding: 7px 20px; font-size: 13px; color: var(--color-text-secondary); text-decoration: none; border-left: 2px solid transparent; transition: all 0.2s; line-height: 1.4; }
+    .toc-item:hover { color: var(--color-primary); background: var(--color-primary-muted); }
+    .toc-item.active { color: var(--color-primary); border-left-color: var(--color-primary); background: var(--color-primary-muted); font-weight: 600; }
+    .toc-group { font-weight: 600; color: var(--color-text); }
+    .toc-sub { padding-left: 32px; font-size: 12px; }
+    .toc-divider { height: 1px; background: var(--color-border); margin: 8px 20px; }
+
+    /* ── Hero ── */
+    .kb-hero { background: linear-gradient(135deg, #E8F7F6 0%, #F7FBFA 60%, #EEF2F7 100%); border-bottom: 1px solid var(--color-border); padding: 48px 48px 40px; }
+    .kb-hero-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--color-primary-light); color: var(--color-primary-dark); font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 100px; margin-bottom: 16px; }
+    .kb-hero-title { font-family: var(--font-heading); font-size: 32px; font-weight: 800; color: var(--color-text); margin: 0 0 8px; line-height: 1.2; }
+    .kb-hero-sub { font-size: 16px; color: var(--color-text-secondary); margin: 0 0 20px; }
+    .kb-hero-stats { display: flex; gap: 24px; flex-wrap: wrap; }
+    .kb-stat { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--color-text-secondary); }
+    .kb-stat i { color: var(--color-primary); font-size: 16px; }
+    @media (max-width: 768px) { .kb-hero { padding: 32px 20px 28px; } .kb-hero-title { font-size: 24px; } }
+
+    /* ── Filter pills ── */
+    .kb-filter { padding: 16px 48px; background: var(--color-white); border-bottom: 1px solid var(--color-border); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; position: sticky; top: 72px; z-index: 10; }
+    .filter-pill { padding: 6px 16px; border-radius: 100px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--color-border); color: var(--color-text-secondary); background: var(--color-white); transition: all 0.2s; }
+    .filter-pill:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .filter-pill.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+    @media (max-width: 768px) { .kb-filter { padding: 12px 16px; top: 72px; } }
+
+    /* ── Mobile TOC dropdown ── */
+    .kb-mobile-toc { display: none; padding: 12px 16px; background: var(--color-white); border-bottom: 1px solid var(--color-border); }
+    .kb-mobile-toc select { width: 100%; padding: 8px 12px; border: 1.5px solid var(--color-border); border-radius: 8px; font-size: 14px; font-family: var(--font-body); color: var(--color-text); background: var(--color-white); }
+    @media (max-width: 1024px) { .kb-mobile-toc { display: block; } }
+
+    /* ── Overview table ── */
+    .overview-section { margin-bottom: 48px; }
+    .table-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid var(--color-border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    .overview-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .overview-table thead tr { background: var(--color-primary); color: white; }
+    .overview-table th { padding: 12px 14px; text-align: left; font-weight: 600; font-size: 12px; white-space: nowrap; position: sticky; top: 0; }
+    .overview-table td { padding: 12px 14px; vertical-align: top; border-bottom: 1px solid var(--color-border); line-height: 1.5; }
+    .overview-table tbody tr:nth-child(even) { background: var(--color-bg); }
+    .overview-table tbody tr:hover { background: var(--color-primary-muted); }
+    .overview-table tbody tr:last-child td { border-bottom: none; }
+    .group-badge { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; font-weight: 700; font-size: 12px; color: white; flex-shrink: 0; }
+    .g1 { background: #0E9E8E; } .g2 { background: #3B82F6; } .g3 { background: #8B5CF6; }
+    .g4 { background: #F59E0B; } .g5 { background: #EF4444; } .g6 { background: #6B7280; }
+    .escalation-cell { color: var(--color-error); font-size: 12px; }
+
+    /* ── Group sections ── */
+    .group-section { margin-bottom: 64px; scroll-margin-top: 130px; }
+    .group-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+    .group-num { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-weight: 800; font-size: 20px; color: white; flex-shrink: 0; }
+    .group-title-block h2 { font-family: var(--font-heading); font-size: 22px; font-weight: 800; margin: 0 0 4px; color: var(--color-text); }
+    .group-desc-card { background: var(--color-primary-muted); border-left: 3px solid var(--color-primary); border-radius: 0 8px 8px 0; padding: 12px 16px; margin-bottom: 28px; font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; }
+
+    /* ── Sub-sections ── */
+    .sub-section { margin-bottom: 32px; scroll-margin-top: 130px; }
+    .sub-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    .sub-num { font-family: var(--font-heading); font-size: 13px; font-weight: 700; color: var(--color-text-muted); min-width: 32px; }
+    .sub-title { font-family: var(--font-heading); font-size: 16px; font-weight: 700; color: var(--color-text); flex: 1; }
+    .timing-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .timing-immediate { background: #DCFCE7; color: #15803D; }
+    .timing-days { background: #DBEAFE; color: #1D4ED8; }
+    .timing-daily { background: #FEF3C7; color: #B45309; }
+    .timing-biweekly { background: #EDE9FE; color: #7C3AED; }
+    .timing-reactive { background: #F3F4F6; color: #374151; }
+    .timing-weekly { background: #FCE7F3; color: #9D174D; }
+    .escalation-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; background: var(--color-error-light); color: var(--color-error); }
+    .sub-label { font-size: 12px; font-weight: 600; color: var(--color-text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ── Zalo chat bubble ── */
+    .zalo-message { display: flex; gap: 12px; margin: 12px 0; }
+    .zalo-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--color-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+    .zalo-bubble { background: white; border-radius: 0 16px 16px 16px; padding: 12px 16px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); max-width: 560px; position: relative; border: 1px solid var(--color-border-light); }
+    .zalo-bubble-content { white-space: pre-wrap; font-size: 14px; line-height: 1.7; color: var(--color-text); font-family: var(--font-body); }
+    .zalo-placeholder { color: var(--color-primary); font-weight: 700; background: var(--color-primary-muted); padding: 0 3px; border-radius: 3px; }
+    .zalo-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--color-border); }
+    .zalo-time { font-size: 11px; color: var(--color-text-muted); }
+    .zalo-copy { background: none; border: 1px solid var(--color-border); border-radius: 6px; padding: 4px 10px; cursor: pointer; color: var(--color-text-muted); font-size: 12px; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s; font-family: var(--font-body); }
+    .zalo-copy:hover { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+    .zalo-copy.copied { background: var(--color-success); color: white; border-color: var(--color-success); }
+
+    /* ── Operational rules ── */
+    .rules-section { margin-bottom: 48px; scroll-margin-top: 130px; }
+    .rules-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .rules-table th { background: var(--color-bg-alt); padding: 10px 14px; text-align: left; font-weight: 600; border-bottom: 2px solid var(--color-border); }
+    .rules-table td { padding: 10px 14px; border-bottom: 1px solid var(--color-border); }
+    .rules-table tr:last-child td { border-bottom: none; }
+    .alert-card { background: var(--color-error-light); border: 1px solid #FCA5A5; border-radius: 12px; padding: 20px 24px; margin: 16px 0; }
+    .alert-card h4 { color: var(--color-error); font-family: var(--font-heading); font-size: 15px; font-weight: 700; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+    .alert-card ul { margin: 0; padding-left: 20px; color: #7F1D1D; font-size: 14px; line-height: 1.8; }
+
+    /* ── Section title shared ── */
+    .section-heading { font-family: var(--font-heading); font-size: 20px; font-weight: 800; color: var(--color-text); margin: 0 0 20px; display: flex; align-items: center; gap: 10px; }
+    .section-heading i { color: var(--color-primary); }
+
+    /* ── Print & back-to-top ── */
+    .print-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border: 1.5px solid var(--color-border); border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--color-text-secondary); cursor: pointer; background: white; font-family: var(--font-body); transition: all 0.2s; }
+    .print-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .back-to-top { position: fixed; bottom: 32px; right: 32px; width: 44px; height: 44px; border-radius: 50%; background: var(--color-primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: var(--shadow-primary); opacity: 0; transform: translateY(8px); transition: all 0.3s; z-index: 100; }
+    .back-to-top.visible { opacity: 1; transform: translateY(0); }
+    .back-to-top:hover { background: var(--color-primary-dark); }
+
+    /* ── Intro note ── */
+    .intro-note { background: var(--color-secondary-light); border: 1px solid #FDE68A; border-radius: 12px; padding: 16px 20px; margin-bottom: 32px; font-size: 13px; color: #78350F; line-height: 1.6; }
+    .intro-note strong { color: #92400E; }
+
+    /* ── Footer ── */
+    .footer { background: var(--color-dark); color: var(--color-text-light); padding: 48px 0 32px; margin-top: 80px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 48px; display: flex; flex-direction: column; gap: 24px; }
+    .footer-brand { font-family: var(--font-heading); font-size: 20px; font-weight: 800; color: white; }
+    .footer-brand span { color: var(--color-primary); }
+    .footer-tagline { font-size: 14px; color: var(--color-text-muted); margin-top: 4px; }
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { font-size: 13px; color: var(--color-text-muted); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--color-primary); }
+    .footer-note { font-size: 12px; color: var(--color-text-muted); border-top: 1px solid #2A3A4A; padding-top: 20px; }
+    @media (max-width: 768px) { .footer-inner { padding: 0 20px; } }
+
+    @media print {
+      .kb-sidebar, .kb-filter, .kb-mobile-toc, .nav, .back-to-top, .print-btn, .zalo-copy, .footer { display: none !important; }
+      .kb-main { padding: 0; max-width: 100%; }
+      .group-section { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ NAV ═══════════════════════════════════════ -->
+<header>
+  <nav class="nav">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="../index.html" class="nav-brand">
+          <span class="nav-brand-name">Me<span>Care</span></span>
+          <span class="text-xs font-normal" style="color:var(--color-text-muted);margin-left:8px;">Trợ lý AI Zalo</span>
+        </a>
+        <div class="nav-links">
+          <a href="../index.html" class="nav-link" style="display:flex;align-items:center;gap:4px;">
+            <i class="ph ph-arrow-left" style="font-size:14px;"></i> Tổng quan
+          </a>
+          <a href="../index.html#quy-trinh" class="nav-link">Quy trình</a>
+          <a href="../index.html#chi-so" class="nav-link">Chỉ số</a>
+          <a href="kichban.html" class="nav-link" style="color:var(--color-primary);font-weight:600;">Kịch bản</a>
+        </div>
+        <div class="nav-actions">
+          <button class="print-btn" onclick="window.print()">
+            <i class="ph ph-printer"></i> In tài liệu
+          </button>
+          <button class="nav-toggle" aria-label="Mở menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ═══════════════════════════════════════ HERO ═══════════════════════════════════════ -->
+<div class="kb-hero">
+  <div style="max-width:860px;margin:0 auto;">
+    <div class="kb-hero-badge">
+      <i class="ph-bold ph-chat-circle"></i>
+      Kịch bản Zalo cá nhân
+    </div>
+    <h1 class="kb-hero-title">Kịch Bản Chăm Sóc Khách Hàng</h1>
+    <p class="kb-hero-sub">Nhà Thuốc Trúc Tâm — Zalo Cá Nhân &nbsp;·&nbsp; Người gửi: <strong>DS. Hải</strong></p>
+    <div class="kb-hero-stats">
+      <div class="kb-stat"><i class="ph-bold ph-users-three"></i> 6 Nhóm khách hàng</div>
+      <div class="kb-stat"><i class="ph-bold ph-chat-dots"></i> 28+ Kịch bản</div>
+      <div class="kb-stat"><i class="ph-bold ph-shield-check"></i> Tuân thủ GPP</div>
+      <div class="kb-stat"><i class="ph-bold ph-clock"></i> Phản hồi tức thì</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ FILTER PILLS ═══════════════════════════════════════ -->
+<div class="kb-filter">
+  <button class="filter-pill active" data-target="all">Tất cả</button>
+  <button class="filter-pill" data-target="nhom1">Nhóm 1</button>
+  <button class="filter-pill" data-target="nhom2">Nhóm 2</button>
+  <button class="filter-pill" data-target="nhom3">Nhóm 3</button>
+  <button class="filter-pill" data-target="nhom4">Nhóm 4</button>
+  <button class="filter-pill" data-target="nhom5">Nhóm 5</button>
+  <button class="filter-pill" data-target="nhom6">Nhóm 6</button>
+  <button class="filter-pill" data-target="quy-tac">Quy tắc</button>
+</div>
+
+<!-- ═══════════════════════════════════════ MOBILE TOC ═══════════════════════════════════════ -->
+<div class="kb-mobile-toc">
+  <select id="mobile-toc-select" onchange="document.getElementById(this.value).scrollIntoView({behavior:'smooth'})">
+    <option value="tong-quan">Tổng Quan 6 Nhóm</option>
+    <option value="nhom1">Nhóm 1 — Bệnh Mãn Tính</option>
+    <option value="nhom2">Nhóm 2 — Thuốc Không Kê Đơn</option>
+    <option value="nhom3">Nhóm 3 — Thuốc Theo Đơn Bác Sĩ</option>
+    <option value="nhom4">Nhóm 4 — Thực Phẩm Chức Năng &amp; Dụng Cụ</option>
+    <option value="nhom5">Nhóm 5 — Hỏi Thăm / Phản Ánh</option>
+    <option value="nhom6">Nhóm 6 — Không Ghi Được Thông Tin</option>
+    <option value="quy-tac">Quy Tắc Vận Hành</option>
+  </select>
+</div>
+
+<!-- ═══════════════════════════════════════ MAIN LAYOUT ═══════════════════════════════════════ -->
+<div class="kb-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="kb-sidebar" id="kb-sidebar">
+    <div class="toc-label">Mục lục</div>
+    <a href="#tong-quan" class="toc-item toc-group">Tổng Quan 6 Nhóm</a>
+    <div class="toc-divider"></div>
+    <a href="#nhom1" class="toc-item toc-group">Nhóm 1 — Bệnh Mãn Tính</a>
+    <a href="#s1-1" class="toc-item toc-sub">1.1 Chào mừng</a>
+    <a href="#s1-2" class="toc-item toc-sub">1.2 Nhắc sáng</a>
+    <a href="#s1-3" class="toc-item toc-sub">1.3 Nhắc tối</a>
+    <a href="#s1-4" class="toc-item toc-sub">1.4 Chưa xác nhận uống</a>
+    <a href="#s1-5" class="toc-item toc-sub">1.5 Nhắc mua thêm</a>
+    <a href="#s1-6" class="toc-item toc-sub">1.6 Chỉ số huyết áp</a>
+    <a href="#s1-7" class="toc-item toc-sub">1.7 Chỉ số tiểu đường</a>
+    <a href="#s1-8" class="toc-item toc-sub">1.8 Chỉ số bất thường</a>
+    <a href="#s1-9" class="toc-item toc-sub">1.9 Lịch tái khám</a>
+    <a href="#s1-10" class="toc-item toc-sub">1.10 Tư vấn sản phẩm</a>
+    <a href="#s1-11" class="toc-item toc-sub">1.11 Sinh nhật</a>
+    <div class="toc-divider"></div>
+    <a href="#nhom2" class="toc-item toc-group">Nhóm 2 — Không Kê Đơn</a>
+    <a href="#s2-1" class="toc-item toc-sub">2.1 Chào + hướng dẫn</a>
+    <a href="#s2-2" class="toc-item toc-sub">2.2 Hỏi thăm sau 2–3 ngày</a>
+    <a href="#s2-3" class="toc-item toc-sub">2.3 Đã khỏi</a>
+    <a href="#s2-4" class="toc-item toc-sub">2.4 Không đỡ / nặng hơn</a>
+    <a href="#s2-5" class="toc-item toc-sub">2.5 Sản phẩm theo mùa</a>
+    <div class="toc-divider"></div>
+    <a href="#nhom3" class="toc-item toc-group">Nhóm 3 — Theo Đơn Bác Sĩ</a>
+    <a href="#s3-1" class="toc-item toc-sub">3.1 Chào + xác nhận đơn</a>
+    <a href="#s3-2" class="toc-item toc-sub">3.2 Nhắc uống thuốc</a>
+    <a href="#s3-3" class="toc-item toc-sub">3.3 Hỏi thăm phản ứng</a>
+    <a href="#s3-4" class="toc-item toc-sub">3.4 Nhắc mua lại / tái khám</a>
+    <a href="#s3-5" class="toc-item toc-sub">3.5 Thuốc hết hàng</a>
+    <div class="toc-divider"></div>
+    <a href="#nhom4" class="toc-item toc-group">Nhóm 4 — TPCN &amp; Dụng Cụ</a>
+    <a href="#s4-1" class="toc-item toc-sub">4.1 Hướng dẫn TPCN</a>
+    <a href="#s4-2" class="toc-item toc-sub">4.2 Hướng dẫn máy đo HA</a>
+    <a href="#s4-3" class="toc-item toc-sub">4.3 Hỏi thăm sau 7 ngày</a>
+    <a href="#s4-4" class="toc-item toc-sub">4.4 Nhắc mua thêm</a>
+    <a href="#s4-5" class="toc-item toc-sub">4.5 Gợi ý bổ sung</a>
+    <a href="#s4-6" class="toc-item toc-sub">4.6 Khuyến mãi</a>
+    <div class="toc-divider"></div>
+    <a href="#nhom5" class="toc-item toc-group">Nhóm 5 — Phản Ánh</a>
+    <a href="#s5-1" class="toc-item toc-sub">5.1 Hỏi thăm sau mua</a>
+    <a href="#s5-2" class="toc-item toc-sub">5.2 Câu hỏi cách dùng</a>
+    <a href="#s5-3" class="toc-item toc-sub">5.3 Phản ứng có hại</a>
+    <a href="#s5-4" class="toc-item toc-sub">5.4 Khiếu nại chất lượng</a>
+    <a href="#s5-5" class="toc-item toc-sub">5.5 Theo dõi sau khiếu nại</a>
+    <a href="#s5-6" class="toc-item toc-sub">5.6 Phục hồi quan hệ</a>
+    <div class="toc-divider"></div>
+    <a href="#nhom6" class="toc-item toc-group">Nhóm 6 — Không Ghi Được</a>
+    <a href="#s6-1" class="toc-item toc-sub">6.1 Từ chối thông tin</a>
+    <a href="#s6-2" class="toc-item toc-sub">6.2 Mua hộ người khác</a>
+    <a href="#s6-3" class="toc-item toc-sub">6.3 Khách đang vội</a>
+    <a href="#s6-4" class="toc-item toc-sub">6.4 Khách cao tuổi</a>
+    <a href="#s6-5" class="toc-item toc-sub">6.5 Lần đầu ghé qua</a>
+    <div class="toc-divider"></div>
+    <a href="#quy-tac" class="toc-item toc-group">Quy Tắc Vận Hành</a>
+  </aside>
+
+  <!-- MAIN CONTENT (rendered by JS) -->
+  <main class="kb-main" id="kb-main">
+    <div id="content-root"></div>
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════ FOOTER ═══════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Me<span>Care</span></div>
+      <div class="footer-tagline">Trợ lý AI Zalo cho Nhà Thuốc Việt Nam</div>
+    </div>
+    <div class="footer-links">
+      <a href="../index.html">Tổng quan</a>
+      <a href="kichban.html">Kịch bản</a>
+      <a href="../index.html#quy-trinh">Quy trình</a>
+      <a href="../index.html#chi-so">Chỉ số</a>
+    </div>
+    <div class="footer-note">
+      Tài liệu này được tạo riêng cho <strong style="color:var(--color-primary);">Nhà Thuốc Trúc Tâm</strong>. Không phát tán ra bên ngoài.<br />
+      &copy; 2026 MeCare. Bảo lưu mọi quyền.
+    </div>
+  </div>
+</footer>
+
+<!-- BACK TO TOP -->
+<button class="back-to-top" id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Về đầu trang">
+  <i class="ph-bold ph-arrow-up"></i>
+</button>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     DATA + RENDER ENGINE
+═══════════════════════════════════════════════════════════════ -->
+<script>
+// ─── ALL MESSAGE DATA ───────────────────────────────────────────
+const GROUPS = [
+  {
+    id: "nhom1",
+    num: 1,
+    color: "#0E9E8E",
+    name: "Khách Hàng Bệnh Mãn Tính",
+    nameFull: "Khách Hàng Bệnh Mãn Tính (Tiểu Đường, Cao Huyết Áp)",
+    desc: "Khách hàng cần dùng thuốc liên tục nhiều tháng, thậm chí nhiều năm. Rủi ro lớn nhất là quên uống thuốc, tự ý bỏ liều, hoặc không tái khám đúng hạn. DS. Hải đồng hành như người quen đáng tin cậy — không phải robot nhắc lịch.",
+    sections: [
+      {
+        id: "s1-1", num: "1.1",
+        title: "Tin nhắn chào mừng",
+        timing: "Ngay sau kết nối Zalo",
+        timingType: "immediate",
+        escalation: false,
+        messages: [
+          `Dạ, em chào anh/chị [TÊN] ạ!\n\nEm là Hải — dược sĩ Nhà thuốc Trúc Tâm. Cảm ơn anh/chị đã kết nối với em nhé!\n\nTừ hôm nay em sẽ đồng hành cùng anh/chị:\n– Nhắc uống thuốc đúng giờ mỗi ngày\n– Báo trước khi thuốc sắp hết để anh/chị chuẩn bị kịp\n– Hỏi thăm sức khỏe và theo dõi chỉ số định kỳ\n– Tư vấn trực tiếp bất cứ khi anh/chị cần thêm\n\nAnh/chị cứ nhắn em bất cứ lúc nào nhé, em luôn ở đây ạ 🙏`
+        ]
+      },
+      {
+        id: "s1-2", num: "1.2",
+        title: "Nhắc uống thuốc buổi sáng",
+        timing: "Hàng ngày (sáng)",
+        timingType: "daily",
+        escalation: false,
+        messages: [
+          `Dạ, Hải nhắc anh/chị [TÊN] uống thuốc buổi sáng ạ!\n\n– [TÊN THUỐC 1]: [LIỀU DÙNG] — uống sau ăn sáng\n– [TÊN THUỐC 2]: [LIỀU DÙNG] — uống sau ăn sáng\n\nAnh/chị nhớ uống cùng một ly nước đầy (khoảng 200ml) để thuốc hấp thu tốt hơn nhé ạ.\n\nUống xong anh/chị nhắn em một tiếng, em ghi nhận để theo dõi cho anh/chị ạ 😊`
+        ]
+      },
+      {
+        id: "s1-3", num: "1.3",
+        title: "Nhắc uống thuốc buổi tối",
+        timing: "Hàng ngày (tối)",
+        timingType: "daily",
+        escalation: false,
+        messages: [
+          `Dạ, Hải nhắc anh/chị [TÊN] uống thuốc buổi tối ạ!\n\n– [TÊN THUỐC]: [LIỀU DÙNG] — uống [trước/sau] ăn tối\n\nChúc anh/chị buổi tối thật thoải mái và nghỉ ngơi ngon giấc nhé ạ 🙏`
+        ]
+      },
+      {
+        id: "s1-4", num: "1.4",
+        title: "Chưa xác nhận uống thuốc",
+        timing: "Sau 1–2 tiếng không phản hồi",
+        timingType: "reactive",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi — Hải hỏi thăm tí ạ.\n\nHôm nay anh/chị chưa nhắn lại cho em về liều thuốc buổi [sáng/tối], không biết anh/chị có quên không hay có chuyện gì không ạ?\n\nNếu anh/chị vừa quên uống:\n– Còn trong vòng 1–2 tiếng: vẫn uống được bình thường ạ\n– Nếu đã qua lâu: bỏ qua liều đó, uống liều tiếp theo đúng giờ thôi nhé\n\nQuan trọng là không uống gấp đôi để bù liều anh/chị ơi — có thể gây ra phản ứng không mong muốn ạ.\n\nAnh/chị có cần em hỗ trợ thêm gì không ạ?`
+        ]
+      },
+      {
+        id: "s1-5", num: "1.5",
+        title: "Nhắc mua thêm thuốc trước khi hết",
+        timing: "Gửi trước 5 ngày",
+        timingType: "days",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi — Hải nhắn sớm để anh/chị chuẩn bị nhé!\n\nTính ra thì khoảng ngày [NGÀY HẾT THUỐC] là thuốc [TÊN THUỐC] của anh/chị sẽ gần hết rồi ạ.\n\nAnh/chị muốn em xử lý theo cách nào ạ?\n1. Đặt trước, em giao tận nhà cho anh/chị\n2. Anh/chị ghé nhà thuốc lúc thuận tiện, em giữ hàng sẵn\n3. Cần tư vấn thêm trước khi mua lại\n\nNhắn em số tương ứng hoặc nói thẳng cũng được ạ, em lo cho anh/chị 🙏`
+        ]
+      },
+      {
+        id: "s1-6", num: "1.6",
+        title: "Nhắc theo dõi chỉ số — Cao Huyết Áp",
+        timing: "2 tuần/lần",
+        timingType: "biweekly",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi!\n\nĐược 2 tuần rồi — em nhắc anh/chị đo huyết áp tại nhà một lần nhé ạ.\n\nAnh/chị đo lúc ngồi nghỉ khoảng 5 phút, rồi nhắn kết quả cho em. Ví dụ nhắn "huyết áp 125/80" là em ghi nhận được ngay ạ.\n\nMục tiêu mình đang hướng tới là dưới 130/80 mmHg nhé anh/chị.\n\nNếu kết quả cao hơn bình thường nhiều, em kết nối dược sĩ cho anh/chị tư vấn liền ạ 🙏`
+        ]
+      },
+      {
+        id: "s1-7", num: "1.7",
+        title: "Nhắc theo dõi chỉ số — Tiểu Đường",
+        timing: "2 tuần/lần",
+        timingType: "biweekly",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi!\n\nNhắc anh/chị đo đường huyết [lúc đói buổi sáng / sau ăn 2 tiếng] hôm nay nhé ạ.\n\nNhắn kết quả cho em, ví dụ: "đường huyết 6.5" là em hiểu ngay ạ.\n\nĐể anh/chị tham khảo:\n– Lúc đói: khoảng 4.4 – 7.2 mmol/L là ổn\n– Sau ăn 2 tiếng: dưới 10 mmol/L là tốt\n\nNếu kết quả khác bình thường, anh/chị đừng lo — nhắn em, em kết nối dược sĩ hỗ trợ ngay ạ 🙏`
+        ]
+      },
+      {
+        id: "s1-8", num: "1.8",
+        title: "Chỉ số bất thường — Kết nối dược sĩ",
+        timing: "Khi khách nhắn",
+        timingType: "reactive",
+        escalation: true,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi — em cảm ơn anh/chị đã báo kịp thời ạ.\n\nChỉ số [huyết áp/đường huyết] của anh/chị hôm nay ([KẾT QUẢ]) hơi cao hơn mức thông thường một chút — em cần nhờ dược sĩ đánh giá kỹ hơn cho anh/chị ạ.\n\nEm đang kết nối dược sĩ ngay bây giờ — anh/chị chờ em một chút nhé.\n\nTrong lúc chờ anh/chị lưu ý:\n– Ngồi nghỉ, tránh hoạt động mạnh\n– Uống thuốc đúng giờ như bình thường\n– Không tự điều chỉnh liều thuốc\n\nDược sĩ sẽ nhắn lại anh/chị ngay ạ 🙏`
+        ]
+      },
+      {
+        id: "s1-9", num: "1.9",
+        title: "Nhắc lịch tái khám",
+        timing: "Gửi trước 3 ngày",
+        timingType: "days",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi — em nhắc nhẹ nhé!\n\nNgày [NGÀY TÁI KHÁM] là lịch tái khám định kỳ của anh/chị tại [TÊN CƠ SỞ Y TẾ] rồi ạ.\n\nTrước khi đi anh/chị chuẩn bị mấy thứ này tiện hơn ạ:\n– Mang theo đơn thuốc cũ\n– Ghi lại kết quả đo chỉ số ở nhà những tuần vừa rồi\n– Ghi sẵn câu hỏi muốn hỏi bác sĩ nếu có\n\nSau khi tái khám có đơn mới, anh/chị nhắn em — em lo phần mua thuốc cho anh/chị luôn nhé 😊`
+        ]
+      },
+      {
+        id: "s1-10", num: "1.10",
+        title: "Tư vấn sản phẩm hỗ trợ thêm",
+        timing: "1 lần/tháng",
+        timingType: "biweekly",
+        escalation: false,
+        labels: ["Dành cho khách cao huyết áp", "Dành cho khách tiểu đường"],
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi!\n\nGần đây dược sĩ bên em có giới thiệu thêm cho một số khách đang điều trị cao huyết áp về sản phẩm Coenzyme Q10 — loại này hỗ trợ tim mạch, nhiều bác sĩ tim mạch khuyên dùng kèm theo thuốc huyết áp ạ.\n\nAnh/chị không nhất thiết phải dùng ngay đâu ạ, nhưng nếu muốn tìm hiểu thêm hoặc hỏi dược sĩ xem có phù hợp với mình không, em kết nối liền nhé.\n\nNhắn em "tư vấn thêm" là được ạ 🙏`,
+          `Dạ, anh/chị [TÊN] ơi!\n\nBên em vừa có thêm máy đo đường huyết mới — dòng [TÊN MÁY], que thử nhỏ hơn, kết quả nhanh hơn và độ chính xác cao, khá tiện cho việc tự đo tại nhà ạ.\n\nNếu anh/chị đang dùng máy cũ hoặc chưa có, em có thể mang sang cho anh/chị xem thử luôn nếu tiện.\n\nHoặc anh/chị chỉ cần nhắn em "hỏi thêm" là được ạ 😊`
+        ]
+      },
+      {
+        id: "s1-11", num: "1.11",
+        title: "Chúc mừng sinh nhật",
+        timing: "Ngày sinh nhật",
+        timingType: "immediate",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi!\n\nHôm nay là sinh nhật của anh/chị — Hải và toàn bộ anh chị em Nhà thuốc Trúc Tâm xin chúc anh/chị sinh nhật thật vui, sức khỏe luôn dồi dào và gia đình bình an ạ! 🎂\n\nChăm sóc sức khỏe đều đặn như anh/chị đang làm chính là món quà quý nhất rồi đó ạ 😊\n\nAnh/chị cần gì cứ nhắn em nhé!`
+        ]
+      }
+    ]
+  },
+  {
+    id: "nhom2",
+    num: 2,
+    color: "#3B82F6",
+    name: "Khách Mua Thuốc Không Kê Đơn",
+    nameFull: "Khách Mua Thuốc Không Kê Đơn",
+    desc: "Khách mua thuốc tự điều trị các triệu chứng thông thường như ho, sốt, đau đầu, đau bụng, dị ứng nhẹ... Không cần đơn bác sĩ. Thường là mua lẻ theo đợt bệnh ngắn ngày.",
+    sections: [
+      {
+        id: "s2-1", num: "2.1",
+        title: "Tin nhắn chào + hướng dẫn dùng thuốc",
+        timing: "Ngay sau khi mua",
+        timingType: "immediate",
+        escalation: false,
+        messages: [
+          `Dạ, em chào anh/chị [TÊN] ạ!\n\nEm là Hải — dược sĩ Nhà thuốc Trúc Tâm. Cảm ơn anh/chị đã ghé nhà thuốc hôm nay nhé!\n\nVề thuốc anh/chị vừa mua, em nhắn lại để anh/chị tiện tham khảo:\n\n💊 [TÊN THUỐC]\n– Công dụng: [MÔ TẢ NGẮN]\n– Liều dùng: [LIỀU DÙNG]\n– Thời điểm uống: [TRƯỚC/SAU ĂN, BAO NHIÊU PHÚT]\n– Dùng trong: [SỐ NGÀY] ngày\n\n⚠️ Lưu ý: [LƯU Ý CỤ THỂ — ví dụ: "Không dùng với rượu bia", "Có thể buồn ngủ, không lái xe sau khi uống"]\n\nNếu sau [SỐ NGÀY] ngày vẫn chưa thấy đỡ, anh/chị nhắn em — Hải sẽ tư vấn trực tiếp cho anh/chị nhé ạ.\n\nChúc anh/chị mau khỏe! 🙏`
+        ]
+      },
+      {
+        id: "s2-2", num: "2.2",
+        title: "Hỏi thăm sau 2–3 ngày dùng thuốc",
+        timing: "Sau 2–3 ngày",
+        timingType: "days",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi — Hải hỏi thăm tí ạ!\n\nĐược [SỐ NGÀY] ngày rồi, anh/chị dùng [TÊN THUỐC] thấy tình trạng thế nào rồi ạ?\n\n1. Đã khỏi / đỡ nhiều rồi 🙂\n2. Có đỡ nhưng chưa khỏi hẳn\n3. Chưa thấy đỡ gì hoặc nặng hơn 😟\n\nAnh/chị nhắn lại số tương ứng hoặc kể thêm cho em biết nhé — em hỗ trợ tiếp ạ!`
+        ]
+      },
+      {
+        id: "s2-3", num: "2.3",
+        title: "Phản hồi khi khách báo đã khỏi",
+        timing: "Khi khách nhắn",
+        timingType: "reactive",
+        escalation: false,
+        messages: [
+          `Dạ, vậy là tốt rồi ạ — em mừng cho anh/chị [TÊN]! 🎉\n\nAnh/chị lưu ý thêm một chút:\n– Nếu còn thuốc thừa thì giữ lại đúng cách, không tự tăng liều hoặc dùng khi không cần thiết nhé ạ\n– Bảo quản nơi khô ráo, tránh ánh nắng trực tiếp\n\nKhi nào cần đến nhà thuốc lần sau, anh/chị nhắn em trước — em chuẩn bị sẵn cho anh/chị nhé ạ 😊`
+        ]
+      },
+      {
+        id: "s2-4", num: "2.4",
+        title: "Phản hồi khi khách báo không đỡ / nặng hơn",
+        timing: "Khi khách nhắn",
+        timingType: "reactive",
+        escalation: true,
+        messages: [
+          `Dạ, cảm ơn anh/chị [TÊN] đã nhắn lại cho em ạ.\n\nNếu sau [SỐ NGÀY] ngày dùng thuốc mà triệu chứng chưa cải thiện hoặc có vẻ nặng hơn — đây thường là dấu hiệu cơ thể cần được bác sĩ kiểm tra kỹ hơn rồi ạ.\n\nEm khuyến nghị anh/chị đến gặp bác sĩ sớm nhé, đặc biệt nếu có một trong các dấu hiệu sau:\n– Sốt trên 38.5°C kéo dài hơn 2 ngày\n– Khó thở hoặc đau tức ngực\n– Nôn ói nhiều lần hoặc tiêu chảy liên tục không dứt\n\nAnh/chị cần em hỗ trợ tìm phòng khám gần nhất không ạ? Em tìm giúp liền!`
+        ]
+      },
+      {
+        id: "s2-5", num: "2.5",
+        title: "Gợi ý sản phẩm tăng đề kháng theo mùa",
+        timing: "Đầu mùa dịch / giao mùa",
+        timingType: "biweekly",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi!\n\nDạo này thời tiết [giao mùa / đang nắng nóng / trở lạnh bất thường] nên khá nhiều người hay bị [ho / sốt / dị ứng] ạ.\n\nBên em đang có mấy sản phẩm hỗ trợ đề kháng phòng bệnh:\n– Vitamin C kết hợp Kẽm — tăng miễn dịch mùa dịch\n– Nước muối sinh lý — rửa mũi phòng bệnh đường hô hấp\n– Siro ho thảo dược — cho cả người lớn và trẻ em\n\nKhông nhất thiết phải mua ngay đâu anh/chị ạ, nhưng nếu muốn hỏi thêm cho mình hay cho gia đình, em tư vấn ngay ạ 😊`
+        ]
+      }
+    ]
+  },
+  {
+    id: "nhom3",
+    num: 3,
+    color: "#8B5CF6",
+    name: "Khách Mua Thuốc Theo Đơn Bác Sĩ",
+    nameFull: "Khách Mua Thuốc Theo Đơn Bác Sĩ",
+    desc: "Khách mang theo đơn do bác sĩ kê (đơn có giá trị trong 5 ngày kể từ ngày kê). Thường là thuốc chuyên khoa — kháng sinh, thuốc tim mạch, thuốc tiểu đường, thuốc huyết áp từ bệnh viện... Việc uống đúng liều, đủ liệu trình là rất quan trọng.",
+    sections: [
+      {
+        id: "s3-1", num: "3.1",
+        title: "Tin nhắn chào + xác nhận đơn thuốc",
+        timing: "Ngay sau khi mua",
+        timingType: "immediate",
+        escalation: false,
+        messages: [
+          `Dạ, em chào anh/chị [TÊN] ạ!\n\nEm là Hải — dược sĩ Nhà thuốc Trúc Tâm. Hải vừa kiểm tra xong đơn thuốc của anh/chị rồi ạ.\n\nĐơn thuốc hôm nay gồm:\n\n[DANH SÁCH THUỐC VÀ HƯỚNG DẪN TỪNG LOẠI]\n\nĐây là đơn thuốc [SỐ NGÀY] ngày ạ. Anh/chị uống đúng giờ, đúng liều, đủ ngày — dù cảm thấy khỏe hơn giữa chừng cũng không dừng sớm nhé, đặc biệt với kháng sinh ạ.\n\nCó bất kỳ thắc mắc gì về cách dùng, anh/chị nhắn em ngay nhé — em luôn ở đây ạ 🙏`
+        ]
+      },
+      {
+        id: "s3-2", num: "3.2",
+        title: "Nhắc uống thuốc theo đơn",
+        timing: "Hàng ngày",
+        timingType: "daily",
+        escalation: false,
+        messages: [
+          `Dạ, Hải nhắc anh/chị [TÊN] uống thuốc ạ!\n\n– [TÊN THUỐC]: [LIỀU DÙNG]\n  ⏰ Uống lúc: [GIỜ UỐNG]\n  🍽️ [TRƯỚC/SAU ĂN BAO NHIÊU PHÚT]\n\n⚠️ Lưu ý riêng hôm nay: [LƯU Ý ĐẶC THÙ]\nVí dụ: "Không uống kèm sữa hoặc sản phẩm có canxi trong vòng 2 tiếng" / "Không dừng thuốc đột ngột dù cảm thấy khỏe hơn rồi"\n\nUống xong anh/chị báo em nhé ạ 😊`
+        ]
+      },
+      {
+        id: "s3-3", num: "3.3",
+        title: "Hỏi thăm phản ứng sau khi dùng thuốc",
+        timing: "Sau 5–7 ngày",
+        timingType: "days",
+        escalation: true,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi — Hải hỏi thăm ạ!\n\nĐược khoảng 1 tuần anh/chị dùng [TÊN THUỐC] rồi — trong quá trình dùng anh/chị có thấy biểu hiện gì bất thường không ạ, ví dụ như:\n\n– Đau bụng, buồn nôn sau khi uống thuốc?\n– Nổi mẩn, ngứa hoặc phát ban trên da?\n– Chóng mặt, tim đập nhanh bất thường?\n– Hoặc bất kỳ điều gì khiến anh/chị lo lắng?\n\nNếu có bất kỳ điều gì — dù nhỏ — anh/chị cứ nhắn em nhé. Hải sẽ đánh giá và hỗ trợ anh/chị ngay ạ 🙏`
+        ]
+      },
+      {
+        id: "s3-4", num: "3.4",
+        title: "Nhắc mua lại / tái khám trước khi hết đơn",
+        timing: "Trước khi hết đơn",
+        timingType: "days",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi — em nhắn sớm để anh/chị sắp xếp nhé!\n\nĐơn thuốc hiện tại sẽ gần hết vào khoảng ngày [NGÀY HẾT ĐƠN] ạ.\n\nVới loại thuốc này, anh/chị cần có đơn bác sĩ mới để tiếp tục điều trị — không mua thêm tự do được nhé ạ.\n\nAnh/chị nên sắp xếp lịch tái khám tại [TÊN CƠ SỞ Y TẾ] trước ngày đó.\n\nNếu cần tư vấn thêm hoặc có gì chưa rõ về đơn thuốc hiện tại, anh/chị nhắn em — em kết nối dược sĩ hỗ trợ ngay ạ. Đừng để gián đoạn điều trị nhé anh/chị! 🙏`
+        ]
+      },
+      {
+        id: "s3-5", num: "3.5",
+        title: "Thông báo khi thuốc tạm hết hàng",
+        timing: "Khi phát sinh",
+        timingType: "reactive",
+        escalation: true,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi — em cần xin ý kiến anh/chị tí ạ.\n\nHôm nay bên em tạm thời hết [TÊN THUỐC GỐC] rồi ạ.\n\nDược sĩ bên em có thể cung cấp thuốc thay thế tương đương:\n🔄 [TÊN THUỐC THAY THẾ]\n– Cùng hoạt chất: [HOẠT CHẤT]\n– Cùng liều lượng và dạng bào chế\n– Nhà sản xuất: [NHÀ SẢN XUẤT]\n\nDược sĩ đã kiểm tra — hai loại này tương đương về mặt điều trị ạ.\n\nTuy nhiên việc đổi thuốc chỉ được thực hiện khi anh/chị đồng ý nhé — đây là quy định bắt buộc để đảm bảo quyền lợi cho anh/chị ạ.\n\nAnh/chị đồng ý dùng thuốc thay thế này không ạ? Hoặc muốn em hỏi thêm dược sĩ trước khi quyết định cũng được ạ 🙏`
+        ]
+      }
+    ]
+  },
+  {
+    id: "nhom4",
+    num: 4,
+    color: "#F59E0B",
+    name: "Khách Mua Thực Phẩm Chức Năng và Dụng Cụ Y Tế",
+    nameFull: "Khách Mua Thực Phẩm Chức Năng và Dụng Cụ Y Tế",
+    desc: "Mua vitamin, thực phẩm bổ sung sức khỏe, dược mỹ phẩm, hoặc dụng cụ theo dõi sức khỏe tại nhà (máy đo huyết áp, máy đo đường huyết, nhiệt kế...). Mục tiêu chính là phòng bệnh và chăm sóc sức khỏe chủ động.",
+    sections: [
+      {
+        id: "s4-1", num: "4.1",
+        title: "Tin nhắn chào + hướng dẫn sử dụng thực phẩm chức năng",
+        timing: "Ngay sau khi mua",
+        timingType: "immediate",
+        escalation: false,
+        messages: [
+          `Dạ, em chào anh/chị [TÊN] ạ!\n\nEm là Hải — dược sĩ Nhà thuốc Trúc Tâm. Cảm ơn anh/chị đã tin tưởng chọn [TÊN SẢN PHẨM] nhé!\n\nĐể sản phẩm phát huy hiệu quả tốt nhất, anh/chị lưu ý:\n– Liều dùng: [LIỀU DÙNG]\n– Thời điểm dùng tốt nhất: [THỜI ĐIỂM — ví dụ: sau ăn sáng, trước khi ngủ]\n– Nên dùng liên tục ít nhất [SỐ TUẦN] tuần mới thấy rõ hiệu quả ạ\n\n⚠️ Lưu ý: Đây là thực phẩm bảo vệ sức khỏe, không phải thuốc điều trị bệnh — tác dụng hỗ trợ và cần dùng đều đặn mới hiệu quả nhé anh/chị ạ.\n\nSau [SỐ NGÀY] ngày em hỏi thăm lại anh/chị nhé 😊`
+        ]
+      },
+      {
+        id: "s4-2", num: "4.2",
+        title: "Tin nhắn chào + hướng dẫn sử dụng máy đo huyết áp",
+        timing: "Ngay sau khi mua",
+        timingType: "immediate",
+        escalation: false,
+        messages: [
+          `Dạ, em chào anh/chị [TÊN] ạ!\n\nEm là Hải — dược sĩ Nhà thuốc Trúc Tâm. Cảm ơn anh/chị đã mua máy đo huyết áp [TÊN MÁY] tại nhà thuốc mình nhé!\n\nĐể đo cho kết quả chính xác, anh/chị làm theo 4 bước này ạ:\n1. Nghỉ ngơi nhẹ nhàng khoảng 5 phút trước khi đo — không vừa đi bộ hay leo cầu thang xong đo ngay\n2. Ngồi thẳng lưng, đặt tay lên bàn ngang tầm tim\n3. Không nói chuyện trong khi đo\n4. Nên đo 2 lần cách nhau 1 phút rồi lấy trung bình — kết quả sẽ chính xác hơn ạ\n\nChỉ số huyết áp bình thường: dưới 130/80 mmHg\n\nNếu máy có lỗi kỹ thuật hoặc kết quả đo bất thường, anh/chị nhắn em ngay — Hải hỗ trợ bảo hành và tư vấn trực tiếp ngay ạ 🙏`
+        ]
+      },
+      {
+        id: "s4-3", num: "4.3",
+        title: "Hỏi thăm sau 7 ngày dùng thực phẩm chức năng",
+        timing: "Sau 7 ngày",
+        timingType: "days",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi — Hải hỏi thăm tí ạ!\n\nĐược 7 ngày rồi — anh/chị dùng [TÊN SẢN PHẨM] thấy thế nào ạ?\n\n1. Cảm thấy có sự khác biệt tốt rồi 🙂\n2. Chưa thấy gì nhiều — vẫn đang dùng đều\n3. Có thắc mắc muốn hỏi thêm\n\nAnh/chị nhắn lại số tương ứng hoặc kể thêm cũng được ạ — em luôn ở đây hỗ trợ nhé! 😊`
+        ]
+      },
+      {
+        id: "s4-4", num: "4.4",
+        title: "Nhắc mua thêm trước khi hết sản phẩm",
+        timing: "Trước khi hết",
+        timingType: "days",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi!\n\nTính ra thì [TÊN SẢN PHẨM] của anh/chị sắp dùng hết rồi ạ.\n\nĐể không bị gián đoạn — đặc biệt với các loại vitamin và thực phẩm chức năng cần dùng liên tục mới hiệu quả — anh/chị muốn:\n\n1. Đặt trước cho em, em giao tận nhà\n2. Ghé nhà thuốc lấy lúc thuận tiện, em giữ hàng sẵn\n3. Tạm dừng và hỏi dược sĩ xem có cần tiếp tục không\n\nAnh/chị nhắn em nhé ạ 🙏`
+        ]
+      },
+      {
+        id: "s4-5", num: "4.5",
+        title: "Gợi ý sản phẩm bổ sung thêm",
+        timing: "1 lần/tháng",
+        timingType: "biweekly",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi!\n\nBên em muốn chia sẻ thêm một thông tin nhỏ ạ.\n\nNhiều khách đang dùng [TÊN SẢN PHẨM] thường kết hợp thêm với [SẢN PHẨM BỔ SUNG] — [LÝ DO KẾT HỢP NGẮN GỌN, ví dụ: "Vitamin D3 thường dùng kèm K2 để canxi hấp thụ vào xương tốt hơn, không lắng đọng mạch máu"].\n\nAnh/chị không cần mua ngay đâu ạ, chỉ chia sẻ để anh/chị biết thêm thôi. Nếu muốn hỏi dược sĩ xem có phù hợp với mình không, em kết nối liền ạ 😊`
+        ]
+      },
+      {
+        id: "s4-6", num: "4.6",
+        title: "Thông báo khuyến mãi",
+        timing: "Khi có chương trình",
+        timingType: "reactive",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi!\n\nNhà thuốc Trúc Tâm đang có chương trình: [MÔ TẢ CHƯƠNG TRÌNH] — áp dụng đến hết ngày [NGÀY HẾT KHUYẾN MÃI] ạ.\n\nVì anh/chị từng dùng [TÊN SẢN PHẨM LIÊN QUAN] nên em nghĩ anh/chị sẽ quan tâm ạ.\n\nAnh/chị muốn đặt hàng hoặc hỏi thêm chi tiết, em xử lý ngay nhé! 😊`
+        ]
+      }
+    ]
+  },
+  {
+    id: "nhom5",
+    num: 5,
+    color: "#EF4444",
+    name: "Khách Hỏi Thăm / Phản Ánh Sau Khi Mua",
+    nameFull: "Khách Hỏi Thăm / Phản Ánh Sau Khi Mua",
+    desc: "Khách liên hệ sau khi về nhà vì gặp phản ứng không mong muốn sau dùng thuốc, chưa rõ cách dùng, nghi ngờ chất lượng sản phẩm, hoặc muốn phản ánh. Đây là nhóm cần phản hồi ngay lập tức — không để chờ.",
+    sections: [
+      {
+        id: "s5-1", num: "5.1",
+        title: "Tin nhắn chủ động hỏi thăm sau khi mua",
+        timing: "Vài tiếng sau mua",
+        timingType: "immediate",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi!\n\nHải, Nhà thuốc Trúc Tâm hỏi thăm tí ạ — anh/chị mua [TÊN THUỐC/SẢN PHẨM] hồi nãy, về dùng thấy ổn không ạ?\n\nNếu có bất kỳ điều gì chưa rõ về cách dùng, hoặc cảm thấy có gì bất thường, anh/chị nhắn em ngay nhé — Hải hỗ trợ ngay lập tức ạ 🙏`
+        ]
+      },
+      {
+        id: "s5-2", num: "5.2",
+        title: "Tiếp nhận câu hỏi về cách dùng thuốc",
+        timing: "Khi khách nhắn",
+        timingType: "reactive",
+        escalation: true,
+        messages: [
+          `Dạ, em hiểu rồi ạ — cảm ơn anh/chị [TÊN] đã hỏi ngay nhé, đúng rồi đấy ạ!\n\n[TRẢ LỜI CỤ THỂ THEO CÂU HỎI CỦA KHÁCH]\n\nNếu câu trả lời này anh/chị vẫn chưa rõ hoặc muốn dược sĩ giải thích thêm, em kết nối dược sĩ cho anh/chị ngay bây giờ ạ — chỉ cần nói một tiếng là được nhé! 🙏`
+        ]
+      },
+      {
+        id: "s5-3", num: "5.3",
+        title: "Tiếp nhận báo cáo phản ứng có hại",
+        timing: "Phản hồi ngay lập tức",
+        timingType: "immediate",
+        escalation: true,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi — em cảm ơn anh/chị đã nhắn ngay cho em ạ, quan trọng lắm đấy!\n\nEm đang kết nối dược sĩ cho anh/chị ngay bây giờ — dược sĩ sẽ nhắn lại anh/chị trong vài phút thôi ạ.\n\nTrong lúc chờ, anh/chị lưu ý:\n– Tạm ngưng dùng thuốc\n– Uống nhiều nước\n– Nghỉ ngơi, không gắng sức\n\n⚠️ Nếu anh/chị thấy khó thở, sưng mặt hoặc lưỡi, nổi mẩn đỏ lan rộng nhanh — đây là dấu hiệu khẩn cấp, anh/chị gọi cấp cứu 115 ngay nhé, đừng chờ ạ.\n\nEm báo dược sĩ ngay bây giờ! 🙏`
+        ]
+      },
+      {
+        id: "s5-4", num: "5.4",
+        title: "Tiếp nhận khiếu nại chất lượng sản phẩm",
+        timing: "Khi khách nhắn",
+        timingType: "reactive",
+        escalation: true,
+        messages: [
+          `Dạ, anh/chị [TÊN] kính mến,\n\nHải và Nhà thuốc Trúc Tâm xin tiếp nhận phản ánh của anh/chị ạ — chân thành xin lỗi anh/chị về trải nghiệm không tốt này.\n\nĐể bên em xử lý đúng cách và bảo vệ quyền lợi cho anh/chị, anh/chị có thể gửi cho em:\n– Ảnh sản phẩm và hộp/lọ (mặt nhãn có số lô, hạn sử dụng)\n– Mô tả ngắn vấn đề anh/chị gặp phải\n\nBên em cam kết:\n✅ Phản hồi ngay khi nhận đủ thông tin\n✅ Xử lý theo đúng quy trình — đổi hàng, hoàn tiền, hoặc báo nhà sản xuất tùy tình huống\n✅ Giữ bí mật thông tin của anh/chị\n\nCảm ơn anh/chị đã cho bên em biết — đây là cách để mình cùng nhau cải thiện ạ 🙏`
+        ]
+      },
+      {
+        id: "s5-5", num: "5.5",
+        title: "Theo dõi sau khi giải quyết khiếu nại",
+        timing: "Sau khi xử lý",
+        timingType: "days",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi — Hải hỏi thăm lại ạ.\n\nSau khi bên em xử lý phản ánh hôm [NGÀY XỬ LÝ], anh/chị cảm thấy vấn đề đã được giải quyết ổn chưa ạ?\n\n1. Ổn rồi, cảm ơn nhà thuốc 😊\n2. Vẫn còn vấn đề cần xử lý tiếp\n3. Muốn góp ý thêm điều gì đó\n\nPhản hồi của anh/chị giúp bên em phục vụ ngày càng tốt hơn ạ. Em cảm ơn nhiều! 🙏`
+        ]
+      },
+      {
+        id: "s5-6", num: "5.6",
+        title: "Tin nhắn phục hồi quan hệ",
+        timing: "7–14 ngày sau khi giải quyết",
+        timingType: "days",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] thân mến!\n\nMột khoảng thời gian rồi kể từ lần mình gặp sự cố trước. Hải hỏi thăm — anh/chị dạo này sức khỏe thế nào rồi ạ?\n\nBên em biết rằng chuyện xảy ra hôm đó không vui gì, và chúng em thực sự trân trọng việc anh/chị đã phản hồi thẳng thắn cho mình biết thay vì im lặng.\n\nNếu anh/chị cần gì — tư vấn thuốc, đặt hàng, hay chỉ đơn giản là hỏi về sức khỏe — em luôn ở đây ạ.\n\nNhà thuốc Trúc Tâm luôn cố gắng hết sức để xứng đáng với sự tin tưởng của anh/chị 🙏`
+        ]
+      }
+    ]
+  },
+  {
+    id: "nhom6",
+    num: 6,
+    color: "#6B7280",
+    name: "Khách Không Ghi Được Thông Tin Triệu Chứng",
+    nameFull: "Khách Không Ghi Được Thông Tin Triệu Chứng / Bệnh",
+    desc: "Tình huống xảy ra khi nhân viên không thể thu thập thông tin triệu chứng hoặc bệnh trạng của người dùng thuốc — do khách từ chối, mua hộ người khác, đang vội vàng, hoặc gặp khó khăn trong giao tiếp. Mục tiêu: vẫn đảm bảo an toàn dùng thuốc mà không gây khó chịu hay áp lực cho khách.",
+    sections: [
+      {
+        id: "s6-1", num: "6.1",
+        title: "Khách từ chối cung cấp thông tin sức khỏe",
+        timing: "Ngay sau khi mua",
+        timingType: "immediate",
+        escalation: false,
+        messages: [
+          `Dạ, em hiểu ạ — thông tin sức khỏe là riêng tư, anh/chị không nhất thiết phải chia sẻ đâu ạ.\n\nEm chỉ nhắn lại để anh/chị tiện tham khảo khi cần:\n– Hướng dẫn dùng thuốc đã có trên nhãn và tờ hướng dẫn trong hộp\n– Nếu có bất kỳ điều gì bất thường sau khi dùng — dù nhỏ — anh/chị có thể nhắn em bất kỳ lúc nào ạ\n\nNhà thuốc Trúc Tâm không lưu hay chia sẻ thông tin sức khỏe của anh/chị ra bên ngoài ạ 🙏`
+        ]
+      },
+      {
+        id: "s6-2", num: "6.2",
+        title: "Khách mua thay cho người khác",
+        timing: "Ngay sau khi mua",
+        timingType: "immediate",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi!\n\nNếu được, anh/chị hỏi lại người thân/bạn bè về mấy điều nhỏ — em kiểm tra thêm cho chắc ạ:\n\n1. Người dùng đang có triệu chứng gì? (ví dụ: ho, sốt, đau bụng...)\n2. Đang dùng thêm thuốc nào khác không?\n3. Có dị ứng với thuốc gì không?\n\nKhông nhất thiết phải có đủ ngay đâu ạ — nhưng nếu có, em kiểm tra để đảm bảo thuốc phù hợp và không tương tác với thuốc khác.\n\nAnh/chị cứ nhắn em khi nào có thêm thông tin nhé 🙏`
+        ]
+      },
+      {
+        id: "s6-3", num: "6.3",
+        title: "Khách đang vội, không có thời gian trao đổi",
+        timing: "Ngay sau khi mua",
+        timingType: "immediate",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN] ơi — Hải nhắn nhanh ạ!\n\nBiết anh/chị đang bận nên em gửi mấy điểm quan trọng nhất về [TÊN THUỐC]:\n\n⚡ Liều dùng: [LIỀU DÙNG] — [THỜI ĐIỂM UỐNG, VD: sau ăn sáng]\n⚡ Lưu ý: [1–2 CÂU NGẮN, VD: "Không uống rượu bia khi dùng thuốc này" / "Có thể buồn ngủ — tránh lái xe"]\n\nKhi nào anh/chị rảnh, nhắn em nếu cần tư vấn thêm nhé — em trả lời ngay ạ 🙏`
+        ]
+      },
+      {
+        id: "s6-4", num: "6.4",
+        title: "Khách cao tuổi khó giao tiếp — nhắn cho người thân",
+        timing: "Ngay sau khi mua",
+        timingType: "immediate",
+        escalation: false,
+        messages: [
+          `Dạ, anh/chị [TÊN — người thân / người đi cùng] ơi!\n\nCảm ơn anh/chị đã đưa [ba/mẹ/ông/bà] đến nhà thuốc hôm nay ạ. Hải gửi thông tin thuốc để anh/chị tiện nhắc và theo dõi ở nhà:\n\n💊 [TÊN THUỐC]\n– Liều dùng: [LIỀU DÙNG]\n– Thời điểm: [VD: sáng sau ăn + tối sau ăn]\n– Lưu ý đặc biệt: [LƯU Ý QUAN TRỌNG NHẤT]\n\nNếu [ba/mẹ/ông/bà] có biểu hiện lạ nào sau khi dùng — dù nhẹ — anh/chị nhắn em ngay nhé, Hải hỗ trợ trực tiếp liền ạ 🙏`
+        ]
+      },
+      {
+        id: "s6-5", num: "6.5",
+        title: "Khách lần đầu ghé qua, không cung cấp thông tin",
+        timing: "Sau khi khách rời quầy",
+        timingType: "immediate",
+        escalation: false,
+        messages: [
+          `Dạ, em chào anh/chị [TÊN] — cảm ơn anh/chị đã ghé nhà thuốc Trúc Tâm lần đầu ạ!\n\nHải từ Nhà thuốc Trúc Tâm. Về [TÊN THUỐC/SẢN PHẨM] vừa mua, anh/chị có thắc mắc gì cứ nhắn em nhé ạ.\n\nNếu tiện, anh/chị cho em biết thêm hai điều nhỏ này — để em hỗ trợ an toàn hơn:\n– Anh/chị đang dùng thêm thuốc gì khác không? (em kiểm tra tương tác thuốc)\n– Có dị ứng với thuốc hoặc thực phẩm nào không?\n\nKhông bắt buộc đâu ạ — khi nào tiện thì chia sẻ nhé. Em lưu lại để phục vụ chu đáo hơn lần sau 🙏`
+        ]
+      }
+    ]
+  }
+];
+
+// ─── OVERVIEW TABLE DATA ─────────────────────────────────────────
+const OVERVIEW_ROWS = [
+  { num:1, name:"Khách hàng bệnh mãn tính (tiểu đường, cao huyết áp)", chars:"Dùng thuốc lâu dài nhiều tháng/năm, nguy cơ cao bỏ liều hoặc không tái khám đúng hạn", proactive:"Mỗi ngày (nhắc thuốc) + theo sự kiện (refill, tái khám, chỉ số)", reply:"Ngay lập tức", escalation:"Chỉ số bất thường, bỏ liều nhiều ngày, bất kỳ triệu chứng lạ" },
+  { num:2, name:"Khách mua thuốc không kê đơn", chars:"Triệu chứng nhẹ, tự điều trị ngắn ngày, thường mua lẻ", proactive:"Hỏi thăm 1 lần sau 2–3 ngày dùng", reply:"Ngay lập tức", escalation:"Không đỡ sau đủ ngày dùng, triệu chứng nặng hơn" },
+  { num:3, name:"Khách mua thuốc theo đơn bác sĩ", chars:"Có đơn bác sĩ, thuốc chuyên khoa — tuân thủ đúng liều trình rất quan trọng", proactive:"Nhắc thuốc theo lịch đơn + hỏi thăm 1 lần sau 5–7 ngày", reply:"Ngay lập tức", escalation:"Bất kỳ phản ứng lạ sau dùng thuốc, yêu cầu đổi thuốc thay thế" },
+  { num:4, name:"Khách mua thực phẩm chức năng và dụng cụ y tế", chars:"Chăm sóc sức khỏe chủ động, phòng bệnh — không cần theo dõi sát như dùng thuốc", proactive:"Hỏi thăm sau 7 ngày + nhắc mua lại khi sắp hết", reply:"Ngay lập tức", escalation:"Muốn tư vấn chuyên sâu về sản phẩm phù hợp với bệnh lý cụ thể" },
+  { num:5, name:"Khách hỏi thăm / phản ánh sau khi mua", chars:"Đã mua về rồi mới liên hệ — thắc mắc cách dùng, phản ứng có hại, hoặc khiếu nại chất lượng", proactive:"Không — khách chủ động nhắn trước", reply:"Ngay lập tức — ưu tiên cao nhất", escalation:"Phản ứng có hại thuốc (dù nhẹ), khiếu nại chất lượng" },
+  { num:6, name:"Khách không ghi được thông tin triệu chứng / bệnh", chars:"Tình huống cắt ngang nhiều nhóm — khách từ chối, mua hộ, đang vội, hoặc khó giao tiếp", proactive:"Chỉ gửi hướng dẫn dùng thuốc tối giản ngay sau mua; không chủ động nhắn thêm", reply:"Ngay lập tức", escalation:"Khách nhắn lại có triệu chứng bất thường sau dùng thuốc" }
+];
+
+// ─── TIMING CONFIG ───────────────────────────────────────────────
+const TIMING_CONFIG = {
+  immediate: { cls: "timing-immediate", icon: "ph-lightning", label: null },
+  daily:     { cls: "timing-daily",     icon: "ph-clock",     label: null },
+  days:      { cls: "timing-days",      icon: "ph-calendar",  label: null },
+  biweekly:  { cls: "timing-biweekly",  icon: "ph-repeat",    label: null },
+  reactive:  { cls: "timing-reactive",  icon: "ph-chat-dots", label: null },
+  weekly:    { cls: "timing-weekly",    icon: "ph-calendar-blank", label: null }
+};
+
+const GROUP_BG_COLORS = ["#E8F7F6","#EFF6FF","#F5F3FF","#FFFBEB","#FEF2F2","#F9FAFB"];
+
+// ─── UTILS ───────────────────────────────────────────────────────
+function esc(str) {
+  return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function highlightPlaceholders(text) {
+  // Highlight [PLACEHOLDER] patterns
+  return esc(text).replace(/\[([^\]]+)\]/g, '<span class="zalo-placeholder">[$1]</span>');
+}
+
+function makeBubble(msgText, label) {
+  const content = highlightPlaceholders(msgText);
+  const labelHtml = label ? `<div class="sub-label">${esc(label)}</div>` : '';
+  return `
+    ${labelHtml}
+    <div class="zalo-message">
+      <div class="zalo-avatar">N</div>
+      <div class="zalo-bubble">
+        <div class="zalo-bubble-content">${content}</div>
+        <div class="zalo-meta">
+          <span class="zalo-time">DS. Hải &middot; Nhà Thuốc Trúc Tâm</span>
+          <button class="zalo-copy" onclick="copyMsg(this)" title="Sao chép tin nhắn">
+            <i class="ph ph-copy"></i> Sao chép
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function makeTimingBadge(section) {
+  const cfg = TIMING_CONFIG[section.timingType] || TIMING_CONFIG.reactive;
+  return `<span class="timing-badge ${cfg.cls}"><i class="ph ${cfg.icon}"></i>${esc(section.timing)}</span>`;
+}
+
+// ─── RENDER OVERVIEW TABLE ───────────────────────────────────────
+function renderOverview() {
+  const gbCls = ["g1","g2","g3","g4","g5","g6"];
+  const rows = OVERVIEW_ROWS.map((r,i) => `
+    <tr>
+      <td style="text-align:center;"><span class="group-badge ${gbCls[i]}">${r.num}</span></td>
+      <td><strong>${esc(r.name)}</strong></td>
+      <td>${esc(r.chars)}</td>
+      <td>${esc(r.proactive)}</td>
+      <td>${esc(r.reply)}</td>
+      <td class="escalation-cell"><i class="ph ph-warning" style="margin-right:4px;"></i>${esc(r.escalation)}</td>
+    </tr>`).join('');
+
+  return `
+  <div class="overview-section" id="tong-quan">
+    <h2 class="section-heading"><i class="ph-bold ph-table"></i> Tổng Quan 6 Nhóm Khách Hàng</h2>
+    <div class="intro-note">
+      <strong>Lưu ý:</strong> Đây là kịch bản tin nhắn Zalo cá nhân — Dược Sĩ Hải nhắn trực tiếp cho từng khách hàng, không phải tin nhắn tự động hàng loạt. Các ô <span style="color:var(--color-primary);font-weight:700;">[như thế này]</span> là phần cần điền thông tin cụ thể của từng khách.
+    </div>
+    <div class="table-wrapper">
+      <table class="overview-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nhóm khách hàng</th>
+            <th>Đặc điểm</th>
+            <th>DS. Hải chủ động nhắn</th>
+            <th>Phản hồi khi khách nhắn</th>
+            <th>Kết nối dược sĩ ngay khi</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// ─── RENDER A GROUP ──────────────────────────────────────────────
+function renderGroup(group, idx) {
+  const bgColor = GROUP_BG_COLORS[idx] || "#F7F9FB";
+  const gbCls = ["g1","g2","g3","g4","g5","g6"][idx] || "g1";
+
+  const sectionsHtml = group.sections.map(sec => {
+    const bubblesHtml = sec.messages.map((msg, mi) => {
+      const label = (sec.labels && sec.labels[mi]) ? sec.labels[mi] : null;
+      return makeBubble(msg, label);
+    }).join('');
+
+    const escalBadge = sec.escalation
+      ? `<span class="escalation-badge"><i class="ph-bold ph-warning"></i> Kết nối dược sĩ</span>`
+      : '';
+
+    return `
+    <div class="sub-section" id="${sec.id}">
+      <div class="sub-header">
+        <span class="sub-num">${sec.num}</span>
+        <span class="sub-title">${esc(sec.title)}</span>
+        ${makeTimingBadge(sec)}
+        ${escalBadge}
+      </div>
+      ${bubblesHtml}
+    </div>`;
+  }).join('<hr style="border:none;border-top:1px solid var(--color-border);margin:24px 0;">');
+
+  return `
+  <div class="group-section" id="${group.id}">
+    <div class="group-header">
+      <div class="group-num ${gbCls}" style="background:${group.color};">${group.num}</div>
+      <div class="group-title-block">
+        <h2>${esc(group.nameFull)}</h2>
+      </div>
+    </div>
+    <div class="group-desc-card">
+      <i class="ph ph-info" style="color:var(--color-primary);margin-right:6px;"></i>${esc(group.desc)}
+    </div>
+    ${sectionsHtml}
+  </div>`;
+}
+
+// ─── RENDER OPERATIONAL RULES ────────────────────────────────────
+function renderRules() {
+  return `
+  <div class="rules-section" id="quy-tac">
+    <h2 class="section-heading"><i class="ph-bold ph-gear"></i> Quy Tắc Vận Hành</h2>
+
+    <h3 style="font-family:var(--font-heading);font-size:16px;font-weight:700;margin:0 0 12px;color:var(--color-text);">
+      <i class="ph ph-clock" style="color:var(--color-primary);margin-right:6px;"></i>Thời gian phản hồi
+    </h3>
+    <div class="table-wrapper" style="margin-bottom:32px;">
+      <table class="rules-table">
+        <thead><tr><th>Loại tình huống</th><th>Thời gian</th></tr></thead>
+        <tbody>
+          <tr><td>Mọi câu hỏi thông thường</td><td>Ngay lập tức (trong giờ làm việc)</td></tr>
+          <tr><td>Câu hỏi về cách dùng thuốc</td><td>Ngay lập tức</td></tr>
+          <tr><td>Báo cáo phản ứng có hại sau dùng thuốc</td><td><strong style="color:var(--color-error);">Ngay lập tức — kết nối dược sĩ</strong></td></tr>
+          <tr><td>Khiếu nại chất lượng</td><td>Tiếp nhận ngay, xử lý trong ngày</td></tr>
+          <tr><td>Ngoài giờ làm việc</td><td>DS. Hải / hệ thống ghi nhận và phản hồi đầu giờ sáng hôm sau</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-family:var(--font-heading);font-size:16px;font-weight:700;margin:0 0 12px;color:var(--color-text);">
+      <i class="ph ph-warning" style="color:var(--color-error);margin-right:6px;"></i>Khi nào cần kết nối dược sĩ ngay
+    </h3>
+    <div class="alert-card">
+      <h4><i class="ph-bold ph-warning-circle"></i> Kết nối dược sĩ ngay khi:</h4>
+      <ul>
+        <li>Khách báo có phản ứng bất thường sau dùng thuốc (dù nhẹ)</li>
+        <li>Chỉ số huyết áp hoặc đường huyết vượt ngưỡng an toàn</li>
+        <li>Yêu cầu đổi sang thuốc thay thế cho đơn của bác sĩ</li>
+        <li>Câu hỏi về tương tác thuốc hoặc chống chỉ định</li>
+        <li>Khiếu nại chất lượng nghiêm trọng</li>
+        <li>Khách lo lắng và muốn được chuyên gia giải thích trực tiếp</li>
+        <li>Bất kỳ tình huống nào cần xác nhận thêm trước khi trả lời</li>
+      </ul>
+    </div>
+
+    <h3 style="font-family:var(--font-heading);font-size:16px;font-weight:700;margin:24px 0 12px;color:var(--color-text);">
+      <i class="ph ph-chat-circle" style="color:var(--color-primary);margin-right:6px;"></i>Giới hạn tần suất nhắn tin
+    </h3>
+    <div class="table-wrapper">
+      <table class="rules-table">
+        <thead><tr><th>Tệp khách hàng</th><th>Giới hạn</th></tr></thead>
+        <tbody>
+          <tr><td>Bệnh nhân mãn tính</td><td>Tối đa 3 tin/ngày (nhắc thuốc sáng + tối + 1 tin chăm sóc)</td></tr>
+          <tr><td>Khách mua thuốc không kê đơn</td><td>Tối đa 3 tin trong 7 ngày đợt điều trị</td></tr>
+          <tr><td>Khách mua thuốc theo đơn bác sĩ</td><td>Theo lịch đơn thuốc + tối đa 1 tin chăm sóc/tuần</td></tr>
+          <tr><td>Khách mua thực phẩm chức năng và dụng cụ</td><td>Tối đa 2 tin/tuần; 1 tin gợi ý sản phẩm/tháng</td></tr>
+          <tr><td>Khách sau bán</td><td>Không giới hạn cho xử lý sự cố; 1 tin hỏi thăm chủ động/đơn hàng</td></tr>
+          <tr><td>Khách không ghi được thông tin</td><td>Tối đa 1–2 tin ngay sau mua; không chủ động nhắn thêm trừ khi khách phản hồi</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-size:12px;color:var(--color-text-muted);margin-top:24px;font-style:italic;">
+      Tài liệu còn ở dạng nháp — chờ duyệt nội dung trước khi đưa vào hệ thống.
+    </p>
+  </div>`;
+}
+
+// ─── MAIN RENDER ─────────────────────────────────────────────────
+function renderAll() {
+  const root = document.getElementById('content-root');
+  let html = renderOverview();
+  GROUPS.forEach((g, i) => {
+    html += renderGroup(g, i);
+  });
+  html += renderRules();
+  root.innerHTML = html;
+}
+
+// ─── COPY TO CLIPBOARD ───────────────────────────────────────────
+function copyMsg(btn) {
+  const content = btn.closest('.zalo-bubble').querySelector('.zalo-bubble-content');
+  const text = content.innerText || content.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied');
+    btn.innerHTML = '<i class="ph ph-check"></i> Đã sao chép';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<i class="ph ph-copy"></i> Sao chép';
+    }, 2000);
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.classList.add('copied');
+    btn.innerHTML = '<i class="ph ph-check"></i> Đã sao chép';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<i class="ph ph-copy"></i> Sao chép';
+    }, 2000);
+  });
+}
+
+// ─── FILTER PILLS ─────────────────────────────────────────────────
+document.querySelectorAll('.filter-pill').forEach(pill => {
+  pill.addEventListener('click', function() {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    const target = this.dataset.target;
+    if (target === 'all') {
+      document.querySelectorAll('.group-section, .overview-section, .rules-section').forEach(el => el.style.display = '');
+    } else {
+      document.querySelectorAll('.group-section, .overview-section, .rules-section').forEach(el => el.style.display = 'none');
+      const el = document.getElementById(target);
+      if (el) {
+        el.style.display = '';
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  });
+});
+
+// ─── SIDEBAR ACTIVE TRACKING ─────────────────────────────────────
+function initSidebarTracking() {
+  const tocLinks = document.querySelectorAll('.toc-item');
+  const targets = [];
+  tocLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      const el = document.getElementById(href.slice(1));
+      if (el) targets.push({ el, link });
+    }
+  });
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const scrollY = window.scrollY + 160;
+        let current = null;
+        for (const { el } of targets) {
+          if (el.offsetTop <= scrollY) current = el.id;
+        }
+        tocLinks.forEach(l => l.classList.remove('active'));
+        if (current) {
+          const activeLink = document.querySelector(`.toc-item[href="#${current}"]`);
+          if (activeLink) activeLink.classList.add('active');
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+}
+
+// ─── BACK TO TOP ─────────────────────────────────────────────────
+const btt = document.getElementById('back-to-top');
+window.addEventListener('scroll', () => {
+  btt.classList.toggle('visible', window.scrollY > 400);
+});
+
+// ─── SMOOTH SCROLL FOR SIDEBAR ───────────────────────────────────
+document.querySelectorAll('.toc-item').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      const el = document.getElementById(href.slice(1));
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────
+renderAll();
+initSidebarTracking();
+</script>
+
+<script src="../js/main.js?v=202605270615" defer></script>
+</body>
+</html>

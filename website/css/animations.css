@@ -1,0 +1,352 @@
+/* ============================================================
+   MeCare Animations — Nhà Thuốc Trúc Tâm Sales Kit
+   All animations triggered by JS adding `.animate-in` class
+   via IntersectionObserver in main.js
+   ============================================================ */
+
+
+/* ============================================================
+   1. Base Animation Setup
+   Initial states — elements are invisible before JS fires
+   ============================================================ */
+
+[data-animate] {
+  will-change: transform, opacity;
+}
+
+/* Default state: hidden, positioned for animation */
+.fade-up {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fade-in {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.slide-in-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.slide-in-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.zoom-in {
+  opacity: 0;
+  transform: scale(0.94);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fade-down {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* ============================================================
+   2. Triggered State — added by JS IntersectionObserver
+   ============================================================ */
+
+.fade-up.animate-in,
+.fade-in.animate-in,
+.slide-in-left.animate-in,
+.slide-in-right.animate-in,
+.zoom-in.animate-in,
+.fade-down.animate-in {
+  opacity: 1;
+  transform: none;
+}
+
+
+/* ============================================================
+   3. Staggered children — delay for list/grid items
+   Applied to parent; children get staggered delays
+   ============================================================ */
+
+.stagger-children > *:nth-child(1)  { transition-delay: 0ms; }
+.stagger-children > *:nth-child(2)  { transition-delay: 80ms; }
+.stagger-children > *:nth-child(3)  { transition-delay: 160ms; }
+.stagger-children > *:nth-child(4)  { transition-delay: 240ms; }
+.stagger-children > *:nth-child(5)  { transition-delay: 320ms; }
+.stagger-children > *:nth-child(6)  { transition-delay: 400ms; }
+.stagger-children > *:nth-child(7)  { transition-delay: 480ms; }
+.stagger-children > *:nth-child(8)  { transition-delay: 560ms; }
+.stagger-children > *:nth-child(9)  { transition-delay: 640ms; }
+.stagger-children > *:nth-child(10) { transition-delay: 720ms; }
+
+
+/* ============================================================
+   4. Explicit delay utilities
+   ============================================================ */
+
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+.delay-600 { transition-delay: 600ms; }
+.delay-700 { transition-delay: 700ms; }
+.delay-800 { transition-delay: 800ms; }
+
+
+/* ============================================================
+   5. Keyframe Animations (CSS-native, no JS needed)
+   Used for decorative elements that always animate
+   ============================================================ */
+
+/* Pulse — for badges, indicators */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Spin — for loading indicators */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Bounce — for scroll hints */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(-8px);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1.2s infinite;
+}
+
+/* Float — for decorative icon elements */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Shimmer — for skeleton loading states */
+@keyframes shimmer {
+  0%   { background-position: -468px 0; }
+  100% { background-position: 468px 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-alt) 25%,
+    var(--color-bg) 50%,
+    var(--color-bg-alt) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Ping — for notification dots */
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-ping {
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Counter number roll — for stat numbers (decorative) */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-count-up {
+  animation: count-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Gradient shift for hero background */
+@keyframes gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+}
+
+/* Draw line — for process connector */
+@keyframes draw-line {
+  from { transform: scaleX(0); transform-origin: left; }
+  to   { transform: scaleX(1); transform-origin: left; }
+}
+
+.animate-draw-line {
+  animation: draw-line 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Checkmark appear */
+@keyframes check-appear {
+  from { stroke-dashoffset: 24; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* Notification dot pulse */
+@keyframes dot-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(14, 158, 142, 0.4); }
+  70%  { box-shadow: 0 0 0 8px rgba(14, 158, 142, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(14, 158, 142, 0); }
+}
+
+.animate-dot-pulse {
+  animation: dot-pulse 2s ease infinite;
+}
+
+/* Scale in — for modals, cards appearing */
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Slide up from bottom — for mobile sheet */
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Typing cursor blink */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.animate-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background-color: currentColor;
+  vertical-align: text-bottom;
+  animation: cursor-blink 1s step-end infinite;
+}
+
+
+/* ============================================================
+   6. Hover Animations (non-JS, pure CSS transitions)
+   ============================================================ */
+
+/* Subtle lift on hover */
+.hover-lift {
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Icon nudge right on hover — for arrow icons in links */
+.hover-nudge-icon .btn-arrow,
+.hover-nudge-icon i.ph-arrow-right {
+  transition: transform var(--transition-base);
+}
+
+.hover-nudge-icon:hover .btn-arrow,
+.hover-nudge-icon:hover i.ph-arrow-right {
+  transform: translateX(4px);
+}
+
+/* Scale up icon on hover */
+.hover-scale {
+  transition: transform var(--transition-fast);
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Glow on hover — for primary elements */
+.hover-glow {
+  transition: box-shadow var(--transition-base);
+}
+
+.hover-glow:hover {
+  box-shadow: var(--shadow-primary);
+}
+
+
+/* ============================================================
+   7. Reduced Motion Support
+   Respects user's accessibility preference
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .fade-up,
+  .fade-in,
+  .slide-in-left,
+  .slide-in-right,
+  .zoom-in,
+  .fade-down {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .animate-float,
+  .animate-bounce,
+  .animate-pulse,
+  .animate-ping,
+  .animate-gradient {
+    animation: none;
+  }
+}

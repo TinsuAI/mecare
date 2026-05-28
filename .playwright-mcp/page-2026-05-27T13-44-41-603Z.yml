@@ -1,0 +1,1039 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e5]:
+        - link "MeCare Trợ lý AI Zalo" [ref=e6] [cursor=pointer]:
+          - /url: ../index.html
+          - generic [ref=e7]: MeCare
+          - generic [ref=e8]: Trợ lý AI Zalo
+        - generic [ref=e9]:
+          - link " Tổng quan" [ref=e10] [cursor=pointer]:
+            - /url: ../index.html
+            - generic [ref=e11]: 
+            - text: Tổng quan
+          - link "Quy trình" [ref=e12] [cursor=pointer]:
+            - /url: ../index.html#quy-trinh
+          - link "Chỉ số" [ref=e13] [cursor=pointer]:
+            - /url: ../index.html#chi-so
+          - link "Kịch bản" [ref=e14] [cursor=pointer]:
+            - /url: kichban.html
+        - button " In tài liệu" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: 
+          - text: In tài liệu
+  - generic [ref=e19]:
+    - generic [ref=e20]:
+      - generic [ref=e21]: 
+      - text: Kịch bản Zalo cá nhân
+    - heading "Kịch Bản Chăm Sóc Khách Hàng" [level=1] [ref=e22]
+    - paragraph [ref=e23]:
+      - text: "Nhà Thuốc Trúc Tâm — Zalo Cá Nhân · Người gửi:"
+      - strong [ref=e24]: DS. Hải
+    - generic [ref=e25]:
+      - generic [ref=e26]:
+        - generic [ref=e27]: 
+        - text: 6 Nhóm khách hàng
+      - generic [ref=e28]:
+        - generic [ref=e29]: 
+        - text: 28+ Kịch bản
+      - generic [ref=e30]:
+        - generic [ref=e31]: 
+        - text: Tuân thủ GPP
+      - generic [ref=e32]:
+        - generic [ref=e33]: 
+        - text: Phản hồi tức thì
+  - generic [ref=e34]:
+    - button "Tất cả" [ref=e35] [cursor=pointer]
+    - button "Nhóm 1" [ref=e36] [cursor=pointer]
+    - button "Nhóm 2" [ref=e37] [cursor=pointer]
+    - button "Nhóm 3" [ref=e38] [cursor=pointer]
+    - button "Nhóm 4" [ref=e39] [cursor=pointer]
+    - button "Nhóm 5" [ref=e40] [cursor=pointer]
+    - button "Nhóm 6" [ref=e41] [cursor=pointer]
+    - button "Quy tắc" [ref=e42] [cursor=pointer]
+  - generic [ref=e43]:
+    - complementary [ref=e44]:
+      - generic [ref=e45]: Mục lục
+      - link "Tổng Quan 6 Nhóm" [ref=e46] [cursor=pointer]:
+        - /url: "#tong-quan"
+      - link "Nhóm 1 — Bệnh Mãn Tính" [ref=e48] [cursor=pointer]:
+        - /url: "#nhom1"
+      - link "1.1 Chào mừng" [ref=e49] [cursor=pointer]:
+        - /url: "#s1-1"
+      - link "1.2 Nhắc sáng" [ref=e50] [cursor=pointer]:
+        - /url: "#s1-2"
+      - link "1.3 Nhắc tối" [ref=e51] [cursor=pointer]:
+        - /url: "#s1-3"
+      - link "1.4 Chưa xác nhận uống" [ref=e52] [cursor=pointer]:
+        - /url: "#s1-4"
+      - link "1.5 Nhắc mua thêm" [ref=e53] [cursor=pointer]:
+        - /url: "#s1-5"
+      - link "1.6 Chỉ số huyết áp" [ref=e54] [cursor=pointer]:
+        - /url: "#s1-6"
+      - link "1.7 Chỉ số tiểu đường" [ref=e55] [cursor=pointer]:
+        - /url: "#s1-7"
+      - link "1.8 Chỉ số bất thường" [ref=e56] [cursor=pointer]:
+        - /url: "#s1-8"
+      - link "1.9 Lịch tái khám" [ref=e57] [cursor=pointer]:
+        - /url: "#s1-9"
+      - link "1.10 Tư vấn sản phẩm" [ref=e58] [cursor=pointer]:
+        - /url: "#s1-10"
+      - link "1.11 Sinh nhật" [ref=e59] [cursor=pointer]:
+        - /url: "#s1-11"
+      - link "Nhóm 2 — Không Kê Đơn" [ref=e61] [cursor=pointer]:
+        - /url: "#nhom2"
+      - link "2.1 Chào + hướng dẫn" [ref=e62] [cursor=pointer]:
+        - /url: "#s2-1"
+      - link "2.2 Hỏi thăm sau 2–3 ngày" [ref=e63] [cursor=pointer]:
+        - /url: "#s2-2"
+      - link "2.3 Đã khỏi" [ref=e64] [cursor=pointer]:
+        - /url: "#s2-3"
+      - link "2.4 Không đỡ / nặng hơn" [ref=e65] [cursor=pointer]:
+        - /url: "#s2-4"
+      - link "2.5 Sản phẩm theo mùa" [ref=e66] [cursor=pointer]:
+        - /url: "#s2-5"
+      - link "Nhóm 3 — Theo Đơn Bác Sĩ" [ref=e68] [cursor=pointer]:
+        - /url: "#nhom3"
+      - link "3.1 Chào + xác nhận đơn" [ref=e69] [cursor=pointer]:
+        - /url: "#s3-1"
+      - link "3.2 Nhắc uống thuốc" [ref=e70] [cursor=pointer]:
+        - /url: "#s3-2"
+      - link "3.3 Hỏi thăm phản ứng" [ref=e71] [cursor=pointer]:
+        - /url: "#s3-3"
+      - link "3.4 Nhắc mua lại / tái khám" [ref=e72] [cursor=pointer]:
+        - /url: "#s3-4"
+      - link "3.5 Thuốc hết hàng" [ref=e73] [cursor=pointer]:
+        - /url: "#s3-5"
+      - link "Nhóm 4 — TPCN & Dụng Cụ" [ref=e75] [cursor=pointer]:
+        - /url: "#nhom4"
+      - link "4.1 Hướng dẫn TPCN" [ref=e76] [cursor=pointer]:
+        - /url: "#s4-1"
+      - link "4.2 Hướng dẫn máy đo HA" [ref=e77] [cursor=pointer]:
+        - /url: "#s4-2"
+      - link "4.3 Hỏi thăm sau 7 ngày" [ref=e78] [cursor=pointer]:
+        - /url: "#s4-3"
+      - link "4.4 Nhắc mua thêm" [ref=e79] [cursor=pointer]:
+        - /url: "#s4-4"
+      - link "4.5 Gợi ý bổ sung" [ref=e80] [cursor=pointer]:
+        - /url: "#s4-5"
+      - link "4.6 Khuyến mãi" [ref=e81] [cursor=pointer]:
+        - /url: "#s4-6"
+      - link "Nhóm 5 — Phản Ánh" [ref=e83] [cursor=pointer]:
+        - /url: "#nhom5"
+      - link "5.1 Hỏi thăm sau mua" [ref=e84] [cursor=pointer]:
+        - /url: "#s5-1"
+      - link "5.2 Câu hỏi cách dùng" [ref=e85] [cursor=pointer]:
+        - /url: "#s5-2"
+      - link "5.3 Phản ứng có hại" [ref=e86] [cursor=pointer]:
+        - /url: "#s5-3"
+      - link "5.4 Khiếu nại chất lượng" [ref=e87] [cursor=pointer]:
+        - /url: "#s5-4"
+      - link "5.5 Theo dõi sau khiếu nại" [ref=e88] [cursor=pointer]:
+        - /url: "#s5-5"
+      - link "5.6 Phục hồi quan hệ" [ref=e89] [cursor=pointer]:
+        - /url: "#s5-6"
+      - link "Nhóm 6 — Không Ghi Được" [ref=e91] [cursor=pointer]:
+        - /url: "#nhom6"
+      - link "6.1 Từ chối thông tin" [ref=e92] [cursor=pointer]:
+        - /url: "#s6-1"
+      - link "6.2 Mua hộ người khác" [ref=e93] [cursor=pointer]:
+        - /url: "#s6-2"
+      - link "6.3 Khách đang vội" [ref=e94] [cursor=pointer]:
+        - /url: "#s6-3"
+      - link "6.4 Khách cao tuổi" [ref=e95] [cursor=pointer]:
+        - /url: "#s6-4"
+      - link "6.5 Lần đầu ghé qua" [ref=e96] [cursor=pointer]:
+        - /url: "#s6-5"
+      - link "Quy Tắc Vận Hành" [ref=e98] [cursor=pointer]:
+        - /url: "#quy-tac"
+    - main [ref=e99]:
+      - generic [ref=e100]:
+        - generic [ref=e101]:
+          - heading " Tổng Quan 6 Nhóm Khách Hàng" [level=2] [ref=e102]:
+            - generic [ref=e103]: 
+            - text: Tổng Quan 6 Nhóm Khách Hàng
+          - generic [ref=e104]:
+            - strong [ref=e105]: "Lưu ý:"
+            - text: Đây là kịch bản tin nhắn Zalo cá nhân — Dược Sĩ Hải nhắn trực tiếp cho từng khách hàng, không phải tin nhắn tự động hàng loạt. Các ô [như thế này] là phần cần điền thông tin cụ thể của từng khách.
+          - table [ref=e107]:
+            - rowgroup [ref=e108]:
+              - row "# Nhóm khách hàng Đặc điểm DS. Hải chủ động nhắn Phản hồi khi khách nhắn Kết nối dược sĩ ngay khi" [ref=e109]:
+                - columnheader "#" [ref=e110]
+                - columnheader "Nhóm khách hàng" [ref=e111]
+                - columnheader "Đặc điểm" [ref=e112]
+                - columnheader "DS. Hải chủ động nhắn" [ref=e113]
+                - columnheader "Phản hồi khi khách nhắn" [ref=e114]
+                - columnheader "Kết nối dược sĩ ngay khi" [ref=e115]
+            - rowgroup [ref=e116]:
+              - row "1 Khách hàng bệnh mãn tính (tiểu đường, cao huyết áp) Dùng thuốc lâu dài nhiều tháng/năm, nguy cơ cao bỏ liều hoặc không tái khám đúng hạn Mỗi ngày (nhắc thuốc) + theo sự kiện (refill, tái khám, chỉ số) Ngay lập tức Chỉ số bất thường, bỏ liều nhiều ngày, bất kỳ triệu chứng lạ" [ref=e117]:
+                - cell "1" [ref=e118]:
+                  - generic [ref=e119]: "1"
+                - cell "Khách hàng bệnh mãn tính (tiểu đường, cao huyết áp)" [ref=e120]:
+                  - strong [ref=e121]: Khách hàng bệnh mãn tính (tiểu đường, cao huyết áp)
+                - cell "Dùng thuốc lâu dài nhiều tháng/năm, nguy cơ cao bỏ liều hoặc không tái khám đúng hạn" [ref=e122]
+                - cell "Mỗi ngày (nhắc thuốc) + theo sự kiện (refill, tái khám, chỉ số)" [ref=e123]
+                - cell "Ngay lập tức" [ref=e124]
+                - cell "Chỉ số bất thường, bỏ liều nhiều ngày, bất kỳ triệu chứng lạ" [ref=e125]:
+                  - generic [ref=e126]: 
+                  - text: Chỉ số bất thường, bỏ liều nhiều ngày, bất kỳ triệu chứng lạ
+              - row "2 Khách mua thuốc không kê đơn Triệu chứng nhẹ, tự điều trị ngắn ngày, thường mua lẻ Hỏi thăm 1 lần sau 2–3 ngày dùng Ngay lập tức Không đỡ sau đủ ngày dùng, triệu chứng nặng hơn" [ref=e127]:
+                - cell "2" [ref=e128]:
+                  - generic [ref=e129]: "2"
+                - cell "Khách mua thuốc không kê đơn" [ref=e130]:
+                  - strong [ref=e131]: Khách mua thuốc không kê đơn
+                - cell "Triệu chứng nhẹ, tự điều trị ngắn ngày, thường mua lẻ" [ref=e132]
+                - cell "Hỏi thăm 1 lần sau 2–3 ngày dùng" [ref=e133]
+                - cell "Ngay lập tức" [ref=e134]
+                - cell "Không đỡ sau đủ ngày dùng, triệu chứng nặng hơn" [ref=e135]:
+                  - generic [ref=e136]: 
+                  - text: Không đỡ sau đủ ngày dùng, triệu chứng nặng hơn
+              - row "3 Khách mua thuốc theo đơn bác sĩ Có đơn bác sĩ, thuốc chuyên khoa — tuân thủ đúng liều trình rất quan trọng Nhắc thuốc theo lịch đơn + hỏi thăm 1 lần sau 5–7 ngày Ngay lập tức Bất kỳ phản ứng lạ sau dùng thuốc, yêu cầu đổi thuốc thay thế" [ref=e137]:
+                - cell "3" [ref=e138]:
+                  - generic [ref=e139]: "3"
+                - cell "Khách mua thuốc theo đơn bác sĩ" [ref=e140]:
+                  - strong [ref=e141]: Khách mua thuốc theo đơn bác sĩ
+                - cell "Có đơn bác sĩ, thuốc chuyên khoa — tuân thủ đúng liều trình rất quan trọng" [ref=e142]
+                - cell "Nhắc thuốc theo lịch đơn + hỏi thăm 1 lần sau 5–7 ngày" [ref=e143]
+                - cell "Ngay lập tức" [ref=e144]
+                - cell "Bất kỳ phản ứng lạ sau dùng thuốc, yêu cầu đổi thuốc thay thế" [ref=e145]:
+                  - generic [ref=e146]: 
+                  - text: Bất kỳ phản ứng lạ sau dùng thuốc, yêu cầu đổi thuốc thay thế
+              - row "4 Khách mua thực phẩm chức năng và dụng cụ y tế Chăm sóc sức khỏe chủ động, phòng bệnh — không cần theo dõi sát như dùng thuốc Hỏi thăm sau 7 ngày + nhắc mua lại khi sắp hết Ngay lập tức Muốn tư vấn chuyên sâu về sản phẩm phù hợp với bệnh lý cụ thể" [ref=e147]:
+                - cell "4" [ref=e148]:
+                  - generic [ref=e149]: "4"
+                - cell "Khách mua thực phẩm chức năng và dụng cụ y tế" [ref=e150]:
+                  - strong [ref=e151]: Khách mua thực phẩm chức năng và dụng cụ y tế
+                - cell "Chăm sóc sức khỏe chủ động, phòng bệnh — không cần theo dõi sát như dùng thuốc" [ref=e152]
+                - cell "Hỏi thăm sau 7 ngày + nhắc mua lại khi sắp hết" [ref=e153]
+                - cell "Ngay lập tức" [ref=e154]
+                - cell "Muốn tư vấn chuyên sâu về sản phẩm phù hợp với bệnh lý cụ thể" [ref=e155]:
+                  - generic [ref=e156]: 
+                  - text: Muốn tư vấn chuyên sâu về sản phẩm phù hợp với bệnh lý cụ thể
+              - row "5 Khách hỏi thăm / phản ánh sau khi mua Đã mua về rồi mới liên hệ — thắc mắc cách dùng, phản ứng có hại, hoặc khiếu nại chất lượng Không — khách chủ động nhắn trước Ngay lập tức — ưu tiên cao nhất Phản ứng có hại thuốc (dù nhẹ), khiếu nại chất lượng" [ref=e157]:
+                - cell "5" [ref=e158]:
+                  - generic [ref=e159]: "5"
+                - cell "Khách hỏi thăm / phản ánh sau khi mua" [ref=e160]:
+                  - strong [ref=e161]: Khách hỏi thăm / phản ánh sau khi mua
+                - cell "Đã mua về rồi mới liên hệ — thắc mắc cách dùng, phản ứng có hại, hoặc khiếu nại chất lượng" [ref=e162]
+                - cell "Không — khách chủ động nhắn trước" [ref=e163]
+                - cell "Ngay lập tức — ưu tiên cao nhất" [ref=e164]
+                - cell "Phản ứng có hại thuốc (dù nhẹ), khiếu nại chất lượng" [ref=e165]:
+                  - generic [ref=e166]: 
+                  - text: Phản ứng có hại thuốc (dù nhẹ), khiếu nại chất lượng
+              - row "6 Khách không ghi được thông tin triệu chứng / bệnh Tình huống cắt ngang nhiều nhóm — khách từ chối, mua hộ, đang vội, hoặc khó giao tiếp Chỉ gửi hướng dẫn dùng thuốc tối giản ngay sau mua; không chủ động nhắn thêm Ngay lập tức Khách nhắn lại có triệu chứng bất thường sau dùng thuốc" [ref=e167]:
+                - cell "6" [ref=e168]:
+                  - generic [ref=e169]: "6"
+                - cell "Khách không ghi được thông tin triệu chứng / bệnh" [ref=e170]:
+                  - strong [ref=e171]: Khách không ghi được thông tin triệu chứng / bệnh
+                - cell "Tình huống cắt ngang nhiều nhóm — khách từ chối, mua hộ, đang vội, hoặc khó giao tiếp" [ref=e172]
+                - cell "Chỉ gửi hướng dẫn dùng thuốc tối giản ngay sau mua; không chủ động nhắn thêm" [ref=e173]
+                - cell "Ngay lập tức" [ref=e174]
+                - cell "Khách nhắn lại có triệu chứng bất thường sau dùng thuốc" [ref=e175]:
+                  - generic [ref=e176]: 
+                  - text: Khách nhắn lại có triệu chứng bất thường sau dùng thuốc
+        - generic [ref=e177]:
+          - generic [ref=e178]:
+            - generic [ref=e179]: "1"
+            - heading "Khách Hàng Bệnh Mãn Tính (Tiểu Đường, Cao Huyết Áp)" [level=2] [ref=e181]
+          - generic [ref=e182]:
+            - generic [ref=e183]: 
+            - text: Khách hàng cần dùng thuốc liên tục nhiều tháng, thậm chí nhiều năm. Rủi ro lớn nhất là quên uống thuốc, tự ý bỏ liều, hoặc không tái khám đúng hạn. DS. Hải đồng hành như người quen đáng tin cậy — không phải robot nhắc lịch.
+          - generic [ref=e184]:
+            - generic [ref=e185]:
+              - generic [ref=e186]: "1.1"
+              - generic [ref=e187]: Tin nhắn chào mừng
+              - generic [ref=e188]:
+                - generic [ref=e189]: 
+                - text: Ngay sau kết nối Zalo
+            - generic [ref=e190]:
+              - generic [ref=e191]: "N"
+              - generic [ref=e192]:
+                - generic [ref=e193]: "Dạ, em chào anh/chị [TÊN] ạ! Em là Hải — dược sĩ Nhà thuốc Trúc Tâm. Cảm ơn anh/chị đã kết nối với em nhé! Từ hôm nay em sẽ đồng hành cùng anh/chị: – Nhắc uống thuốc đúng giờ mỗi ngày – Báo trước khi thuốc sắp hết để anh/chị chuẩn bị kịp – Hỏi thăm sức khỏe và theo dõi chỉ số định kỳ – Tư vấn trực tiếp bất cứ khi anh/chị cần thêm Anh/chị cứ nhắn em bất cứ lúc nào nhé, em luôn ở đây ạ 🙏"
+                - generic [ref=e194]:
+                  - generic [ref=e195]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e196] [cursor=pointer]:
+                    - generic [ref=e197]: 
+                    - text: Sao chép
+          - separator [ref=e198]
+          - generic [ref=e199]:
+            - generic [ref=e200]:
+              - generic [ref=e201]: "1.2"
+              - generic [ref=e202]: Nhắc uống thuốc buổi sáng
+              - generic [ref=e203]:
+                - generic [ref=e204]: 
+                - text: Hàng ngày (sáng)
+            - generic [ref=e205]:
+              - generic [ref=e206]: "N"
+              - generic [ref=e207]:
+                - generic [ref=e208]: "Dạ, Hải nhắc anh/chị [TÊN] uống thuốc buổi sáng ạ! – [TÊN THUỐC 1]: [LIỀU DÙNG] — uống sau ăn sáng – [TÊN THUỐC 2]: [LIỀU DÙNG] — uống sau ăn sáng Anh/chị nhớ uống cùng một ly nước đầy (khoảng 200ml) để thuốc hấp thu tốt hơn nhé ạ. Uống xong anh/chị nhắn em một tiếng, em ghi nhận để theo dõi cho anh/chị ạ 😊"
+                - generic [ref=e209]:
+                  - generic [ref=e210]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e211] [cursor=pointer]:
+                    - generic [ref=e212]: 
+                    - text: Sao chép
+          - separator [ref=e213]
+          - generic [ref=e214]:
+            - generic [ref=e215]:
+              - generic [ref=e216]: "1.3"
+              - generic [ref=e217]: Nhắc uống thuốc buổi tối
+              - generic [ref=e218]:
+                - generic [ref=e219]: 
+                - text: Hàng ngày (tối)
+            - generic [ref=e220]:
+              - generic [ref=e221]: "N"
+              - generic [ref=e222]:
+                - generic [ref=e223]: "Dạ, Hải nhắc anh/chị [TÊN] uống thuốc buổi tối ạ! – [TÊN THUỐC]: [LIỀU DÙNG] — uống [trước/sau] ăn tối Chúc anh/chị buổi tối thật thoải mái và nghỉ ngơi ngon giấc nhé ạ 🙏"
+                - generic [ref=e224]:
+                  - generic [ref=e225]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e226] [cursor=pointer]:
+                    - generic [ref=e227]: 
+                    - text: Sao chép
+          - separator [ref=e228]
+          - generic [ref=e229]:
+            - generic [ref=e230]:
+              - generic [ref=e231]: "1.4"
+              - generic [ref=e232]: Chưa xác nhận uống thuốc
+              - generic [ref=e233]:
+                - generic [ref=e234]: 
+                - text: Sau 1–2 tiếng không phản hồi
+            - generic [ref=e235]:
+              - generic [ref=e236]: "N"
+              - generic [ref=e237]:
+                - generic [ref=e238]: "Dạ, anh/chị [TÊN] ơi — Hải hỏi thăm tí ạ. Hôm nay anh/chị chưa nhắn lại cho em về liều thuốc buổi [sáng/tối], không biết anh/chị có quên không hay có chuyện gì không ạ? Nếu anh/chị vừa quên uống: – Còn trong vòng 1–2 tiếng: vẫn uống được bình thường ạ – Nếu đã qua lâu: bỏ qua liều đó, uống liều tiếp theo đúng giờ thôi nhé Quan trọng là không uống gấp đôi để bù liều anh/chị ơi — có thể gây ra phản ứng không mong muốn ạ. Anh/chị có cần em hỗ trợ thêm gì không ạ?"
+                - generic [ref=e239]:
+                  - generic [ref=e240]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e241] [cursor=pointer]:
+                    - generic [ref=e242]: 
+                    - text: Sao chép
+          - separator [ref=e243]
+          - generic [ref=e244]:
+            - generic [ref=e245]:
+              - generic [ref=e246]: "1.5"
+              - generic [ref=e247]: Nhắc mua thêm thuốc trước khi hết
+              - generic [ref=e248]:
+                - generic [ref=e249]: 
+                - text: Gửi trước 5 ngày
+            - generic [ref=e250]:
+              - generic [ref=e251]: "N"
+              - generic [ref=e252]:
+                - generic [ref=e253]: Dạ, anh/chị [TÊN] ơi — Hải nhắn sớm để anh/chị chuẩn bị nhé! Tính ra thì khoảng ngày [NGÀY HẾT THUỐC] là thuốc [TÊN THUỐC] của anh/chị sẽ gần hết rồi ạ. Anh/chị muốn em xử lý theo cách nào ạ? 1. Đặt trước, em giao tận nhà cho anh/chị 2. Anh/chị ghé nhà thuốc lúc thuận tiện, em giữ hàng sẵn 3. Cần tư vấn thêm trước khi mua lại Nhắn em số tương ứng hoặc nói thẳng cũng được ạ, em lo cho anh/chị 🙏
+                - generic [ref=e254]:
+                  - generic [ref=e255]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e256] [cursor=pointer]:
+                    - generic [ref=e257]: 
+                    - text: Sao chép
+          - separator [ref=e258]
+          - generic [ref=e259]:
+            - generic [ref=e260]:
+              - generic [ref=e261]: "1.6"
+              - generic [ref=e262]: Nhắc theo dõi chỉ số — Cao Huyết Áp
+              - generic [ref=e263]:
+                - generic [ref=e264]: 
+                - text: 2 tuần/lần
+            - generic [ref=e265]:
+              - generic [ref=e266]: "N"
+              - generic [ref=e267]:
+                - generic [ref=e268]: Dạ, anh/chị [TÊN] ơi! Được 2 tuần rồi — em nhắc anh/chị đo huyết áp tại nhà một lần nhé ạ. Anh/chị đo lúc ngồi nghỉ khoảng 5 phút, rồi nhắn kết quả cho em. Ví dụ nhắn "huyết áp 125/80" là em ghi nhận được ngay ạ. Mục tiêu mình đang hướng tới là dưới 130/80 mmHg nhé anh/chị. Nếu kết quả cao hơn bình thường nhiều, em kết nối dược sĩ cho anh/chị tư vấn liền ạ 🙏
+                - generic [ref=e269]:
+                  - generic [ref=e270]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e271] [cursor=pointer]:
+                    - generic [ref=e272]: 
+                    - text: Sao chép
+          - separator [ref=e273]
+          - generic [ref=e274]:
+            - generic [ref=e275]:
+              - generic [ref=e276]: "1.7"
+              - generic [ref=e277]: Nhắc theo dõi chỉ số — Tiểu Đường
+              - generic [ref=e278]:
+                - generic [ref=e279]: 
+                - text: 2 tuần/lần
+            - generic [ref=e280]:
+              - generic [ref=e281]: "N"
+              - generic [ref=e282]:
+                - generic [ref=e283]: "Dạ, anh/chị [TÊN] ơi! Nhắc anh/chị đo đường huyết [lúc đói buổi sáng / sau ăn 2 tiếng] hôm nay nhé ạ. Nhắn kết quả cho em, ví dụ: \"đường huyết 6.5\" là em hiểu ngay ạ. Để anh/chị tham khảo: – Lúc đói: khoảng 4.4 – 7.2 mmol/L là ổn – Sau ăn 2 tiếng: dưới 10 mmol/L là tốt Nếu kết quả khác bình thường, anh/chị đừng lo — nhắn em, em kết nối dược sĩ hỗ trợ ngay ạ 🙏"
+                - generic [ref=e284]:
+                  - generic [ref=e285]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e286] [cursor=pointer]:
+                    - generic [ref=e287]: 
+                    - text: Sao chép
+          - separator [ref=e288]
+          - generic [ref=e289]:
+            - generic [ref=e290]:
+              - generic [ref=e291]: "1.8"
+              - generic [ref=e292]: Chỉ số bất thường — Kết nối dược sĩ
+              - generic [ref=e293]:
+                - generic [ref=e294]: 
+                - text: Khi khách nhắn
+              - generic [ref=e295]:
+                - generic [ref=e296]: 
+                - text: Kết nối dược sĩ
+            - generic [ref=e297]:
+              - generic [ref=e298]: "N"
+              - generic [ref=e299]:
+                - generic [ref=e300]: "Dạ, anh/chị [TÊN] ơi — em cảm ơn anh/chị đã báo kịp thời ạ. Chỉ số [huyết áp/đường huyết] của anh/chị hôm nay ([KẾT QUẢ]) hơi cao hơn mức thông thường một chút — em cần nhờ dược sĩ đánh giá kỹ hơn cho anh/chị ạ. Em đang kết nối dược sĩ ngay bây giờ — anh/chị chờ em một chút nhé. Trong lúc chờ anh/chị lưu ý: – Ngồi nghỉ, tránh hoạt động mạnh – Uống thuốc đúng giờ như bình thường – Không tự điều chỉnh liều thuốc Dược sĩ sẽ nhắn lại anh/chị ngay ạ 🙏"
+                - generic [ref=e301]:
+                  - generic [ref=e302]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e303] [cursor=pointer]:
+                    - generic [ref=e304]: 
+                    - text: Sao chép
+          - separator [ref=e305]
+          - generic [ref=e306]:
+            - generic [ref=e307]:
+              - generic [ref=e308]: "1.9"
+              - generic [ref=e309]: Nhắc lịch tái khám
+              - generic [ref=e310]:
+                - generic [ref=e311]: 
+                - text: Gửi trước 3 ngày
+            - generic [ref=e312]:
+              - generic [ref=e313]: "N"
+              - generic [ref=e314]:
+                - generic [ref=e315]: "Dạ, anh/chị [TÊN] ơi — em nhắc nhẹ nhé! Ngày [NGÀY TÁI KHÁM] là lịch tái khám định kỳ của anh/chị tại [TÊN CƠ SỞ Y TẾ] rồi ạ. Trước khi đi anh/chị chuẩn bị mấy thứ này tiện hơn ạ: – Mang theo đơn thuốc cũ – Ghi lại kết quả đo chỉ số ở nhà những tuần vừa rồi – Ghi sẵn câu hỏi muốn hỏi bác sĩ nếu có Sau khi tái khám có đơn mới, anh/chị nhắn em — em lo phần mua thuốc cho anh/chị luôn nhé 😊"
+                - generic [ref=e316]:
+                  - generic [ref=e317]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e318] [cursor=pointer]:
+                    - generic [ref=e319]: 
+                    - text: Sao chép
+          - separator [ref=e320]
+          - generic [ref=e321]:
+            - generic [ref=e322]:
+              - generic [ref=e323]: "1.10"
+              - generic [ref=e324]: Tư vấn sản phẩm hỗ trợ thêm
+              - generic [ref=e325]:
+                - generic [ref=e326]: 
+                - text: 1 lần/tháng
+            - generic [ref=e327]: Dành cho khách cao huyết áp
+            - generic [ref=e328]:
+              - generic [ref=e329]: "N"
+              - generic [ref=e330]:
+                - generic [ref=e331]: Dạ, anh/chị [TÊN] ơi! Gần đây dược sĩ bên em có giới thiệu thêm cho một số khách đang điều trị cao huyết áp về sản phẩm Coenzyme Q10 — loại này hỗ trợ tim mạch, nhiều bác sĩ tim mạch khuyên dùng kèm theo thuốc huyết áp ạ. Anh/chị không nhất thiết phải dùng ngay đâu ạ, nhưng nếu muốn tìm hiểu thêm hoặc hỏi dược sĩ xem có phù hợp với mình không, em kết nối liền nhé. Nhắn em "tư vấn thêm" là được ạ 🙏
+                - generic [ref=e332]:
+                  - generic [ref=e333]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e334] [cursor=pointer]:
+                    - generic [ref=e335]: 
+                    - text: Sao chép
+            - generic [ref=e336]: Dành cho khách tiểu đường
+            - generic [ref=e337]:
+              - generic [ref=e338]: "N"
+              - generic [ref=e339]:
+                - generic [ref=e340]: Dạ, anh/chị [TÊN] ơi! Bên em vừa có thêm máy đo đường huyết mới — dòng [TÊN MÁY], que thử nhỏ hơn, kết quả nhanh hơn và độ chính xác cao, khá tiện cho việc tự đo tại nhà ạ. Nếu anh/chị đang dùng máy cũ hoặc chưa có, em có thể mang sang cho anh/chị xem thử luôn nếu tiện. Hoặc anh/chị chỉ cần nhắn em "hỏi thêm" là được ạ 😊
+                - generic [ref=e341]:
+                  - generic [ref=e342]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e343] [cursor=pointer]:
+                    - generic [ref=e344]: 
+                    - text: Sao chép
+          - separator [ref=e345]
+          - generic [ref=e346]:
+            - generic [ref=e347]:
+              - generic [ref=e348]: "1.11"
+              - generic [ref=e349]: Chúc mừng sinh nhật
+              - generic [ref=e350]:
+                - generic [ref=e351]: 
+                - text: Ngày sinh nhật
+            - generic [ref=e352]:
+              - generic [ref=e353]: "N"
+              - generic [ref=e354]:
+                - generic [ref=e355]: Dạ, anh/chị [TÊN] ơi! Hôm nay là sinh nhật của anh/chị — Hải và toàn bộ anh chị em Nhà thuốc Trúc Tâm xin chúc anh/chị sinh nhật thật vui, sức khỏe luôn dồi dào và gia đình bình an ạ! 🎂 Chăm sóc sức khỏe đều đặn như anh/chị đang làm chính là món quà quý nhất rồi đó ạ 😊 Anh/chị cần gì cứ nhắn em nhé!
+                - generic [ref=e356]:
+                  - generic [ref=e357]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e358] [cursor=pointer]:
+                    - generic [ref=e359]: 
+                    - text: Sao chép
+        - generic [ref=e360]:
+          - generic [ref=e361]:
+            - generic [ref=e362]: "2"
+            - heading "Khách Mua Thuốc Không Kê Đơn" [level=2] [ref=e364]
+          - generic [ref=e365]:
+            - generic [ref=e366]: 
+            - text: Khách mua thuốc tự điều trị các triệu chứng thông thường như ho, sốt, đau đầu, đau bụng, dị ứng nhẹ... Không cần đơn bác sĩ. Thường là mua lẻ theo đợt bệnh ngắn ngày.
+          - generic [ref=e367]:
+            - generic [ref=e368]:
+              - generic [ref=e369]: "2.1"
+              - generic [ref=e370]: Tin nhắn chào + hướng dẫn dùng thuốc
+              - generic [ref=e371]:
+                - generic [ref=e372]: 
+                - text: Ngay sau khi mua
+            - generic [ref=e373]:
+              - generic [ref=e374]: "N"
+              - generic [ref=e375]:
+                - generic [ref=e376]: "Dạ, em chào anh/chị [TÊN] ạ! Em là Hải — dược sĩ Nhà thuốc Trúc Tâm. Cảm ơn anh/chị đã ghé nhà thuốc hôm nay nhé! Về thuốc anh/chị vừa mua, em nhắn lại để anh/chị tiện tham khảo: 💊 [TÊN THUỐC] – Công dụng: [MÔ TẢ NGẮN] – Liều dùng: [LIỀU DÙNG] – Thời điểm uống: [TRƯỚC/SAU ĂN, BAO NHIÊU PHÚT] – Dùng trong: [SỐ NGÀY] ngày ⚠️ Lưu ý: [LƯU Ý CỤ THỂ — ví dụ: \"Không dùng với rượu bia\", \"Có thể buồn ngủ, không lái xe sau khi uống\"] Nếu sau [SỐ NGÀY] ngày vẫn chưa thấy đỡ, anh/chị nhắn em — Hải sẽ tư vấn trực tiếp cho anh/chị nhé ạ. Chúc anh/chị mau khỏe! 🙏"
+                - generic [ref=e377]:
+                  - generic [ref=e378]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e379] [cursor=pointer]:
+                    - generic [ref=e380]: 
+                    - text: Sao chép
+          - separator [ref=e381]
+          - generic [ref=e382]:
+            - generic [ref=e383]:
+              - generic [ref=e384]: "2.2"
+              - generic [ref=e385]: Hỏi thăm sau 2–3 ngày dùng thuốc
+              - generic [ref=e386]:
+                - generic [ref=e387]: 
+                - text: Sau 2–3 ngày
+            - generic [ref=e388]:
+              - generic [ref=e389]: "N"
+              - generic [ref=e390]:
+                - generic [ref=e391]: Dạ, anh/chị [TÊN] ơi — Hải hỏi thăm tí ạ! Được [SỐ NGÀY] ngày rồi, anh/chị dùng [TÊN THUỐC] thấy tình trạng thế nào rồi ạ? 1. Đã khỏi / đỡ nhiều rồi 🙂 2. Có đỡ nhưng chưa khỏi hẳn 3. Chưa thấy đỡ gì hoặc nặng hơn 😟 Anh/chị nhắn lại số tương ứng hoặc kể thêm cho em biết nhé — em hỗ trợ tiếp ạ!
+                - generic [ref=e392]:
+                  - generic [ref=e393]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e394] [cursor=pointer]:
+                    - generic [ref=e395]: 
+                    - text: Sao chép
+          - separator [ref=e396]
+          - generic [ref=e397]:
+            - generic [ref=e398]:
+              - generic [ref=e399]: "2.3"
+              - generic [ref=e400]: Phản hồi khi khách báo đã khỏi
+              - generic [ref=e401]:
+                - generic [ref=e402]: 
+                - text: Khi khách nhắn
+            - generic [ref=e403]:
+              - generic [ref=e404]: "N"
+              - generic [ref=e405]:
+                - generic [ref=e406]: "Dạ, vậy là tốt rồi ạ — em mừng cho anh/chị [TÊN]! 🎉 Anh/chị lưu ý thêm một chút: – Nếu còn thuốc thừa thì giữ lại đúng cách, không tự tăng liều hoặc dùng khi không cần thiết nhé ạ – Bảo quản nơi khô ráo, tránh ánh nắng trực tiếp Khi nào cần đến nhà thuốc lần sau, anh/chị nhắn em trước — em chuẩn bị sẵn cho anh/chị nhé ạ 😊"
+                - generic [ref=e407]:
+                  - generic [ref=e408]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e409] [cursor=pointer]:
+                    - generic [ref=e410]: 
+                    - text: Sao chép
+          - separator [ref=e411]
+          - generic [ref=e412]:
+            - generic [ref=e413]:
+              - generic [ref=e414]: "2.4"
+              - generic [ref=e415]: Phản hồi khi khách báo không đỡ / nặng hơn
+              - generic [ref=e416]:
+                - generic [ref=e417]: 
+                - text: Khi khách nhắn
+              - generic [ref=e418]:
+                - generic [ref=e419]: 
+                - text: Kết nối dược sĩ
+            - generic [ref=e420]:
+              - generic [ref=e421]: "N"
+              - generic [ref=e422]:
+                - generic [ref=e423]: "Dạ, cảm ơn anh/chị [TÊN] đã nhắn lại cho em ạ. Nếu sau [SỐ NGÀY] ngày dùng thuốc mà triệu chứng chưa cải thiện hoặc có vẻ nặng hơn — đây thường là dấu hiệu cơ thể cần được bác sĩ kiểm tra kỹ hơn rồi ạ. Em khuyến nghị anh/chị đến gặp bác sĩ sớm nhé, đặc biệt nếu có một trong các dấu hiệu sau: – Sốt trên 38.5°C kéo dài hơn 2 ngày – Khó thở hoặc đau tức ngực – Nôn ói nhiều lần hoặc tiêu chảy liên tục không dứt Anh/chị cần em hỗ trợ tìm phòng khám gần nhất không ạ? Em tìm giúp liền!"
+                - generic [ref=e424]:
+                  - generic [ref=e425]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e426] [cursor=pointer]:
+                    - generic [ref=e427]: 
+                    - text: Sao chép
+          - separator [ref=e428]
+          - generic [ref=e429]:
+            - generic [ref=e430]:
+              - generic [ref=e431]: "2.5"
+              - generic [ref=e432]: Gợi ý sản phẩm tăng đề kháng theo mùa
+              - generic [ref=e433]:
+                - generic [ref=e434]: 
+                - text: Đầu mùa dịch / giao mùa
+            - generic [ref=e435]:
+              - generic [ref=e436]: "N"
+              - generic [ref=e437]:
+                - generic [ref=e438]: "Dạ, anh/chị [TÊN] ơi! Dạo này thời tiết [giao mùa / đang nắng nóng / trở lạnh bất thường] nên khá nhiều người hay bị [ho / sốt / dị ứng] ạ. Bên em đang có mấy sản phẩm hỗ trợ đề kháng phòng bệnh: – Vitamin C kết hợp Kẽm — tăng miễn dịch mùa dịch – Nước muối sinh lý — rửa mũi phòng bệnh đường hô hấp – Siro ho thảo dược — cho cả người lớn và trẻ em Không nhất thiết phải mua ngay đâu anh/chị ạ, nhưng nếu muốn hỏi thêm cho mình hay cho gia đình, em tư vấn ngay ạ 😊"
+                - generic [ref=e439]:
+                  - generic [ref=e440]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e441] [cursor=pointer]:
+                    - generic [ref=e442]: 
+                    - text: Sao chép
+        - generic [ref=e443]:
+          - generic [ref=e444]:
+            - generic [ref=e445]: "3"
+            - heading "Khách Mua Thuốc Theo Đơn Bác Sĩ" [level=2] [ref=e447]
+          - generic [ref=e448]:
+            - generic [ref=e449]: 
+            - text: Khách mang theo đơn do bác sĩ kê (đơn có giá trị trong 5 ngày kể từ ngày kê). Thường là thuốc chuyên khoa — kháng sinh, thuốc tim mạch, thuốc tiểu đường, thuốc huyết áp từ bệnh viện... Việc uống đúng liều, đủ liệu trình là rất quan trọng.
+          - generic [ref=e450]:
+            - generic [ref=e451]:
+              - generic [ref=e452]: "3.1"
+              - generic [ref=e453]: Tin nhắn chào + xác nhận đơn thuốc
+              - generic [ref=e454]:
+                - generic [ref=e455]: 
+                - text: Ngay sau khi mua
+            - generic [ref=e456]:
+              - generic [ref=e457]: "N"
+              - generic [ref=e458]:
+                - generic [ref=e459]: "Dạ, em chào anh/chị [TÊN] ạ! Em là Hải — dược sĩ Nhà thuốc Trúc Tâm. Hải vừa kiểm tra xong đơn thuốc của anh/chị rồi ạ. Đơn thuốc hôm nay gồm: [DANH SÁCH THUỐC VÀ HƯỚNG DẪN TỪNG LOẠI] Đây là đơn thuốc [SỐ NGÀY] ngày ạ. Anh/chị uống đúng giờ, đúng liều, đủ ngày — dù cảm thấy khỏe hơn giữa chừng cũng không dừng sớm nhé, đặc biệt với kháng sinh ạ. Có bất kỳ thắc mắc gì về cách dùng, anh/chị nhắn em ngay nhé — em luôn ở đây ạ 🙏"
+                - generic [ref=e460]:
+                  - generic [ref=e461]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e462] [cursor=pointer]:
+                    - generic [ref=e463]: 
+                    - text: Sao chép
+          - separator [ref=e464]
+          - generic [ref=e465]:
+            - generic [ref=e466]:
+              - generic [ref=e467]: "3.2"
+              - generic [ref=e468]: Nhắc uống thuốc theo đơn
+              - generic [ref=e469]:
+                - generic [ref=e470]: 
+                - text: Hàng ngày
+            - generic [ref=e471]:
+              - generic [ref=e472]: "N"
+              - generic [ref=e473]:
+                - generic [ref=e474]: "Dạ, Hải nhắc anh/chị [TÊN] uống thuốc ạ! – [TÊN THUỐC]: [LIỀU DÙNG] ⏰ Uống lúc: [GIỜ UỐNG] 🍽️ [TRƯỚC/SAU ĂN BAO NHIÊU PHÚT] ⚠️ Lưu ý riêng hôm nay: [LƯU Ý ĐẶC THÙ] Ví dụ: \"Không uống kèm sữa hoặc sản phẩm có canxi trong vòng 2 tiếng\" / \"Không dừng thuốc đột ngột dù cảm thấy khỏe hơn rồi\" Uống xong anh/chị báo em nhé ạ 😊"
+                - generic [ref=e475]:
+                  - generic [ref=e476]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e477] [cursor=pointer]:
+                    - generic [ref=e478]: 
+                    - text: Sao chép
+          - separator [ref=e479]
+          - generic [ref=e480]:
+            - generic [ref=e481]:
+              - generic [ref=e482]: "3.3"
+              - generic [ref=e483]: Hỏi thăm phản ứng sau khi dùng thuốc
+              - generic [ref=e484]:
+                - generic [ref=e485]: 
+                - text: Sau 5–7 ngày
+              - generic [ref=e486]:
+                - generic [ref=e487]: 
+                - text: Kết nối dược sĩ
+            - generic [ref=e488]:
+              - generic [ref=e489]: "N"
+              - generic [ref=e490]:
+                - generic [ref=e491]: "Dạ, anh/chị [TÊN] ơi — Hải hỏi thăm ạ! Được khoảng 1 tuần anh/chị dùng [TÊN THUỐC] rồi — trong quá trình dùng anh/chị có thấy biểu hiện gì bất thường không ạ, ví dụ như: – Đau bụng, buồn nôn sau khi uống thuốc? – Nổi mẩn, ngứa hoặc phát ban trên da? – Chóng mặt, tim đập nhanh bất thường? – Hoặc bất kỳ điều gì khiến anh/chị lo lắng? Nếu có bất kỳ điều gì — dù nhỏ — anh/chị cứ nhắn em nhé. Hải sẽ đánh giá và hỗ trợ anh/chị ngay ạ 🙏"
+                - generic [ref=e492]:
+                  - generic [ref=e493]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e494] [cursor=pointer]:
+                    - generic [ref=e495]: 
+                    - text: Sao chép
+          - separator [ref=e496]
+          - generic [ref=e497]:
+            - generic [ref=e498]:
+              - generic [ref=e499]: "3.4"
+              - generic [ref=e500]: Nhắc mua lại / tái khám trước khi hết đơn
+              - generic [ref=e501]:
+                - generic [ref=e502]: 
+                - text: Trước khi hết đơn
+            - generic [ref=e503]:
+              - generic [ref=e504]: "N"
+              - generic [ref=e505]:
+                - generic [ref=e506]: Dạ, anh/chị [TÊN] ơi — em nhắn sớm để anh/chị sắp xếp nhé! Đơn thuốc hiện tại sẽ gần hết vào khoảng ngày [NGÀY HẾT ĐƠN] ạ. Với loại thuốc này, anh/chị cần có đơn bác sĩ mới để tiếp tục điều trị — không mua thêm tự do được nhé ạ. Anh/chị nên sắp xếp lịch tái khám tại [TÊN CƠ SỞ Y TẾ] trước ngày đó. Nếu cần tư vấn thêm hoặc có gì chưa rõ về đơn thuốc hiện tại, anh/chị nhắn em — em kết nối dược sĩ hỗ trợ ngay ạ. Đừng để gián đoạn điều trị nhé anh/chị! 🙏
+                - generic [ref=e507]:
+                  - generic [ref=e508]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e509] [cursor=pointer]:
+                    - generic [ref=e510]: 
+                    - text: Sao chép
+          - separator [ref=e511]
+          - generic [ref=e512]:
+            - generic [ref=e513]:
+              - generic [ref=e514]: "3.5"
+              - generic [ref=e515]: Thông báo khi thuốc tạm hết hàng
+              - generic [ref=e516]:
+                - generic [ref=e517]: 
+                - text: Khi phát sinh
+              - generic [ref=e518]:
+                - generic [ref=e519]: 
+                - text: Kết nối dược sĩ
+            - generic [ref=e520]:
+              - generic [ref=e521]: "N"
+              - generic [ref=e522]:
+                - generic [ref=e523]: "Dạ, anh/chị [TÊN] ơi — em cần xin ý kiến anh/chị tí ạ. Hôm nay bên em tạm thời hết [TÊN THUỐC GỐC] rồi ạ. Dược sĩ bên em có thể cung cấp thuốc thay thế tương đương: 🔄 [TÊN THUỐC THAY THẾ] – Cùng hoạt chất: [HOẠT CHẤT] – Cùng liều lượng và dạng bào chế – Nhà sản xuất: [NHÀ SẢN XUẤT] Dược sĩ đã kiểm tra — hai loại này tương đương về mặt điều trị ạ. Tuy nhiên việc đổi thuốc chỉ được thực hiện khi anh/chị đồng ý nhé — đây là quy định bắt buộc để đảm bảo quyền lợi cho anh/chị ạ. Anh/chị đồng ý dùng thuốc thay thế này không ạ? Hoặc muốn em hỏi thêm dược sĩ trước khi quyết định cũng được ạ 🙏"
+                - generic [ref=e524]:
+                  - generic [ref=e525]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e526] [cursor=pointer]:
+                    - generic [ref=e527]: 
+                    - text: Sao chép
+        - generic [ref=e528]:
+          - generic [ref=e529]:
+            - generic [ref=e530]: "4"
+            - heading "Khách Mua Thực Phẩm Chức Năng và Dụng Cụ Y Tế" [level=2] [ref=e532]
+          - generic [ref=e533]:
+            - generic [ref=e534]: 
+            - text: Mua vitamin, thực phẩm bổ sung sức khỏe, dược mỹ phẩm, hoặc dụng cụ theo dõi sức khỏe tại nhà (máy đo huyết áp, máy đo đường huyết, nhiệt kế...). Mục tiêu chính là phòng bệnh và chăm sóc sức khỏe chủ động.
+          - generic [ref=e535]:
+            - generic [ref=e536]:
+              - generic [ref=e537]: "4.1"
+              - generic [ref=e538]: Tin nhắn chào + hướng dẫn sử dụng thực phẩm chức năng
+              - generic [ref=e539]:
+                - generic [ref=e540]: 
+                - text: Ngay sau khi mua
+            - generic [ref=e541]:
+              - generic [ref=e542]: "N"
+              - generic [ref=e543]:
+                - generic [ref=e544]: "Dạ, em chào anh/chị [TÊN] ạ! Em là Hải — dược sĩ Nhà thuốc Trúc Tâm. Cảm ơn anh/chị đã tin tưởng chọn [TÊN SẢN PHẨM] nhé! Để sản phẩm phát huy hiệu quả tốt nhất, anh/chị lưu ý: – Liều dùng: [LIỀU DÙNG] – Thời điểm dùng tốt nhất: [THỜI ĐIỂM — ví dụ: sau ăn sáng, trước khi ngủ] – Nên dùng liên tục ít nhất [SỐ TUẦN] tuần mới thấy rõ hiệu quả ạ ⚠️ Lưu ý: Đây là thực phẩm bảo vệ sức khỏe, không phải thuốc điều trị bệnh — tác dụng hỗ trợ và cần dùng đều đặn mới hiệu quả nhé anh/chị ạ. Sau [SỐ NGÀY] ngày em hỏi thăm lại anh/chị nhé 😊"
+                - generic [ref=e545]:
+                  - generic [ref=e546]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e547] [cursor=pointer]:
+                    - generic [ref=e548]: 
+                    - text: Sao chép
+          - separator [ref=e549]
+          - generic [ref=e550]:
+            - generic [ref=e551]:
+              - generic [ref=e552]: "4.2"
+              - generic [ref=e553]: Tin nhắn chào + hướng dẫn sử dụng máy đo huyết áp
+              - generic [ref=e554]:
+                - generic [ref=e555]: 
+                - text: Ngay sau khi mua
+            - generic [ref=e556]:
+              - generic [ref=e557]: "N"
+              - generic [ref=e558]:
+                - generic [ref=e559]: "Dạ, em chào anh/chị [TÊN] ạ! Em là Hải — dược sĩ Nhà thuốc Trúc Tâm. Cảm ơn anh/chị đã mua máy đo huyết áp [TÊN MÁY] tại nhà thuốc mình nhé! Để đo cho kết quả chính xác, anh/chị làm theo 4 bước này ạ: 1. Nghỉ ngơi nhẹ nhàng khoảng 5 phút trước khi đo — không vừa đi bộ hay leo cầu thang xong đo ngay 2. Ngồi thẳng lưng, đặt tay lên bàn ngang tầm tim 3. Không nói chuyện trong khi đo 4. Nên đo 2 lần cách nhau 1 phút rồi lấy trung bình — kết quả sẽ chính xác hơn ạ Chỉ số huyết áp bình thường: dưới 130/80 mmHg Nếu máy có lỗi kỹ thuật hoặc kết quả đo bất thường, anh/chị nhắn em ngay — Hải hỗ trợ bảo hành và tư vấn trực tiếp ngay ạ 🙏"
+                - generic [ref=e560]:
+                  - generic [ref=e561]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e562] [cursor=pointer]:
+                    - generic [ref=e563]: 
+                    - text: Sao chép
+          - separator [ref=e564]
+          - generic [ref=e565]:
+            - generic [ref=e566]:
+              - generic [ref=e567]: "4.3"
+              - generic [ref=e568]: Hỏi thăm sau 7 ngày dùng thực phẩm chức năng
+              - generic [ref=e569]:
+                - generic [ref=e570]: 
+                - text: Sau 7 ngày
+            - generic [ref=e571]:
+              - generic [ref=e572]: "N"
+              - generic [ref=e573]:
+                - generic [ref=e574]: Dạ, anh/chị [TÊN] ơi — Hải hỏi thăm tí ạ! Được 7 ngày rồi — anh/chị dùng [TÊN SẢN PHẨM] thấy thế nào ạ? 1. Cảm thấy có sự khác biệt tốt rồi 🙂 2. Chưa thấy gì nhiều — vẫn đang dùng đều 3. Có thắc mắc muốn hỏi thêm Anh/chị nhắn lại số tương ứng hoặc kể thêm cũng được ạ — em luôn ở đây hỗ trợ nhé! 😊
+                - generic [ref=e575]:
+                  - generic [ref=e576]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e577] [cursor=pointer]:
+                    - generic [ref=e578]: 
+                    - text: Sao chép
+          - separator [ref=e579]
+          - generic [ref=e580]:
+            - generic [ref=e581]:
+              - generic [ref=e582]: "4.4"
+              - generic [ref=e583]: Nhắc mua thêm trước khi hết sản phẩm
+              - generic [ref=e584]:
+                - generic [ref=e585]: 
+                - text: Trước khi hết
+            - generic [ref=e586]:
+              - generic [ref=e587]: "N"
+              - generic [ref=e588]:
+                - generic [ref=e589]: "Dạ, anh/chị [TÊN] ơi! Tính ra thì [TÊN SẢN PHẨM] của anh/chị sắp dùng hết rồi ạ. Để không bị gián đoạn — đặc biệt với các loại vitamin và thực phẩm chức năng cần dùng liên tục mới hiệu quả — anh/chị muốn: 1. Đặt trước cho em, em giao tận nhà 2. Ghé nhà thuốc lấy lúc thuận tiện, em giữ hàng sẵn 3. Tạm dừng và hỏi dược sĩ xem có cần tiếp tục không Anh/chị nhắn em nhé ạ 🙏"
+                - generic [ref=e590]:
+                  - generic [ref=e591]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e592] [cursor=pointer]:
+                    - generic [ref=e593]: 
+                    - text: Sao chép
+          - separator [ref=e594]
+          - generic [ref=e595]:
+            - generic [ref=e596]:
+              - generic [ref=e597]: "4.5"
+              - generic [ref=e598]: Gợi ý sản phẩm bổ sung thêm
+              - generic [ref=e599]:
+                - generic [ref=e600]: 
+                - text: 1 lần/tháng
+            - generic [ref=e601]:
+              - generic [ref=e602]: "N"
+              - generic [ref=e603]:
+                - generic [ref=e604]: "Dạ, anh/chị [TÊN] ơi! Bên em muốn chia sẻ thêm một thông tin nhỏ ạ. Nhiều khách đang dùng [TÊN SẢN PHẨM] thường kết hợp thêm với [SẢN PHẨM BỔ SUNG] — [LÝ DO KẾT HỢP NGẮN GỌN, ví dụ: \"Vitamin D3 thường dùng kèm K2 để canxi hấp thụ vào xương tốt hơn, không lắng đọng mạch máu\"]. Anh/chị không cần mua ngay đâu ạ, chỉ chia sẻ để anh/chị biết thêm thôi. Nếu muốn hỏi dược sĩ xem có phù hợp với mình không, em kết nối liền ạ 😊"
+                - generic [ref=e605]:
+                  - generic [ref=e606]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e607] [cursor=pointer]:
+                    - generic [ref=e608]: 
+                    - text: Sao chép
+          - separator [ref=e609]
+          - generic [ref=e610]:
+            - generic [ref=e611]:
+              - generic [ref=e612]: "4.6"
+              - generic [ref=e613]: Thông báo khuyến mãi
+              - generic [ref=e614]:
+                - generic [ref=e615]: 
+                - text: Khi có chương trình
+            - generic [ref=e616]:
+              - generic [ref=e617]: "N"
+              - generic [ref=e618]:
+                - generic [ref=e619]: "Dạ, anh/chị [TÊN] ơi! Nhà thuốc Trúc Tâm đang có chương trình: [MÔ TẢ CHƯƠNG TRÌNH] — áp dụng đến hết ngày [NGÀY HẾT KHUYẾN MÃI] ạ. Vì anh/chị từng dùng [TÊN SẢN PHẨM LIÊN QUAN] nên em nghĩ anh/chị sẽ quan tâm ạ. Anh/chị muốn đặt hàng hoặc hỏi thêm chi tiết, em xử lý ngay nhé! 😊"
+                - generic [ref=e620]:
+                  - generic [ref=e621]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e622] [cursor=pointer]:
+                    - generic [ref=e623]: 
+                    - text: Sao chép
+        - generic [ref=e624]:
+          - generic [ref=e625]:
+            - generic [ref=e626]: "5"
+            - heading "Khách Hỏi Thăm / Phản Ánh Sau Khi Mua" [level=2] [ref=e628]
+          - generic [ref=e629]:
+            - generic [ref=e630]: 
+            - text: Khách liên hệ sau khi về nhà vì gặp phản ứng không mong muốn sau dùng thuốc, chưa rõ cách dùng, nghi ngờ chất lượng sản phẩm, hoặc muốn phản ánh. Đây là nhóm cần phản hồi ngay lập tức — không để chờ.
+          - generic [ref=e631]:
+            - generic [ref=e632]:
+              - generic [ref=e633]: "5.1"
+              - generic [ref=e634]: Tin nhắn chủ động hỏi thăm sau khi mua
+              - generic [ref=e635]:
+                - generic [ref=e636]: 
+                - text: Vài tiếng sau mua
+            - generic [ref=e637]:
+              - generic [ref=e638]: "N"
+              - generic [ref=e639]:
+                - generic [ref=e640]: Dạ, anh/chị [TÊN] ơi! Hải, Nhà thuốc Trúc Tâm hỏi thăm tí ạ — anh/chị mua [TÊN THUỐC/SẢN PHẨM] hồi nãy, về dùng thấy ổn không ạ? Nếu có bất kỳ điều gì chưa rõ về cách dùng, hoặc cảm thấy có gì bất thường, anh/chị nhắn em ngay nhé — Hải hỗ trợ ngay lập tức ạ 🙏
+                - generic [ref=e641]:
+                  - generic [ref=e642]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e643] [cursor=pointer]:
+                    - generic [ref=e644]: 
+                    - text: Sao chép
+          - separator [ref=e645]
+          - generic [ref=e646]:
+            - generic [ref=e647]:
+              - generic [ref=e648]: "5.2"
+              - generic [ref=e649]: Tiếp nhận câu hỏi về cách dùng thuốc
+              - generic [ref=e650]:
+                - generic [ref=e651]: 
+                - text: Khi khách nhắn
+              - generic [ref=e652]:
+                - generic [ref=e653]: 
+                - text: Kết nối dược sĩ
+            - generic [ref=e654]:
+              - generic [ref=e655]: "N"
+              - generic [ref=e656]:
+                - generic [ref=e657]: Dạ, em hiểu rồi ạ — cảm ơn anh/chị [TÊN] đã hỏi ngay nhé, đúng rồi đấy ạ! [TRẢ LỜI CỤ THỂ THEO CÂU HỎI CỦA KHÁCH] Nếu câu trả lời này anh/chị vẫn chưa rõ hoặc muốn dược sĩ giải thích thêm, em kết nối dược sĩ cho anh/chị ngay bây giờ ạ — chỉ cần nói một tiếng là được nhé! 🙏
+                - generic [ref=e658]:
+                  - generic [ref=e659]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e660] [cursor=pointer]:
+                    - generic [ref=e661]: 
+                    - text: Sao chép
+          - separator [ref=e662]
+          - generic [ref=e663]:
+            - generic [ref=e664]:
+              - generic [ref=e665]: "5.3"
+              - generic [ref=e666]: Tiếp nhận báo cáo phản ứng có hại
+              - generic [ref=e667]:
+                - generic [ref=e668]: 
+                - text: Phản hồi ngay lập tức
+              - generic [ref=e669]:
+                - generic [ref=e670]: 
+                - text: Kết nối dược sĩ
+            - generic [ref=e671]:
+              - generic [ref=e672]: "N"
+              - generic [ref=e673]:
+                - generic [ref=e674]: "Dạ, anh/chị [TÊN] ơi — em cảm ơn anh/chị đã nhắn ngay cho em ạ, quan trọng lắm đấy! Em đang kết nối dược sĩ cho anh/chị ngay bây giờ — dược sĩ sẽ nhắn lại anh/chị trong vài phút thôi ạ. Trong lúc chờ, anh/chị lưu ý: – Tạm ngưng dùng thuốc – Uống nhiều nước – Nghỉ ngơi, không gắng sức ⚠️ Nếu anh/chị thấy khó thở, sưng mặt hoặc lưỡi, nổi mẩn đỏ lan rộng nhanh — đây là dấu hiệu khẩn cấp, anh/chị gọi cấp cứu 115 ngay nhé, đừng chờ ạ. Em báo dược sĩ ngay bây giờ! 🙏"
+                - generic [ref=e675]:
+                  - generic [ref=e676]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e677] [cursor=pointer]:
+                    - generic [ref=e678]: 
+                    - text: Sao chép
+          - separator [ref=e679]
+          - generic [ref=e680]:
+            - generic [ref=e681]:
+              - generic [ref=e682]: "5.4"
+              - generic [ref=e683]: Tiếp nhận khiếu nại chất lượng sản phẩm
+              - generic [ref=e684]:
+                - generic [ref=e685]: 
+                - text: Khi khách nhắn
+              - generic [ref=e686]:
+                - generic [ref=e687]: 
+                - text: Kết nối dược sĩ
+            - generic [ref=e688]:
+              - generic [ref=e689]: "N"
+              - generic [ref=e690]:
+                - generic [ref=e691]: "Dạ, anh/chị [TÊN] kính mến, Hải và Nhà thuốc Trúc Tâm xin tiếp nhận phản ánh của anh/chị ạ — chân thành xin lỗi anh/chị về trải nghiệm không tốt này. Để bên em xử lý đúng cách và bảo vệ quyền lợi cho anh/chị, anh/chị có thể gửi cho em: – Ảnh sản phẩm và hộp/lọ (mặt nhãn có số lô, hạn sử dụng) – Mô tả ngắn vấn đề anh/chị gặp phải Bên em cam kết: ✅ Phản hồi ngay khi nhận đủ thông tin ✅ Xử lý theo đúng quy trình — đổi hàng, hoàn tiền, hoặc báo nhà sản xuất tùy tình huống ✅ Giữ bí mật thông tin của anh/chị Cảm ơn anh/chị đã cho bên em biết — đây là cách để mình cùng nhau cải thiện ạ 🙏"
+                - generic [ref=e692]:
+                  - generic [ref=e693]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e694] [cursor=pointer]:
+                    - generic [ref=e695]: 
+                    - text: Sao chép
+          - separator [ref=e696]
+          - generic [ref=e697]:
+            - generic [ref=e698]:
+              - generic [ref=e699]: "5.5"
+              - generic [ref=e700]: Theo dõi sau khi giải quyết khiếu nại
+              - generic [ref=e701]:
+                - generic [ref=e702]: 
+                - text: Sau khi xử lý
+            - generic [ref=e703]:
+              - generic [ref=e704]: "N"
+              - generic [ref=e705]:
+                - generic [ref=e706]: Dạ, anh/chị [TÊN] ơi — Hải hỏi thăm lại ạ. Sau khi bên em xử lý phản ánh hôm [NGÀY XỬ LÝ], anh/chị cảm thấy vấn đề đã được giải quyết ổn chưa ạ? 1. Ổn rồi, cảm ơn nhà thuốc 😊 2. Vẫn còn vấn đề cần xử lý tiếp 3. Muốn góp ý thêm điều gì đó Phản hồi của anh/chị giúp bên em phục vụ ngày càng tốt hơn ạ. Em cảm ơn nhiều! 🙏
+                - generic [ref=e707]:
+                  - generic [ref=e708]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e709] [cursor=pointer]:
+                    - generic [ref=e710]: 
+                    - text: Sao chép
+          - separator [ref=e711]
+          - generic [ref=e712]:
+            - generic [ref=e713]:
+              - generic [ref=e714]: "5.6"
+              - generic [ref=e715]: Tin nhắn phục hồi quan hệ
+              - generic [ref=e716]:
+                - generic [ref=e717]: 
+                - text: 7–14 ngày sau khi giải quyết
+            - generic [ref=e718]:
+              - generic [ref=e719]: "N"
+              - generic [ref=e720]:
+                - generic [ref=e721]: Dạ, anh/chị [TÊN] thân mến! Một khoảng thời gian rồi kể từ lần mình gặp sự cố trước. Hải hỏi thăm — anh/chị dạo này sức khỏe thế nào rồi ạ? Bên em biết rằng chuyện xảy ra hôm đó không vui gì, và chúng em thực sự trân trọng việc anh/chị đã phản hồi thẳng thắn cho mình biết thay vì im lặng. Nếu anh/chị cần gì — tư vấn thuốc, đặt hàng, hay chỉ đơn giản là hỏi về sức khỏe — em luôn ở đây ạ. Nhà thuốc Trúc Tâm luôn cố gắng hết sức để xứng đáng với sự tin tưởng của anh/chị 🙏
+                - generic [ref=e722]:
+                  - generic [ref=e723]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e724] [cursor=pointer]:
+                    - generic [ref=e725]: 
+                    - text: Sao chép
+        - generic [ref=e726]:
+          - generic [ref=e727]:
+            - generic [ref=e728]: "6"
+            - heading "Khách Không Ghi Được Thông Tin Triệu Chứng / Bệnh" [level=2] [ref=e730]
+          - generic [ref=e731]:
+            - generic [ref=e732]: 
+            - text: "Tình huống xảy ra khi nhân viên không thể thu thập thông tin triệu chứng hoặc bệnh trạng của người dùng thuốc — do khách từ chối, mua hộ người khác, đang vội vàng, hoặc gặp khó khăn trong giao tiếp. Mục tiêu: vẫn đảm bảo an toàn dùng thuốc mà không gây khó chịu hay áp lực cho khách."
+          - generic [ref=e733]:
+            - generic [ref=e734]:
+              - generic [ref=e735]: "6.1"
+              - generic [ref=e736]: Khách từ chối cung cấp thông tin sức khỏe
+              - generic [ref=e737]:
+                - generic [ref=e738]: 
+                - text: Ngay sau khi mua
+            - generic [ref=e739]:
+              - generic [ref=e740]: "N"
+              - generic [ref=e741]:
+                - generic [ref=e742]: "Dạ, em hiểu ạ — thông tin sức khỏe là riêng tư, anh/chị không nhất thiết phải chia sẻ đâu ạ. Em chỉ nhắn lại để anh/chị tiện tham khảo khi cần: – Hướng dẫn dùng thuốc đã có trên nhãn và tờ hướng dẫn trong hộp – Nếu có bất kỳ điều gì bất thường sau khi dùng — dù nhỏ — anh/chị có thể nhắn em bất kỳ lúc nào ạ Nhà thuốc Trúc Tâm không lưu hay chia sẻ thông tin sức khỏe của anh/chị ra bên ngoài ạ 🙏"
+                - generic [ref=e743]:
+                  - generic [ref=e744]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e745] [cursor=pointer]:
+                    - generic [ref=e746]: 
+                    - text: Sao chép
+          - separator [ref=e747]
+          - generic [ref=e748]:
+            - generic [ref=e749]:
+              - generic [ref=e750]: "6.2"
+              - generic [ref=e751]: Khách mua thay cho người khác
+              - generic [ref=e752]:
+                - generic [ref=e753]: 
+                - text: Ngay sau khi mua
+            - generic [ref=e754]:
+              - generic [ref=e755]: "N"
+              - generic [ref=e756]:
+                - generic [ref=e757]: "Dạ, anh/chị [TÊN] ơi! Nếu được, anh/chị hỏi lại người thân/bạn bè về mấy điều nhỏ — em kiểm tra thêm cho chắc ạ: 1. Người dùng đang có triệu chứng gì? (ví dụ: ho, sốt, đau bụng...) 2. Đang dùng thêm thuốc nào khác không? 3. Có dị ứng với thuốc gì không? Không nhất thiết phải có đủ ngay đâu ạ — nhưng nếu có, em kiểm tra để đảm bảo thuốc phù hợp và không tương tác với thuốc khác. Anh/chị cứ nhắn em khi nào có thêm thông tin nhé 🙏"
+                - generic [ref=e758]:
+                  - generic [ref=e759]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e760] [cursor=pointer]:
+                    - generic [ref=e761]: 
+                    - text: Sao chép
+          - separator [ref=e762]
+          - generic [ref=e763]:
+            - generic [ref=e764]:
+              - generic [ref=e765]: "6.3"
+              - generic [ref=e766]: Khách đang vội, không có thời gian trao đổi
+              - generic [ref=e767]:
+                - generic [ref=e768]: 
+                - text: Ngay sau khi mua
+            - generic [ref=e769]:
+              - generic [ref=e770]: "N"
+              - generic [ref=e771]:
+                - generic [ref=e772]: "Dạ, anh/chị [TÊN] ơi — Hải nhắn nhanh ạ! Biết anh/chị đang bận nên em gửi mấy điểm quan trọng nhất về [TÊN THUỐC]: ⚡ Liều dùng: [LIỀU DÙNG] — [THỜI ĐIỂM UỐNG, VD: sau ăn sáng] ⚡ Lưu ý: [1–2 CÂU NGẮN, VD: \"Không uống rượu bia khi dùng thuốc này\" / \"Có thể buồn ngủ — tránh lái xe\"] Khi nào anh/chị rảnh, nhắn em nếu cần tư vấn thêm nhé — em trả lời ngay ạ 🙏"
+                - generic [ref=e773]:
+                  - generic [ref=e774]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e775] [cursor=pointer]:
+                    - generic [ref=e776]: 
+                    - text: Sao chép
+          - separator [ref=e777]
+          - generic [ref=e778]:
+            - generic [ref=e779]:
+              - generic [ref=e780]: "6.4"
+              - generic [ref=e781]: Khách cao tuổi khó giao tiếp — nhắn cho người thân
+              - generic [ref=e782]:
+                - generic [ref=e783]: 
+                - text: Ngay sau khi mua
+            - generic [ref=e784]:
+              - generic [ref=e785]: "N"
+              - generic [ref=e786]:
+                - generic [ref=e787]: "Dạ, anh/chị [TÊN — người thân / người đi cùng] ơi! Cảm ơn anh/chị đã đưa [ba/mẹ/ông/bà] đến nhà thuốc hôm nay ạ. Hải gửi thông tin thuốc để anh/chị tiện nhắc và theo dõi ở nhà: 💊 [TÊN THUỐC] – Liều dùng: [LIỀU DÙNG] – Thời điểm: [VD: sáng sau ăn + tối sau ăn] – Lưu ý đặc biệt: [LƯU Ý QUAN TRỌNG NHẤT] Nếu [ba/mẹ/ông/bà] có biểu hiện lạ nào sau khi dùng — dù nhẹ — anh/chị nhắn em ngay nhé, Hải hỗ trợ trực tiếp liền ạ 🙏"
+                - generic [ref=e788]:
+                  - generic [ref=e789]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e790] [cursor=pointer]:
+                    - generic [ref=e791]: 
+                    - text: Sao chép
+          - separator [ref=e792]
+          - generic [ref=e793]:
+            - generic [ref=e794]:
+              - generic [ref=e795]: "6.5"
+              - generic [ref=e796]: Khách lần đầu ghé qua, không cung cấp thông tin
+              - generic [ref=e797]:
+                - generic [ref=e798]: 
+                - text: Sau khi khách rời quầy
+            - generic [ref=e799]:
+              - generic [ref=e800]: "N"
+              - generic [ref=e801]:
+                - generic [ref=e802]: "Dạ, em chào anh/chị [TÊN] — cảm ơn anh/chị đã ghé nhà thuốc Trúc Tâm lần đầu ạ! Hải từ Nhà thuốc Trúc Tâm. Về [TÊN THUỐC/SẢN PHẨM] vừa mua, anh/chị có thắc mắc gì cứ nhắn em nhé ạ. Nếu tiện, anh/chị cho em biết thêm hai điều nhỏ này — để em hỗ trợ an toàn hơn: – Anh/chị đang dùng thêm thuốc gì khác không? (em kiểm tra tương tác thuốc) – Có dị ứng với thuốc hoặc thực phẩm nào không? Không bắt buộc đâu ạ — khi nào tiện thì chia sẻ nhé. Em lưu lại để phục vụ chu đáo hơn lần sau 🙏"
+                - generic [ref=e803]:
+                  - generic [ref=e804]: DS. Hải · Nhà Thuốc Trúc Tâm
+                  - button " Sao chép" [ref=e805] [cursor=pointer]:
+                    - generic [ref=e806]: 
+                    - text: Sao chép
+        - generic [ref=e807]:
+          - heading " Quy Tắc Vận Hành" [level=2] [ref=e808]:
+            - generic [ref=e809]: 
+            - text: Quy Tắc Vận Hành
+          - heading "Thời gian phản hồi" [level=3] [ref=e810]:
+            - generic [ref=e811]: 
+            - text: Thời gian phản hồi
+          - table [ref=e813]:
+            - rowgroup [ref=e814]:
+              - row "Loại tình huống Thời gian" [ref=e815]:
+                - columnheader "Loại tình huống" [ref=e816]
+                - columnheader "Thời gian" [ref=e817]
+            - rowgroup [ref=e818]:
+              - row "Mọi câu hỏi thông thường Ngay lập tức (trong giờ làm việc)" [ref=e819]:
+                - cell "Mọi câu hỏi thông thường" [ref=e820]
+                - cell "Ngay lập tức (trong giờ làm việc)" [ref=e821]
+              - row "Câu hỏi về cách dùng thuốc Ngay lập tức" [ref=e822]:
+                - cell "Câu hỏi về cách dùng thuốc" [ref=e823]
+                - cell "Ngay lập tức" [ref=e824]
+              - row "Báo cáo phản ứng có hại sau dùng thuốc Ngay lập tức — kết nối dược sĩ" [ref=e825]:
+                - cell "Báo cáo phản ứng có hại sau dùng thuốc" [ref=e826]
+                - cell "Ngay lập tức — kết nối dược sĩ" [ref=e827]:
+                  - strong [ref=e828]: Ngay lập tức — kết nối dược sĩ
+              - row "Khiếu nại chất lượng Tiếp nhận ngay, xử lý trong ngày" [ref=e829]:
+                - cell "Khiếu nại chất lượng" [ref=e830]
+                - cell "Tiếp nhận ngay, xử lý trong ngày" [ref=e831]
+              - row "Ngoài giờ làm việc DS. Hải / hệ thống ghi nhận và phản hồi đầu giờ sáng hôm sau" [ref=e832]:
+                - cell "Ngoài giờ làm việc" [ref=e833]
+                - cell "DS. Hải / hệ thống ghi nhận và phản hồi đầu giờ sáng hôm sau" [ref=e834]
+          - heading "Khi nào cần kết nối dược sĩ ngay" [level=3] [ref=e835]:
+            - generic [ref=e836]: 
+            - text: Khi nào cần kết nối dược sĩ ngay
+          - generic [ref=e837]:
+            - heading " Kết nối dược sĩ ngay khi:" [level=4] [ref=e838]:
+              - generic [ref=e839]: 
+              - text: "Kết nối dược sĩ ngay khi:"
+            - list [ref=e840]:
+              - listitem [ref=e841]: Khách báo có phản ứng bất thường sau dùng thuốc (dù nhẹ)
+              - listitem [ref=e842]: Chỉ số huyết áp hoặc đường huyết vượt ngưỡng an toàn
+              - listitem [ref=e843]: Yêu cầu đổi sang thuốc thay thế cho đơn của bác sĩ
+              - listitem [ref=e844]: Câu hỏi về tương tác thuốc hoặc chống chỉ định
+              - listitem [ref=e845]: Khiếu nại chất lượng nghiêm trọng
+              - listitem [ref=e846]: Khách lo lắng và muốn được chuyên gia giải thích trực tiếp
+              - listitem [ref=e847]: Bất kỳ tình huống nào cần xác nhận thêm trước khi trả lời
+          - heading "Giới hạn tần suất nhắn tin" [level=3] [ref=e848]:
+            - generic [ref=e849]: 
+            - text: Giới hạn tần suất nhắn tin
+          - table [ref=e851]:
+            - rowgroup [ref=e852]:
+              - row "Tệp khách hàng Giới hạn" [ref=e853]:
+                - columnheader "Tệp khách hàng" [ref=e854]
+                - columnheader "Giới hạn" [ref=e855]
+            - rowgroup [ref=e856]:
+              - row "Bệnh nhân mãn tính Tối đa 3 tin/ngày (nhắc thuốc sáng + tối + 1 tin chăm sóc)" [ref=e857]:
+                - cell "Bệnh nhân mãn tính" [ref=e858]
+                - cell "Tối đa 3 tin/ngày (nhắc thuốc sáng + tối + 1 tin chăm sóc)" [ref=e859]
+              - row "Khách mua thuốc không kê đơn Tối đa 3 tin trong 7 ngày đợt điều trị" [ref=e860]:
+                - cell "Khách mua thuốc không kê đơn" [ref=e861]
+                - cell "Tối đa 3 tin trong 7 ngày đợt điều trị" [ref=e862]
+              - row "Khách mua thuốc theo đơn bác sĩ Theo lịch đơn thuốc + tối đa 1 tin chăm sóc/tuần" [ref=e863]:
+                - cell "Khách mua thuốc theo đơn bác sĩ" [ref=e864]
+                - cell "Theo lịch đơn thuốc + tối đa 1 tin chăm sóc/tuần" [ref=e865]
+              - row "Khách mua thực phẩm chức năng và dụng cụ Tối đa 2 tin/tuần; 1 tin gợi ý sản phẩm/tháng" [ref=e866]:
+                - cell "Khách mua thực phẩm chức năng và dụng cụ" [ref=e867]
+                - cell "Tối đa 2 tin/tuần; 1 tin gợi ý sản phẩm/tháng" [ref=e868]
+              - row "Khách sau bán Không giới hạn cho xử lý sự cố; 1 tin hỏi thăm chủ động/đơn hàng" [ref=e869]:
+                - cell "Khách sau bán" [ref=e870]
+                - cell "Không giới hạn cho xử lý sự cố; 1 tin hỏi thăm chủ động/đơn hàng" [ref=e871]
+              - row "Khách không ghi được thông tin Tối đa 1–2 tin ngay sau mua; không chủ động nhắn thêm trừ khi khách phản hồi" [ref=e872]:
+                - cell "Khách không ghi được thông tin" [ref=e873]
+                - cell "Tối đa 1–2 tin ngay sau mua; không chủ động nhắn thêm trừ khi khách phản hồi" [ref=e874]
+          - paragraph [ref=e875]: Tài liệu còn ở dạng nháp — chờ duyệt nội dung trước khi đưa vào hệ thống.
+  - contentinfo [ref=e876]:
+    - generic [ref=e877]:
+      - generic [ref=e878]:
+        - generic [ref=e879]: MeCare
+        - generic [ref=e880]: Trợ lý AI Zalo cho Nhà Thuốc Việt Nam
+      - generic [ref=e881]:
+        - link "Tổng quan" [ref=e882] [cursor=pointer]:
+          - /url: ../index.html
+        - link "Kịch bản" [ref=e883] [cursor=pointer]:
+          - /url: kichban.html
+        - link "Quy trình" [ref=e884] [cursor=pointer]:
+          - /url: ../index.html#quy-trinh
+        - link "Chỉ số" [ref=e885] [cursor=pointer]:
+          - /url: ../index.html#chi-so
+      - generic [ref=e886]:
+        - text: Tài liệu này được tạo riêng cho
+        - strong [ref=e887]: Nhà Thuốc Trúc Tâm
+        - text: . Không phát tán ra bên ngoài.
+        - text: © 2026 MeCare. Bảo lưu mọi quyền.
+  - button "Về đầu trang" [ref=e888] [cursor=pointer]:
+    - generic [ref=e889]: 

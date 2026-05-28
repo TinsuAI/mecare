@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <title>DS. Hải – Chăm Sóc Khách Hàng Sau Mua | MeCare × Nhà Thuốc Trúc Tâm</title>
+  <meta name="title" content="DS. Hải – Chăm Sóc Khách Hàng Sau Mua | MeCare × Nhà Thuốc Trúc Tâm" />
+  <meta name="description"
+    content="MeCare giúp Nhà Thuốc Trúc Tâm chăm sóc khách hàng tự động qua Zalo — nhắc uống thuốc, theo dõi phản hồi, tăng tỉ lệ quay lại mua." />
+  <meta name="author" content="MeCare" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="language" content="vi" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="DS. Hải – Chăm Sóc Khách Hàng Sau Mua | MeCare × Nhà Thuốc Trúc Tâm" />
+  <meta property="og:description" content="MeCare giúp Nhà Thuốc Trúc Tâm chăm sóc khách hàng tự động qua Zalo." />
+  <meta property="og:locale" content="vi_VN" />
+  <meta property="og:site_name" content="MeCare" />
+  <meta name="theme-color" content="#0E9E8E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="dns-prefetch" href="https://unpkg.com" />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
+
+  <link rel="stylesheet" href="css/design-system.css?v=202605270615" />
+  <link rel="stylesheet" href="css/animations.css?v=202605270615" />
+
+  <style>
+    body {
+      min-height: 100vh;
+    }
+
+    html {
+      background-color: #F7F9FB;
+    }
+
+    /* ── Zalo Chat Mockup ── */
+    .zalo-phone {
+      background: #1A2332;
+      border-radius: 36px;
+      padding: 12px;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      max-width: 320px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .zalo-phone-inner {
+      background: #ECF0F1;
+      border-radius: 26px;
+      overflow: hidden;
+    }
+
+    .zalo-status-bar {
+      background: #0068FF;
+      padding: 10px 16px 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .zalo-status-bar-back {
+      color: #fff;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .zalo-status-bar-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #0E9E8E;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      flex-shrink: 0;
+    }
+
+    .zalo-status-bar-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .zalo-status-bar-name {
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    .zalo-status-bar-sub {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 11px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .zalo-chat-body {
+      background: #E8EDF0;
+      padding: 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 340px;
+    }
+
+    .zalo-bubble-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .zalo-bubble-row.agent {
+      justify-content: flex-start;
+    }
+
+    .zalo-bubble-row.customer {
+      justify-content: flex-end;
+    }
+
+    .zalo-bubble-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #0E9E8E;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 10px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      flex-shrink: 0;
+    }
+
+    .zalo-bubble {
+      max-width: 220px;
+      padding: 9px 12px;
+      border-radius: 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12.5px;
+      line-height: 1.55;
+    }
+
+    .zalo-bubble.agent {
+      background: #fff;
+      color: #1A2332;
+      border-bottom-left-radius: 4px;
+    }
+
+    .zalo-bubble.customer {
+      background: #0068FF;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .zalo-bubble-time {
+      font-size: 10px;
+      color: #8896A7;
+      font-family: 'Inter', sans-serif;
+      margin-top: 2px;
+      padding: 0 2px;
+    }
+
+    .zalo-bubble-row.customer .zalo-bubble-time {
+      text-align: right;
+    }
+
+    .zalo-bubble-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .zalo-bubble-row.customer .zalo-bubble-wrap {
+      align-items: flex-end;
+    }
+
+    .zalo-bubble-typing {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      padding: 10px 14px;
+    }
+
+    .zalo-bubble-typing span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #8896A7;
+      animation: typingDot 1.2s infinite ease-in-out;
+    }
+
+    .zalo-bubble-typing span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .zalo-bubble-typing span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typingDot {
+
+      0%,
+      60%,
+      100% {
+        transform: translateY(0);
+        opacity: 0.5;
+      }
+
+      30% {
+        transform: translateY(-5px);
+        opacity: 1;
+      }
+    }
+
+    /* ── Process Timeline ── */
+    .process-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 20px;
+      position: relative;
+    }
+
+    .timeline-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 23px;
+      top: 48px;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, #0E9E8E 0%, #D6F2EF 100%);
+    }
+
+    .timeline-connector {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      width: 48px;
+    }
+
+    .timeline-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #0E9E8E;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(14, 158, 142, 0.3);
+      position: relative;
+      z-index: 1;
+    }
+
+    .timeline-body {
+      padding-bottom: 32px;
+      flex: 1;
+      padding-top: 10px;
+    }
+
+    .timeline-body-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      color: #1A2332;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .timeline-body-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #4A5568;
+      line-height: 1.65;
+    }
+
+    .timeline-body-icon {
+      color: #0E9E8E;
+      font-size: 18px;
+    }
+
+    /* ── Implementation Timeline (horizontal) ── */
+    .impl-timeline {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .impl-item {
+      flex: 0 0 200px;
+      position: relative;
+    }
+
+    .impl-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 20px;
+      right: -1px;
+      width: calc(100% - 40px);
+      height: 2px;
+      background: linear-gradient(90deg, #0E9E8E, #D6F2EF);
+      left: 40px;
+    }
+
+    .impl-dot {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #0E9E8E;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 4px 12px rgba(14, 158, 142, 0.3);
+    }
+
+    .impl-week {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: #0E9E8E;
+      margin-bottom: 4px;
+    }
+
+    .impl-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      color: #1A2332;
+      margin-bottom: 4px;
+    }
+
+    .impl-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: #4A5568;
+      line-height: 1.5;
+      padding-right: 16px;
+    }
+
+    /* ── Number badge for customer group cards ── */
+    .group-number-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #0E9E8E;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    /* ── Metric card before/after ── */
+    .metric-card-custom {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card-custom::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #0E9E8E, #1BB8A8);
+    }
+
+    .metric-before-val {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: #8896A7;
+      text-decoration: line-through;
+    }
+
+    .metric-after-val {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      color: #0E9E8E;
+      line-height: 1.1;
+    }
+
+    .metric-name {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: #4A5568;
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+
+    .metric-icon-wrap {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #E8F7F6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0E9E8E;
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    /* ── Differentiator card ── */
+    .diff-card {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 16px;
+      padding: 32px 28px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      transition: transform 250ms ease, box-shadow 250ms ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .diff-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 4px;
+      background: #0E9E8E;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .diff-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
+    }
+
+    /* ── Hidden mobile ── */
+    @media (max-width: 767px) {
+      .hidden-mobile {
+        display: none !important;
+      }
+
+      .metric-after-val {
+        font-size: 28px;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .hidden-desktop {
+        display: none !important;
+      }
+
+      .process-timeline {
+        max-width: 680px;
+        margin: 0 auto;
+      }
+    }
+
+    /* ── Solution section 2-col ── */
+    .solution-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    @media (min-width: 768px) {
+      .solution-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 64px;
+      }
+    }
+
+    /* ── Hero visual ── */
+    .hero-visual-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 16px;
+    }
+
+    /* ── Sticky CTA bar ── */
+    .sticky-cta-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      background: #0E9E8E;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 -4px 20px rgba(14, 158, 142, 0.25);
+    }
+
+    .sticky-cta-bar.is-visible {
+      transform: translateY(0);
+    }
+
+    @media (min-width: 768px) {
+      .sticky-cta-bar {
+        display: none;
+      }
+    }
+
+    .sticky-cta-bar__text {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .sticky-cta-bar__text small {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+
+    .sticky-cta-bar__btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      color: #0E9E8E;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 150ms ease;
+    }
+
+    .sticky-cta-bar__btn:hover {
+      background: #D6F2EF;
+    }
+
+    /* ── CTA section override for gradient ── */
+    .cta-section-custom {
+      background: linear-gradient(135deg, #0B7D70 0%, #0E9E8E 50%, #1BB8A8 100%);
+      padding: 80px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section-custom::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='28'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 1;
+    }
+
+    @media (max-width: 767px) {
+      .cta-section-custom {
+        padding: 60px 0;
+      }
+    }
+
+    /* ── Feature bullet list ── */
+    .solution-bullets {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .solution-bullet {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .solution-bullet-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: #E8F7F6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0E9E8E;
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .solution-bullet-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      color: #4A5568;
+      line-height: 1.6;
+    }
+
+    .solution-bullet-text strong {
+      color: #1A2332;
+      font-weight: 600;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================================================
+       NAVIGATION
+       ============================================================ -->
+  <header>
+    <nav class="nav" id="main-nav">
+      <div class="container">
+        <div class="nav-inner">
+          <a href="#" class="nav-brand">
+            <span class="nav-brand-name">Me<span>Care</span></span>
+            <span class="text-xs text-muted font-normal hidden-mobile" style="margin-left:8px;margin-top:2px;">Trợ lý AI
+              Zalo</span>
+          </a>
+          <div class="nav-links">
+            <a href="#tong-quan" class="nav-link">Tổng quan</a>
+            <a href="#quy-trinh" class="nav-link">Quy trình</a>
+            <a href="#chi-so" class="nav-link">Chỉ số</a>
+            <a href="pages/kichban.html" class="nav-link">Kịch bản chăm sóc</a>
+          </div>
+          <div class="nav-actions">
+            <a href="#cta" class="btn btn-primary btn-sm hidden-mobile">Xem thử demo</a>
+            <button class="nav-toggle" aria-label="Mở menu" id="nav-toggle">
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <nav class="nav-mobile" id="nav-mobile" aria-label="Menu điều hướng">
+      <a href="#tong-quan" class="nav-mobile-link">Tổng quan</a>
+      <a href="#quy-trinh" class="nav-mobile-link">Quy trình</a>
+      <a href="#chi-so" class="nav-mobile-link">Chỉ số</a>
+      <a href="pages/kichban.html" class="nav-mobile-link">Kịch bản chăm sóc</a>
+      <a href="#cta" class="btn btn-primary w-full nav-mobile-cta">Xem thử demo</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ============================================================
+         HERO SECTION
+         ============================================================ -->
+    <section class="hero gradient-hero" id="tong-quan">
+      <div class="container">
+        <div class="grid-2" style="gap:48px;align-items:center;">
+
+          <!-- Left: text -->
+          <div>
+            <div class="hero-eyebrow fade-up">
+              <i class="ph ph-map-pin"></i>
+              Dành riêng cho Nhà Thuốc Trúc Tâm
+            </div>
+            <h1 class="hero-title fade-up">
+              <span class="hero-title-accent">Đây là "Dược sĩ đồng hành" của từng khách hàng.</span>
+            </h1>
+            <p class="hero-subtitle fade-up">
+              Trong khi nhân viên tại quầy chỉ phục vụ tại thời điểm mua thuốc, Mecare chủ động theo dõi khách hàng
+              xuyên suốt hành trình điều trị — <strong>Nhắc đúng lúc · Hỏi đúng người · Can thiệp ngay khi cần</strong>
+              — giúp nhà thuốc chăm sóc khách hàng liên tục, cá nhân hóa, không bỏ sót.
+            </p>
+            <div class="hero-cta fade-up">
+              <a href="#quy-trinh" class="btn btn-white btn-lg">
+                <i class="ph ph-play-circle"></i>
+                Xem quy trình hoạt động
+              </a>
+              <a href="pages/kichban.html" class="btn btn-secondary btn-lg"
+                style="background:transparent;border-color:rgba(255,255,255,0.5);color:#fff;">
+                Xem kịch bản mẫu
+                <i class="ph ph-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Right: Zalo phone mockup -->
+          <div class="hero-visual-wrap fade-up">
+            <div class="zalo-phone">
+              <div class="zalo-phone-inner">
+                <!-- Status bar -->
+                <div class="zalo-status-bar">
+                  <span class="zalo-status-bar-back"><i class="ph ph-arrow-left"></i></span>
+                  <div class="zalo-status-bar-avatar">H</div>
+                  <div class="zalo-status-bar-info">
+                    <div class="zalo-status-bar-name">DS. Hải – Trúc Tâm</div>
+                    <div class="zalo-status-bar-sub">Đang hoạt động</div>
+                  </div>
+                  <i class="ph ph-phone" style="color:#fff;font-size:18px;"></i>
+                </div>
+                <!-- Chat body -->
+                <div class="zalo-chat-body">
+                  <!-- Hải message 1 -->
+                  <div class="zalo-bubble-row agent">
+                    <div class="zalo-bubble-avatar">H</div>
+                    <div class="zalo-bubble-wrap">
+                      <div class="zalo-bubble agent">
+                        DS. Hải từ Nhà Thuốc Trúc Tâm nhắc anh Minh uống thuốc buổi sáng ạ! 🌅<br>
+                        <strong>Metformin 500mg:</strong> 1 viên sau ăn sáng<br>
+                        <strong>Amlodipine 5mg:</strong> 1 viên lúc 8:00
+                      </div>
+                      <div class="zalo-bubble-time">08:00 · Đã gửi</div>
+                    </div>
+                  </div>
+                  <!-- Customer reply -->
+                  <div class="zalo-bubble-row customer">
+                    <div class="zalo-bubble-wrap">
+                      <div class="zalo-bubble customer">Cảm ơn anh Hải nhé! 👍</div>
+                      <div class="zalo-bubble-time">08:03</div>
+                    </div>
+                  </div>
+                  <!-- Hải message 2 -->
+                  <div class="zalo-bubble-row agent">
+                    <div class="zalo-bubble-avatar">H</div>
+                    <div class="zalo-bubble-wrap">
+                      <div class="zalo-bubble agent">
+                        Dạ! Anh nhớ uống cùng 1 ly nước đầy nhé ạ 😊<br>
+                        Thuốc còn dùng được <strong>5 ngày</strong> nữa — em nhắc khi sắp hết!
+                      </div>
+                      <div class="zalo-bubble-time">08:03</div>
+                    </div>
+                  </div>
+                  <!-- Hải check-in -->
+                  <div class="zalo-bubble-row agent">
+                    <div class="zalo-bubble-avatar">H</div>
+                    <div class="zalo-bubble-wrap">
+                      <div class="zalo-bubble agent">
+                        Hôm nay anh cảm thấy thế nào ạ? Huyết áp sáng nay đo được bao nhiêu?
+                      </div>
+                      <div class="zalo-bubble-time">08:04</div>
+                    </div>
+                  </div>
+                  <!-- Typing indicator -->
+                  <div class="zalo-bubble-row customer">
+                    <div class="zalo-bubble-wrap">
+                      <div class="zalo-bubble customer" style="padding:8px 14px;">
+                        <div class="zalo-bubble-typing">
+                          <span></span><span></span><span></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="hero-scroll-hint">
+        <i class="ph ph-arrow-down"></i>
+        Cuộn để khám phá
+      </div>
+    </section>
+
+    <!-- ============================================================
+         STATS BAR
+         ============================================================ -->
+    <div class="stats-bar fade-up">
+      <div class="container">
+        <div class="stats-bar-item">
+          <span class="stat-number" data-count="400" data-suffix="+">400+</span>
+          <span class="stat-label">khách hàng theo dõi cùng lúc</span>
+        </div>
+        <div class="stats-bar-item">
+          <span class="stat-number" data-count="80" data-suffix="%">80%</span>
+          <span class="stat-label">tỉ lệ tuân thủ thuốc</span>
+        </div>
+        <div class="stats-bar-item">
+          <span class="stat-number" data-count="5" data-prefix="<" data-suffix=" phút">&lt;5 phút</span>
+          <span class="stat-label">thời gian phản hồi</span>
+        </div>
+        <div class="stats-bar-item">
+          <span class="stat-number" data-count="30" data-suffix="%">+30%</span>
+          <span class="stat-label">doanh thu tái mua ước tính</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PROBLEM SECTION
+         ============================================================ -->
+    <section class="section bg-light" id="van-de">
+      <div class="container">
+        <div class="section-header section-header-center mb-12 fade-up">
+          <div class="section-eyebrow">Thực trạng</div>
+          <h2 class="section-title">Nhà thuốc của bạn đang chăm sóc khách hàng sau khi họ rời quầy —<br>
+            <span style="color:var(--color-primary);">hay để họ tự xoay xở một mình?</span>
+          </h2>
+          <p class="section-subtitle">
+            Mỗi ngày, hàng chục khách hàng rời nhà thuốc với đơn thuốc trên tay. Nhưng bạn không thể biết:
+          </p>
+        </div>
+
+        <div class="grid-3 stagger-children">
+          <!-- Problem 1 -->
+          <div class="problem-card fade-up">
+            <div class="problem-card-icon">
+              <i class="ph-bold ph-clock"></i>
+            </div>
+            <h3 class="problem-card-title">Họ có uống đúng giờ không?</h3>
+            <p class="problem-card-body">
+              Bệnh nhân tiểu đường bỏ liều vì quên. Khách mua kháng sinh dừng giữa chừng vì "thấy khỏe rồi." Không ai
+              nhắc họ — và không ai biết điều đó đang xảy ra.
+            </p>
+          </div>
+
+          <!-- Problem 2 -->
+          <div class="problem-card fade-up delay-100">
+            <div class="problem-card-icon">
+              <i class="ph-bold ph-pill"></i>
+            </div>
+            <h3 class="problem-card-title">Có bỏ liều không?</h3>
+            <p class="problem-card-body">
+              Không có quy trình nào theo dõi hay nhắc khách tiếp tục đúng phác đồ. Ai bỏ liều — nhà thuốc không biết,
+              và khách cũng không nghĩ cần báo lại.
+            </p>
+          </div>
+
+          <!-- Problem 3 -->
+          <div class="problem-card fade-up delay-200">
+            <div class="problem-card-icon">
+              <i class="ph-bold ph-warning-circle"></i>
+            </div>
+            <h3 class="problem-card-title">Có gặp tác dụng phụ mà ngại hỏi lại không?</h3>
+            <p class="problem-card-body">
+              Khách ngại làm phiền, tự chịu đựng hoặc bỏ thuốc luôn. Nhà thuốc mất cơ hội can thiệp — và mất cả
+              khách hàng dài hạn.
+            </p>
+          </div>
+        </div>
+
+        <div class="fade-up"
+          style="text-align:center;margin-top:40px;padding:24px 32px;background:var(--color-primary-muted);border-radius:12px;border-left:4px solid var(--color-primary);">
+          <p style="font-size:1.1rem;font-weight:600;color:var(--color-text-primary);margin:0;">
+            Mecare giải quyết toàn bộ vấn đề đó.<br>
+            <span style="font-weight:400;color:var(--color-text-secondary);">Chủ động theo dõi – cá nhân hóa – và đảm
+              bảo không bỏ sót bất kỳ khách hàng nào.</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SOLUTION SECTION
+         ============================================================ -->
+    <section class="section bg-white" id="giai-phap">
+      <div class="container">
+        <div class="solution-grid">
+
+          <!-- Text left -->
+          <div class="fade-up">
+            <div class="section-eyebrow mb-4">Những gì hệ thống thực hiện</div>
+            <h2 class="section-title mb-6">
+              <span class="text-primary">Dược Sĩ Hải là người đồng hành thật sự</span> của từng khách.
+            </h2>
+            <p class="text-body-secondary leading-relaxed mb-8">
+              Trong khi nhân viên phục vụ tại quầy, Dược Sĩ Hải chủ động theo dõi từng khách hàng qua Zalo — nhắc đúng
+              lúc, hỏi thăm đúng người, và kết nối dược sĩ trực tiếp khi cần.
+            </p>
+            <div class="solution-bullets">
+              <div class="solution-bullet">
+                <div class="solution-bullet-icon"><i class="ph ph-bell-ringing"></i></div>
+                <div class="solution-bullet-text">
+                  <strong>1. Nhắc uống thuốc cá nhân hóa</strong> — đúng giờ, đúng liều, đúng từng khách theo đơn thuốc
+                  thực tế
+                </div>
+              </div>
+              <div class="solution-bullet">
+                <div class="solution-bullet-icon"><i class="ph ph-chat-circle-dots"></i></div>
+                <div class="solution-bullet-text">
+                  <strong>2. Hỏi thăm sau mua</strong> — theo dõi phản ứng, đánh giá hiệu quả điều trị đúng thời điểm
+                </div>
+              </div>
+              <div class="solution-bullet">
+                <div class="solution-bullet-icon"><i class="ph ph-calendar-check"></i></div>
+                <div class="solution-bullet-text">
+                  <strong>3. Nhắc refill &amp; tái khám</strong> — nhắc trước 5 ngày khi sắp hết thuốc, trước 3 ngày
+                  lịch tái khám
+                </div>
+              </div>
+              <div class="solution-bullet">
+                <div class="solution-bullet-icon"><i class="ph ph-arrow-up-right"></i></div>
+                <div class="solution-bullet-text">
+                  <strong>4. Can thiệp kịp thời</strong> — tự động phát hiện dấu hiệu bất thường → kết nối trực tiếp
+                  dược sĩ ngay lập tức
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat visual right -->
+          <div class="fade-up delay-100">
+            <div class="zalo-phone" style="max-width:300px;">
+              <div class="zalo-phone-inner">
+                <div class="zalo-status-bar">
+                  <span class="zalo-status-bar-back"><i class="ph ph-arrow-left"></i></span>
+                  <div class="zalo-status-bar-avatar">H</div>
+                  <div class="zalo-status-bar-info">
+                    <div class="zalo-status-bar-name">DS. Hải – Nhà Thuốc Trúc Tâm</div>
+                    <div class="zalo-status-bar-sub">Dược sĩ · Luôn sẵn sàng</div>
+                  </div>
+                </div>
+                <div class="zalo-chat-body">
+                  <div class="zalo-bubble-row agent">
+                    <div class="zalo-bubble-avatar">H</div>
+                    <div class="zalo-bubble-wrap">
+                      <div class="zalo-bubble agent">
+                        Chào chị Lan! Hải từ Nhà Thuốc Trúc Tâm. Hôm qua chị mua thuốc về uống chưa ạ? Chị có gặp khó
+                        chịu gì không?
+                      </div>
+                      <div class="zalo-bubble-time">Hôm qua, 10:00</div>
+                    </div>
+                  </div>
+                  <div class="zalo-bubble-row customer">
+                    <div class="zalo-bubble-wrap">
+                      <div class="zalo-bubble customer">
+                        Uống rồi anh Hải ơi, nhưng hơi buồn nôn tí 😅
+                      </div>
+                      <div class="zalo-bubble-time">10:04</div>
+                    </div>
+                  </div>
+                  <div class="zalo-bubble-row agent">
+                    <div class="zalo-bubble-avatar">H</div>
+                    <div class="zalo-bubble-wrap">
+                      <div class="zalo-bubble agent">
+                        Dạ, thuốc này có thể gây buồn nôn nhẹ nếu uống lúc đói ạ. Chị thử uống sau ăn xem nhé! Nếu vẫn
+                        không đỡ Hải sẽ gọi điện cho chị ngay.
+                      </div>
+                      <div class="zalo-bubble-time">10:05</div>
+                    </div>
+                  </div>
+                  <div class="zalo-bubble-row customer">
+                    <div class="zalo-bubble-wrap">
+                      <div class="zalo-bubble customer">Oke em, cảm ơn nha! 🙏</div>
+                      <div class="zalo-bubble-time">10:06</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         6 CUSTOMER GROUPS
+         ============================================================ -->
+    <section class="section gradient-section" id="nhom-khach">
+      <div class="container">
+        <div class="section-header section-header-center mb-12 fade-up">
+          <div class="section-eyebrow">Phân loại khách hàng</div>
+          <h2 class="section-title">6 Nhóm Khách Hàng Được Chăm Sóc</h2>
+          <p class="section-subtitle">
+            Mỗi khách được Dược Sĩ Hải chăm sóc đúng cách — tự động phân nhóm, kịch bản riêng, không bỏ sót.
+          </p>
+        </div>
+
+        <div class="grid-3 stagger-children">
+
+          <!-- Group 1 -->
+          <div class="card card-hover fade-up">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="group-number-badge">1</span>
+              <div class="icon-wrap icon-wrap-primary icon-wrap-md">
+                <i class="ph ph-heartbeat"></i>
+              </div>
+            </div>
+            <h3 class="feature-title mb-2">Khách bệnh mãn tính</h3>
+            <span class="badge badge-primary mb-3">Tiểu đường · Cao huyết áp</span>
+            <p class="feature-body mb-4">Nhóm ưu tiên cao nhất — cần tuân thủ thuốc liên tục, theo dõi chỉ số định kỳ.
+            </p>
+            <div class="flex items-start gap-2">
+              <i class="ph ph-check-circle text-primary" style="font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+              <span class="text-sm text-body-secondary leading-normal">Nhắc uống thuốc sáng/tối + hỏi thăm chỉ số mỗi
+                tuần</span>
+            </div>
+          </div>
+
+          <!-- Group 2 -->
+          <div class="card card-hover fade-up delay-100">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="group-number-badge">2</span>
+              <div class="icon-wrap icon-wrap-primary icon-wrap-md">
+                <i class="ph ph-pill"></i>
+              </div>
+            </div>
+            <h3 class="feature-title mb-2">Khách mua thuốc không kê đơn</h3>
+            <span class="badge badge-secondary mb-3">OTC · Tự điều trị</span>
+            <p class="feature-body mb-4">Cảm, đau đầu, dị ứng — cần hỏi thăm đúng lúc để tránh tự ý dùng thuốc sai cách.
+            </p>
+            <div class="flex items-start gap-2">
+              <i class="ph ph-check-circle text-primary" style="font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+              <span class="text-sm text-body-secondary leading-normal">Hỏi thăm sau 2–3 ngày, cảnh báo nếu triệu chứng
+                không thuyên giảm</span>
+            </div>
+          </div>
+
+          <!-- Group 3 -->
+          <div class="card card-hover fade-up delay-200">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="group-number-badge">3</span>
+              <div class="icon-wrap icon-wrap-primary icon-wrap-md">
+                <i class="ph ph-clipboard-text"></i>
+              </div>
+            </div>
+            <h3 class="feature-title mb-2">Khách mua thuốc theo đơn bác sĩ</h3>
+            <span class="badge badge-primary mb-3">Kê đơn · Điều trị chuyên sâu</span>
+            <p class="feature-body mb-4">Đơn thuốc phức tạp hơn — cần nhắc đúng lịch và kiểm tra phản ứng sau vài ngày
+              đầu.</p>
+            <div class="flex items-start gap-2">
+              <i class="ph ph-check-circle text-primary" style="font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+              <span class="text-sm text-body-secondary leading-normal">Nhắc theo lịch đơn + kiểm tra phản ứng sau 5–7
+                ngày</span>
+            </div>
+          </div>
+
+          <!-- Group 4 -->
+          <div class="card card-hover fade-up">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="group-number-badge">4</span>
+              <div class="icon-wrap icon-wrap-primary icon-wrap-md">
+                <i class="ph ph-leaf"></i>
+              </div>
+            </div>
+            <h3 class="feature-title mb-2">Khách mua thực phẩm chức năng</h3>
+            <span class="badge badge-secondary mb-3">TPCN · Bổ sung</span>
+            <p class="feature-body mb-4">Hiệu quả cần thời gian — theo dõi sau 7 ngày giúp tăng tỉ lệ mua lại đáng kể.
+            </p>
+            <div class="flex items-start gap-2">
+              <i class="ph ph-check-circle text-primary" style="font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+              <span class="text-sm text-body-secondary leading-normal">Theo dõi hiệu quả sau 7 ngày + nhắc mua lại khi
+                sắp hết</span>
+            </div>
+          </div>
+
+          <!-- Group 5 -->
+          <div class="card card-hover fade-up delay-100">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="group-number-badge">5</span>
+              <div class="icon-wrap icon-wrap-primary icon-wrap-md">
+                <i class="ph ph-chat-circle-dots"></i>
+              </div>
+            </div>
+            <h3 class="feature-title mb-2">Khách phản ánh sau khi mua</h3>
+            <span class="badge badge-warning mb-3">Phản hồi · Cần xử lý ngay</span>
+            <p class="feature-body mb-4">Mỗi phản ánh là cơ hội giữ khách — nếu xử lý nhanh và đúng cách.</p>
+            <div class="flex items-start gap-2">
+              <i class="ph ph-check-circle text-primary" style="font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+              <span class="text-sm text-body-secondary leading-normal">Phản hồi ngay lập tức, kết nối dược sĩ can thiệp
+                khi
+                cần</span>
+            </div>
+          </div>
+
+          <!-- Group 6 -->
+          <div class="card card-hover fade-up delay-200">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="group-number-badge">6</span>
+              <div class="icon-wrap icon-wrap-primary icon-wrap-md">
+                <i class="ph ph-question"></i>
+              </div>
+            </div>
+            <h3 class="feature-title mb-2">Khách không ghi được thông tin</h3>
+            <span class="badge badge-muted mb-3">Tối giản · Không áp lực</span>
+            <p class="feature-body mb-4">Không có đủ thông tin cũng không bỏ qua — chỉ cần hướng dẫn tối giản, không tạo
+              áp lực.</p>
+            <div class="flex items-start gap-2">
+              <i class="ph ph-check-circle text-primary" style="font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+              <span class="text-sm text-body-secondary leading-normal">Hướng dẫn cơ bản ngay sau mua — nhanh, thân
+                thiện, không phức tạp</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PROCESS FLOW
+         ============================================================ -->
+    <section class="section bg-white" id="quy-trinh">
+      <div class="container">
+        <div class="section-header section-header-center mb-12 fade-up">
+          <div class="section-eyebrow">Cách hoạt động</div>
+          <h2 class="section-title">Quy Trình Hoạt Động Hàng Ngày</h2>
+          <p class="section-subtitle">
+            Từ khi khách rời quầy đến lần mua tiếp theo — Dược Sĩ Hải không bỏ sót một khoảnh khắc nào.
+          </p>
+        </div>
+
+        <div class="process-timeline fade-up">
+
+          <div class="timeline-item">
+            <div class="timeline-connector">
+              <div class="timeline-number">1</div>
+            </div>
+            <div class="timeline-body">
+              <div class="timeline-body-title">
+                <i class="ph ph-storefront timeline-body-icon"></i>
+                Khách mua thuốc tại quầy
+              </div>
+              <div class="timeline-body-desc">
+                Hệ thống ghi nhận thông tin và tự động phân loại khách vào nhóm phù hợp — không cần nhân viên nhập liệu
+                thủ công.
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-connector">
+              <div class="timeline-number">2</div>
+            </div>
+            <div class="timeline-body">
+              <div class="timeline-body-title">
+                <i class="ph ph-chat-dots timeline-body-icon"></i>
+                Gửi hướng dẫn ngay
+              </div>
+              <div class="timeline-body-desc">
+                Trong vài phút: hướng dẫn dùng thuốc cá nhân hóa được gửi qua Zalo — đúng tên khách, đúng loại thuốc,
+                đúng liều lượng.
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-connector">
+              <div class="timeline-number">3</div>
+            </div>
+            <div class="timeline-body">
+              <div class="timeline-body-title">
+                <i class="ph ph-clock timeline-body-icon"></i>
+                Theo dõi chủ động
+              </div>
+              <div class="timeline-body-desc">
+                Nhắc uống thuốc, hỏi thăm đúng thời điểm theo từng nhóm khách hàng — tự động, đúng lịch, không cần ai
+                nhớ.
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-connector">
+              <div class="timeline-number">4</div>
+            </div>
+            <div class="timeline-body">
+              <div class="timeline-body-title">
+                <i class="ph ph-funnel timeline-body-icon"></i>
+                Nhận và phân loại phản hồi
+              </div>
+              <div class="timeline-body-desc">
+                Phản hồi bình thường → tiếp tục theo dõi. Dấu hiệu bất thường → kết nối dược sĩ ngay lập tức. Không bỏ
+                sót một ca nào.
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-connector">
+              <div class="timeline-number">5</div>
+            </div>
+            <div class="timeline-body">
+              <div class="timeline-body-title">
+                <i class="ph ph-calendar-check timeline-body-icon"></i>
+                Nhắc refill và tái khám
+              </div>
+              <div class="timeline-body-desc">
+                Trước 5 ngày khi thuốc sắp hết, trước 3 ngày khi đến lịch khám — khách không quên, nhà thuốc không mất
+                doanh thu tái mua.
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-connector">
+              <div class="timeline-number">6</div>
+            </div>
+            <div class="timeline-body">
+              <div class="timeline-body-title">
+                <i class="ph ph-chart-line-up timeline-body-icon"></i>
+                Báo cáo định kỳ
+              </div>
+              <div class="timeline-body-desc">
+                Dashboard đầy đủ: tỉ lệ tuân thủ thuốc, doanh thu tái mua, số ca can thiệp — để Dược Sĩ Hải nắm chính
+                xác mọi diễn biến.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         KEY METRICS
+         ============================================================ -->
+    <section class="section gradient-section" id="chi-so">
+      <div class="container">
+        <div class="section-header section-header-center mb-12 fade-up">
+          <div class="section-eyebrow">Kết quả kỳ vọng</div>
+          <h2 class="section-title">Chỉ Số Kỳ Vọng Sau 3 Tháng</h2>
+          <p class="section-subtitle">
+            Dựa trên dữ liệu từ các nhà thuốc triển khai tương tự — các con số dưới đây là mục tiêu thực tế, không phải
+            lý thuyết.
+          </p>
+        </div>
+
+        <div class="grid-3 stagger-children">
+
+          <div class="metric-card-custom fade-up">
+            <div class="metric-icon-wrap"><i class="ph ph-pill"></i></div>
+            <div class="metric-before-val">Hiện tại: ~45%</div>
+            <div class="metric-after-val" data-count="80" data-suffix="%">80%</div>
+            <div class="metric-name">Tỉ lệ tuân thủ thuốc<br>(bệnh mãn tính)</div>
+          </div>
+
+          <div class="metric-card-custom fade-up delay-100">
+            <div class="metric-icon-wrap"><i class="ph ph-arrow-counter-clockwise"></i></div>
+            <div class="metric-before-val">Hiện tại: ~35%</div>
+            <div class="metric-after-val" data-count="65" data-suffix="%">65%</div>
+            <div class="metric-name">Tỉ lệ khách quay lại<br>mua refill</div>
+          </div>
+
+          <div class="metric-card-custom fade-up delay-200">
+            <div class="metric-icon-wrap"><i class="ph ph-clock"></i></div>
+            <div class="metric-before-val">Hiện tại: ~45 phút</div>
+            <div class="metric-after-val" style="font-size:30px;" data-count="5" data-prefix="&lt;" data-suffix=" phút">
+              &lt;5 phút</div>
+            <div class="metric-name">Thời gian phản hồi<br>khi khách nhắn</div>
+          </div>
+
+          <div class="metric-card-custom fade-up">
+            <div class="metric-icon-wrap"><i class="ph ph-users"></i></div>
+            <div class="metric-before-val">Hiện tại: 25 khách</div>
+            <div class="metric-after-val" data-count="400" data-suffix="+">400+</div>
+            <div class="metric-name">Khách được theo dõi<br>cùng một lúc</div>
+          </div>
+
+          <div class="metric-card-custom fade-up delay-100">
+            <div class="metric-icon-wrap"><i class="ph ph-warning"></i></div>
+            <div class="metric-before-val">Hiện tại: ~5%</div>
+            <div class="metric-after-val" data-count="35" data-suffix="%">~35%</div>
+            <div class="metric-name">Phát hiện phản ứng<br>phụ sớm</div>
+          </div>
+
+          <div class="metric-card-custom fade-up delay-200">
+            <div class="metric-icon-wrap"><i class="ph ph-chart-line-up"></i></div>
+            <div class="metric-before-val">Baseline hiện tại</div>
+            <div class="metric-after-val" data-count="30" data-prefix="+" data-suffix="%">+30%</div>
+            <div class="metric-name">Doanh thu tái mua<br>ước tính tăng thêm</div>
+          </div>
+
+        </div>
+
+        <div class="text-center mt-8 fade-up">
+          <div class="alert alert-primary" style="display:inline-flex;max-width:600px;">
+            <i class="ph ph-info alert-icon"></i>
+            <span class="text-sm leading-normal">Chỉ số được ước tính dựa trên dữ liệu thực tế từ các nhà thuốc tương
+              tự. Kết quả thực tế có thể thay đổi theo quy mô và cách vận hành của từng nhà thuốc.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         DIFFERENTIATION
+         ============================================================ -->
+    <section class="section bg-white" id="khac-biet">
+      <div class="container">
+        <div class="section-header section-header-center mb-12 fade-up">
+          <div class="section-eyebrow">Điểm khác biệt</div>
+          <h2 class="section-title">Cách Dược Sĩ Hải Chăm Sóc Khác Biệt</h2>
+          <p class="section-subtitle">
+            Không phải phần mềm quản lý. Không phải broadcast. Dược Sĩ Hải mang sự chăm sóc thật sự đến từng khách —
+            điều chưa nhà thuốc nào ở Việt Nam làm được.
+          </p>
+        </div>
+
+        <div class="grid-3 stagger-children">
+
+          <div class="diff-card fade-up">
+            <div class="icon-wrap icon-wrap-primary icon-wrap-lg mb-6">
+              <i class="ph ph-user-circle"></i>
+            </div>
+            <h3 class="feature-title mb-3">Zalo cá nhân, không phải broadcast</h3>
+            <p class="feature-body leading-relaxed">
+              Dược Sĩ Hải nhắn 1-1, không phải broadcast. Khách hàng nhận được tin nhắn có tên mình, đúng thuốc mình
+              đang uống — cảm nhận được sự quan tâm thật sự, không phải marketing tự động vô hồn.
+            </p>
+          </div>
+
+          <div class="diff-card fade-up delay-100">
+            <div class="icon-wrap icon-wrap-primary icon-wrap-lg mb-6">
+              <i class="ph ph-shield-check"></i>
+            </div>
+            <h3 class="feature-title mb-3">Tuân thủ GPP</h3>
+            <p class="feature-body leading-relaxed">
+              Mọi kịch bản tin nhắn được thiết kế theo Tiêu chuẩn Thực hành Tốt Nhà Thuốc (GPP) — bảo vệ nhà thuốc về
+              mặt pháp lý, đảm bảo thông tin dược học chính xác.
+            </p>
+          </div>
+
+          <div class="diff-card fade-up delay-200">
+            <div class="icon-wrap icon-wrap-primary icon-wrap-lg mb-6">
+              <i class="ph ph-lightning"></i>
+            </div>
+            <h3 class="feature-title mb-3">Hải dẫn dắt, AI hỗ trợ</h3>
+            <p class="feature-body leading-relaxed">
+              Hệ thống đảm bảo không khách nào bị bỏ sót — nhưng mọi quyết định quan trọng vẫn do Dược Sĩ Hải ra. Nhân
+              viên tập trung tư vấn chuyên sâu, không phải gõ tin nhắn thủ công.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         IMPLEMENTATION TIMELINE
+         ============================================================ -->
+    <section class="section bg-primary-muted" id="lo-trinh" style="background-color:var(--color-primary-muted);">
+      <div class="container">
+        <div class="section-header section-header-center mb-12 fade-up">
+          <div class="section-eyebrow">Triển khai</div>
+          <h2 class="section-title">Lộ Trình Triển Khai</h2>
+          <p class="section-subtitle">
+            Từ hôm nay đến khi Dược Sĩ Hải chủ động chăm sóc đầy đủ 6 nhóm khách — chỉ mất 4 tuần.
+          </p>
+        </div>
+
+        <div class="impl-timeline fade-up">
+
+          <div class="impl-item">
+            <div class="impl-dot">1</div>
+            <div class="impl-week">Tuần 1</div>
+            <div class="impl-title">Onboarding</div>
+            <div class="impl-desc">Cài đặt hệ thống, kết nối Zalo Official Account, nhập dữ liệu khách hàng hiện có
+            </div>
+          </div>
+
+          <div class="impl-item">
+            <div class="impl-dot">2</div>
+            <div class="impl-week">Tuần 2</div>
+            <div class="impl-title">Chạy thử pilot</div>
+            <div class="impl-desc">Training nhân viên + chạy thử 20 khách hàng đầu tiên để kiểm tra kịch bản</div>
+          </div>
+
+          <div class="impl-item">
+            <div class="impl-dot">3</div>
+            <div class="impl-week">Tuần 3</div>
+            <div class="impl-title">Go live Nhóm 1+2</div>
+            <div class="impl-desc">Mở rộng sang Nhóm 1 (bệnh mãn tính) và Nhóm 2 (OTC) — hai nhóm có tác động lớn nhất
+            </div>
+          </div>
+
+          <div class="impl-item">
+            <div class="impl-dot">4</div>
+            <div class="impl-week">Tháng 2</div>
+            <div class="impl-title">Mở rộng đầy đủ</div>
+            <div class="impl-desc">Triển khai cả 6 nhóm khách hàng, tinh chỉnh kịch bản theo phản hồi thực tế</div>
+          </div>
+
+          <div class="impl-item">
+            <div class="impl-dot">5</div>
+            <div class="impl-week">Tháng 3</div>
+            <div class="impl-title">Báo cáo ROI</div>
+            <div class="impl-desc">Báo cáo KPI đầy đủ — so sánh trước/sau, đánh giá ROI, lên kế hoạch tối ưu</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CTA SECTION
+         ============================================================ -->
+    <section class="cta-section-custom" id="cta">
+      <div class="container" style="position:relative;z-index:1;">
+        <div class="fade-up">
+          <div class="badge badge-primary mb-6"
+            style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);">
+            <i class="ph ph-star-four"></i>
+            &nbsp;Tài liệu dành riêng cho Nhà Thuốc Trúc Tâm
+          </div>
+          <h2 class="cta-title">
+            Không chỉ bán thuốc.<br>Bạn đang xây dựng mối quan hệ dài hạn với khách hàng.
+          </h2>
+          <!-- <p class="cta-subtitle">
+            Cho chúng tôi 30 phút — chúng tôi sẽ chạy thử mô phỏng với dữ liệu thực của nhà thuốc bạn. Không cam kết,
+            không rủi ro.
+          </p> -->
+          <div class="cta-actions">
+            <a href="pages/kichban.html" class="btn btn-white btn-lg">
+              <i class="ph ph-list-bullets"></i>
+              Xem kịch bản chi tiết
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-brand-name">Me<span>Care</span></div>
+          <p class="footer-brand-desc">
+            Trợ lý AI Zalo chăm sóc khách hàng thông minh cho nhà thuốc Việt Nam. Chăm sóc đúng người, đúng lúc, đúng
+            cách.
+          </p>
+        </div>
+        <div>
+          <div class="footer-links-title">Điều hướng</div>
+          <ul class="footer-links">
+            <li><a href="#tong-quan" class="footer-link">Tổng quan</a></li>
+            <li><a href="#quy-trinh" class="footer-link">Quy trình</a></li>
+            <li><a href="#chi-so" class="footer-link">Chỉ số</a></li>
+            <li><a href="pages/kichban.html" class="footer-link">Kịch bản chăm sóc</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-links-title">Liên hệ</div>
+          <ul class="footer-links">
+            <li><a href="mailto:hello@mecare.vn" class="footer-link">hello@mecare.vn</a></li>
+            <li><a href="https://zalo.me/mecare" class="footer-link">Zalo: MeCare</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-copy">
+        <div class="text-sm text-muted">
+          &copy; 2026 MeCare. Tài liệu này được tạo riêng cho <strong style="color:var(--color-text-white);">Nhà Thuốc
+            Trúc Tâm</strong>. Không phân phối lại.
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="https://zalo.me/mecare" class="footer-social-link" aria-label="Zalo MeCare">
+            <i class="ph ph-chat-circle"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Sticky mobile CTA -->
+  <div class="sticky-cta-bar" id="sticky-cta" role="complementary">
+    <div class="sticky-cta-bar__text">
+      DS. Hải – Nhà Thuốc Trúc Tâm
+      <small>Kịch bản chăm sóc đầy đủ</small>
+    </div>
+    <a href="pages/kichban.html" class="sticky-cta-bar__btn">Xem kịch bản</a>
+  </div>
+
+  <script src="js/main.js?v=202605270615" defer></script>
+
+  <script>
+    // Nav toggle
+    const navToggle = document.getElementById('nav-toggle');
+    const navMobile = document.getElementById('nav-mobile');
+    if (navToggle && navMobile) {
+      navToggle.addEventListener('click', () => {
+        const isOpen = navToggle.classList.toggle('is-open');
+        navMobile.classList.toggle('is-open', isOpen);
+        navToggle.setAttribute('aria-expanded', isOpen);
+      });
+      // Close on link click
+      navMobile.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          navToggle.classList.remove('is-open');
+          navMobile.classList.remove('is-open');
+        });
+      });
+    }
+
+    // Sticky CTA bar (show after scrolling past hero)
+    const stickyCta = document.getElementById('sticky-cta');
+    if (stickyCta) {
+      const showAfter = 600;
+      window.addEventListener('scroll', () => {
+        stickyCta.classList.toggle('is-visible', window.scrollY > showAfter);
+      }, { passive: true });
+    }
+
+    // Scroll animations (fade-up)
+    const animatedEls = document.querySelectorAll('.fade-up, .fade-in, .slide-in-left, .slide-in-right, .zoom-in');
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+      animatedEls.forEach(el => observer.observe(el));
+    } else {
+      animatedEls.forEach(el => el.classList.add('is-visible'));
+    }
+
+    // Animated counters
+    function animateCounter(el) {
+      const target = parseFloat(el.getAttribute('data-count'));
+      const prefix = el.getAttribute('data-prefix') || '';
+      const suffix = el.getAttribute('data-suffix') || '';
+      const decimals = parseInt(el.getAttribute('data-decimals') || '0');
+      const duration = 1800;
+      const startTime = performance.now();
+
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = target * eased;
+        el.textContent = prefix + current.toFixed(decimals) + suffix;
+        if (progress < 1) requestAnimationFrame(update);
+        else el.textContent = prefix + target.toFixed(decimals) + suffix;
+      }
+      requestAnimationFrame(update);
+    }
+
+    const counterEls = document.querySelectorAll('[data-count]');
+    if ('IntersectionObserver' in window) {
+      const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            animateCounter(entry.target);
+            counterObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3 });
+      counterEls.forEach(el => counterObserver.observe(el));
+    }
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href === '#') return;
+        const target = document.querySelector(href);
+        if (target) {
+          e.preventDefault();
+          const navHeight = document.getElementById('main-nav')?.offsetHeight || 64;
+          const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+          window.scrollTo({ top, behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Nav scrolled class
+    const mainNav = document.getElementById('main-nav');
+    if (mainNav) {
+      window.addEventListener('scroll', () => {
+        mainNav.classList.toggle('scrolled', window.scrollY > 20);
+      }, { passive: true });
+    }
+  </script>
+
+</body>
+
+</html>
