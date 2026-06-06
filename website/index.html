@@ -304,6 +304,37 @@
       font-size: 18px;
     }
 
+    .timeline-substeps {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .timeline-substep {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #4A5568;
+      line-height: 1.55;
+    }
+
+    .substep-icon {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      background: #E6F7F5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0E9E8E;
+      font-size: 13px;
+      margin-top: 1px;
+    }
+
     /* ── Implementation Timeline (horizontal) ── */
     .impl-timeline {
       display: flex;
@@ -517,6 +548,26 @@
       padding-top: 16px;
     }
 
+    .hero-video-phone {
+      max-width: 360px;
+      width: 100%;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    #mecare-player {
+      width: 100%;
+      aspect-ratio: 9/16;
+      display: block;
+      border-radius: 26px;
+      overflow: hidden;
+    }
+
+    #mecare-player > div {
+      border-radius: 26px;
+      overflow: hidden;
+    }
+
     /* ── Sticky CTA bar ── */
     .sticky-cta-bar {
       position: fixed;
@@ -723,74 +774,10 @@
             </div>
           </div>
 
-          <!-- Right: Zalo phone mockup -->
+          <!-- Right: Showcase video in phone frame -->
           <div class="hero-visual-wrap fade-up">
-            <div class="zalo-phone">
-              <div class="zalo-phone-inner">
-                <!-- Status bar -->
-                <div class="zalo-status-bar">
-                  <span class="zalo-status-bar-back"><i class="ph ph-arrow-left"></i></span>
-                  <div class="zalo-status-bar-avatar">H</div>
-                  <div class="zalo-status-bar-info">
-                    <div class="zalo-status-bar-name">DS. Hải – Trúc Tâm</div>
-                    <div class="zalo-status-bar-sub">Đang hoạt động</div>
-                  </div>
-                  <i class="ph ph-phone" style="color:#fff;font-size:18px;"></i>
-                </div>
-                <!-- Chat body -->
-                <div class="zalo-chat-body">
-                  <!-- Hải message 1 -->
-                  <div class="zalo-bubble-row agent">
-                    <div class="zalo-bubble-avatar">H</div>
-                    <div class="zalo-bubble-wrap">
-                      <div class="zalo-bubble agent">
-                        DS. Hải từ Nhà Thuốc Trúc Tâm nhắc anh Minh uống thuốc buổi sáng ạ! 🌅<br>
-                        <strong>Metformin 500mg:</strong> 1 viên sau ăn sáng<br>
-                        <strong>Amlodipine 5mg:</strong> 1 viên lúc 8:00
-                      </div>
-                      <div class="zalo-bubble-time">08:00 · Đã gửi</div>
-                    </div>
-                  </div>
-                  <!-- Customer reply -->
-                  <div class="zalo-bubble-row customer">
-                    <div class="zalo-bubble-wrap">
-                      <div class="zalo-bubble customer">Cảm ơn anh Hải nhé! 👍</div>
-                      <div class="zalo-bubble-time">08:03</div>
-                    </div>
-                  </div>
-                  <!-- Hải message 2 -->
-                  <div class="zalo-bubble-row agent">
-                    <div class="zalo-bubble-avatar">H</div>
-                    <div class="zalo-bubble-wrap">
-                      <div class="zalo-bubble agent">
-                        Dạ! Anh nhớ uống cùng 1 ly nước đầy nhé ạ 😊<br>
-                        Thuốc còn dùng được <strong>5 ngày</strong> nữa — em nhắc khi sắp hết!
-                      </div>
-                      <div class="zalo-bubble-time">08:03</div>
-                    </div>
-                  </div>
-                  <!-- Hải check-in -->
-                  <div class="zalo-bubble-row agent">
-                    <div class="zalo-bubble-avatar">H</div>
-                    <div class="zalo-bubble-wrap">
-                      <div class="zalo-bubble agent">
-                        Hôm nay anh cảm thấy thế nào ạ? Huyết áp sáng nay đo được bao nhiêu?
-                      </div>
-                      <div class="zalo-bubble-time">08:04</div>
-                    </div>
-                  </div>
-                  <!-- Typing indicator -->
-                  <div class="zalo-bubble-row customer">
-                    <div class="zalo-bubble-wrap">
-                      <div class="zalo-bubble customer" style="padding:8px 14px;">
-                        <div class="zalo-bubble-typing">
-                          <span></span><span></span><span></span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div class="hero-video-phone">
+              <div id="mecare-player"></div>
             </div>
           </div>
 
@@ -1153,8 +1140,21 @@
                 Khách mua thuốc tại quầy
               </div>
               <div class="timeline-body-desc">
-                Hệ thống ghi nhận thông tin và tự động phân loại khách vào nhóm phù hợp — không cần nhân viên nhập liệu
-                thủ công.
+                Nhân viên thực hiện 3 bước đơn giản ngay tại quầy:
+              </div>
+              <div class="timeline-substeps">
+                <div class="timeline-substep">
+                  <span class="substep-icon"><i class="ph ph-phone"></i></span>
+                  <span>Hỏi số điện thoại khách và nhập vào phần mềm nhà thuốc</span>
+                </div>
+                <div class="timeline-substep">
+                  <span class="substep-icon"><i class="ph ph-qr-code"></i></span>
+                  <span>Hướng dẫn khách quét QR để kết bạn Zalo với <strong>DS. Hải – Nhà Thuốc Trúc Tâm</strong></span>
+                </div>
+                <div class="timeline-substep">
+                  <span class="substep-icon"><i class="ph ph-check-circle"></i></span>
+                  <span>Hệ thống tự động phân loại khách vào nhóm chăm sóc phù hợp</span>
+                </div>
               </div>
             </div>
           </div>
@@ -1386,7 +1386,7 @@
             <div class="impl-dot">1</div>
             <div class="impl-week">Tuần 1</div>
             <div class="impl-title">Onboarding</div>
-            <div class="impl-desc">Cài đặt hệ thống, kết nối Zalo Official Account, nhập dữ liệu khách hàng hiện có
+            <div class="impl-desc">Cài đặt hệ thống, kết nối Zalo Cá Nhân của nhà thuốc, nhập dữ liệu khách hàng hiện có
             </div>
           </div>
 
@@ -1611,6 +1611,7 @@
     }
   </script>
 
+  <script src="/assets/player-embed.js"></script>
 </body>
 
 </html>

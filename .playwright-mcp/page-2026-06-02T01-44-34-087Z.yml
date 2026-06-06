@@ -1,0 +1,404 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e5]:
+        - link "MeCare Trợ lý AI Zalo" [ref=e6] [cursor=pointer]:
+          - /url: "#"
+          - generic [ref=e7]: MeCare
+          - generic [ref=e8]: Trợ lý AI Zalo
+        - generic [ref=e9]:
+          - link "Tổng quan" [ref=e10] [cursor=pointer]:
+            - /url: "#tong-quan"
+          - link "Quy trình" [ref=e11] [cursor=pointer]:
+            - /url: "#quy-trinh"
+          - link "Chỉ số" [ref=e12] [cursor=pointer]:
+            - /url: "#chi-so"
+          - link "Kịch bản chăm sóc" [ref=e13] [cursor=pointer]:
+            - /url: pages/kichban.html
+        - link "Xem thử demo" [ref=e15] [cursor=pointer]:
+          - /url: "#cta"
+  - main [ref=e16]:
+    - generic [ref=e17]:
+      - generic [ref=e19]:
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - generic [ref=e22]: 
+            - text: Dành riêng cho Nhà Thuốc Trúc Tâm
+          - heading "Đây là \"Dược sĩ đồng hành\" của từng khách hàng." [level=1] [ref=e23]
+          - paragraph [ref=e24]:
+            - text: Trong khi nhân viên tại quầy chỉ phục vụ tại thời điểm mua thuốc, Mecare chủ động theo dõi khách hàng xuyên suốt hành trình điều trị —
+            - strong [ref=e25]: Nhắc đúng lúc · Hỏi đúng người · Can thiệp ngay khi cần
+            - text: — giúp nhà thuốc chăm sóc khách hàng liên tục, cá nhân hóa, không bỏ sót.
+          - generic [ref=e26]:
+            - link " Xem quy trình hoạt động" [ref=e27] [cursor=pointer]:
+              - /url: "#quy-trinh"
+              - generic [ref=e28]: 
+              - text: Xem quy trình hoạt động
+            - link "Xem kịch bản mẫu " [ref=e29] [cursor=pointer]:
+              - /url: pages/kichban.html
+              - text: Xem kịch bản mẫu
+              - generic [ref=e30]: 
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - generic [ref=e41]: TÌNH HUỐNG 01
+            - generic [ref=e42]:
+              - generic [ref=e43]: Chào Khách Sau
+              - generic [ref=e44]: Mua Tại Quầy
+            - generic [ref=e45]: "\"Khách mua xong đi, không có cách nào giữ liên lạc\""
+          - generic [ref=e46]: MECARE · DƯỢC SĨ HẢI
+      - generic [ref=e47]:
+        - generic [ref=e48]: 
+        - text: Cuộn để khám phá
+    - generic [ref=e50]:
+      - generic [ref=e51]: 400+ khách hàng theo dõi cùng lúc
+      - generic [ref=e52]: 80% tỉ lệ tuân thủ thuốc
+      - generic [ref=e53]: <5 phút thời gian phản hồi
+      - generic [ref=e54]: +30% doanh thu tái mua ước tính
+    - generic [ref=e56]:
+      - generic [ref=e57]:
+        - generic [ref=e58]: Thực trạng
+        - heading "Nhà thuốc của bạn đang chăm sóc khách hàng sau khi họ rời quầy — hay để họ tự xoay xở một mình?" [level=2] [ref=e59]:
+          - text: Nhà thuốc của bạn đang chăm sóc khách hàng sau khi họ rời quầy —
+          - text: hay để họ tự xoay xở một mình?
+        - paragraph [ref=e60]: "Mỗi ngày, hàng chục khách hàng rời nhà thuốc với đơn thuốc trên tay. Nhưng bạn không thể biết:"
+      - generic [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e64]: 
+          - heading "Họ có uống đúng giờ không?" [level=3] [ref=e65]
+          - paragraph [ref=e66]: Bệnh nhân tiểu đường bỏ liều vì quên. Khách mua kháng sinh dừng giữa chừng vì "thấy khỏe rồi." Không ai nhắc họ — và không ai biết điều đó đang xảy ra.
+        - generic [ref=e67]:
+          - generic [ref=e69]: 
+          - heading "Có bỏ liều không?" [level=3] [ref=e70]
+          - paragraph [ref=e71]: Không có quy trình nào theo dõi hay nhắc khách tiếp tục đúng phác đồ. Ai bỏ liều — nhà thuốc không biết, và khách cũng không nghĩ cần báo lại.
+        - generic [ref=e72]:
+          - generic [ref=e74]: 
+          - heading "Có gặp tác dụng phụ mà ngại hỏi lại không?" [level=3] [ref=e75]
+          - paragraph [ref=e76]: Khách ngại làm phiền, tự chịu đựng hoặc bỏ thuốc luôn. Nhà thuốc mất cơ hội can thiệp — và mất cả khách hàng dài hạn.
+      - paragraph [ref=e78]:
+        - text: Mecare giải quyết toàn bộ vấn đề đó.
+        - text: Chủ động theo dõi – cá nhân hóa – và đảm bảo không bỏ sót bất kỳ khách hàng nào.
+    - generic [ref=e81]:
+      - generic [ref=e82]:
+        - generic [ref=e83]: Những gì hệ thống thực hiện
+        - heading "Dược Sĩ Hải là người đồng hành thật sự của từng khách." [level=2] [ref=e84]
+        - paragraph [ref=e85]: Trong khi nhân viên phục vụ tại quầy, Dược Sĩ Hải chủ động theo dõi từng khách hàng qua Zalo — nhắc đúng lúc, hỏi thăm đúng người, và kết nối dược sĩ trực tiếp khi cần.
+        - generic [ref=e86]:
+          - generic [ref=e87]:
+            - generic [ref=e89]: 
+            - generic [ref=e90]:
+              - strong [ref=e91]: 1. Nhắc uống thuốc cá nhân hóa
+              - text: — đúng giờ, đúng liều, đúng từng khách theo đơn thuốc thực tế
+          - generic [ref=e92]:
+            - generic [ref=e94]: 
+            - generic [ref=e95]:
+              - strong [ref=e96]: 2. Hỏi thăm sau mua
+              - text: — theo dõi phản ứng, đánh giá hiệu quả điều trị đúng thời điểm
+          - generic [ref=e97]:
+            - generic [ref=e99]: 
+            - generic [ref=e100]:
+              - strong [ref=e101]: 3. Nhắc refill & tái khám
+              - text: — nhắc trước 5 ngày khi sắp hết thuốc, trước 3 ngày lịch tái khám
+          - generic [ref=e102]:
+            - generic [ref=e104]: 
+            - generic [ref=e105]:
+              - strong [ref=e106]: 4. Can thiệp kịp thời
+              - text: — tự động phát hiện dấu hiệu bất thường → kết nối trực tiếp dược sĩ ngay lập tức
+      - generic [ref=e109]:
+        - generic [ref=e110]:
+          - generic [ref=e112]: 
+          - generic [ref=e113]: H
+          - generic [ref=e114]:
+            - generic [ref=e115]: DS. Hải – Nhà Thuốc Trúc Tâm
+            - generic [ref=e116]: Dược sĩ · Luôn sẵn sàng
+        - generic [ref=e117]:
+          - generic [ref=e118]:
+            - generic [ref=e119]: H
+            - generic [ref=e120]:
+              - generic [ref=e121]: Chào chị Lan! Hải từ Nhà Thuốc Trúc Tâm. Hôm qua chị mua thuốc về uống chưa ạ? Chị có gặp khó chịu gì không?
+              - generic [ref=e122]: Hôm qua, 10:00
+          - generic [ref=e124]:
+            - generic [ref=e125]: Uống rồi anh Hải ơi, nhưng hơi buồn nôn tí 😅
+            - generic [ref=e126]: 10:04
+          - generic [ref=e127]:
+            - generic [ref=e128]: H
+            - generic [ref=e129]:
+              - generic [ref=e130]: Dạ, thuốc này có thể gây buồn nôn nhẹ nếu uống lúc đói ạ. Chị thử uống sau ăn xem nhé! Nếu vẫn không đỡ Hải sẽ gọi điện cho chị ngay.
+              - generic [ref=e131]: 10:05
+          - generic [ref=e133]:
+            - generic [ref=e134]: Oke em, cảm ơn nha! 🙏
+            - generic [ref=e135]: 10:06
+    - generic [ref=e137]:
+      - generic [ref=e138]:
+        - generic [ref=e139]: Phân loại khách hàng
+        - heading "6 Nhóm Khách Hàng Được Chăm Sóc" [level=2] [ref=e140]
+        - paragraph [ref=e141]: Mỗi khách được Dược Sĩ Hải chăm sóc đúng cách — tự động phân nhóm, kịch bản riêng, không bỏ sót.
+      - generic [ref=e142]:
+        - generic [ref=e143]:
+          - generic [ref=e144]:
+            - generic [ref=e145]: "1"
+            - generic [ref=e147]: 
+          - heading "Khách bệnh mãn tính" [level=3] [ref=e148]
+          - generic [ref=e149]: Tiểu đường · Cao huyết áp
+          - paragraph [ref=e150]: Nhóm ưu tiên cao nhất — cần tuân thủ thuốc liên tục, theo dõi chỉ số định kỳ.
+          - generic [ref=e151]:
+            - generic [ref=e152]: 
+            - generic [ref=e153]: Nhắc uống thuốc sáng/tối + hỏi thăm chỉ số mỗi tuần
+        - generic [ref=e154]:
+          - generic [ref=e155]:
+            - generic [ref=e156]: "2"
+            - generic [ref=e158]: 
+          - heading "Khách mua thuốc không kê đơn" [level=3] [ref=e159]
+          - generic [ref=e160]: OTC · Tự điều trị
+          - paragraph [ref=e161]: Cảm, đau đầu, dị ứng — cần hỏi thăm đúng lúc để tránh tự ý dùng thuốc sai cách.
+          - generic [ref=e162]:
+            - generic [ref=e163]: 
+            - generic [ref=e164]: Hỏi thăm sau 2–3 ngày, cảnh báo nếu triệu chứng không thuyên giảm
+        - generic [ref=e165]:
+          - generic [ref=e166]:
+            - generic [ref=e167]: "3"
+            - generic [ref=e169]: 
+          - heading "Khách mua thuốc theo đơn bác sĩ" [level=3] [ref=e170]
+          - generic [ref=e171]: Kê đơn · Điều trị chuyên sâu
+          - paragraph [ref=e172]: Đơn thuốc phức tạp hơn — cần nhắc đúng lịch và kiểm tra phản ứng sau vài ngày đầu.
+          - generic [ref=e173]:
+            - generic [ref=e174]: 
+            - generic [ref=e175]: Nhắc theo lịch đơn + kiểm tra phản ứng sau 5–7 ngày
+        - generic [ref=e176]:
+          - generic [ref=e177]:
+            - generic [ref=e178]: "4"
+            - generic [ref=e180]: 
+          - heading "Khách mua thực phẩm chức năng" [level=3] [ref=e181]
+          - generic [ref=e182]: TPCN · Bổ sung
+          - paragraph [ref=e183]: Hiệu quả cần thời gian — theo dõi sau 7 ngày giúp tăng tỉ lệ mua lại đáng kể.
+          - generic [ref=e184]:
+            - generic [ref=e185]: 
+            - generic [ref=e186]: Theo dõi hiệu quả sau 7 ngày + nhắc mua lại khi sắp hết
+        - generic [ref=e187]:
+          - generic [ref=e188]:
+            - generic [ref=e189]: "5"
+            - generic [ref=e191]: 
+          - heading "Khách phản ánh sau khi mua" [level=3] [ref=e192]
+          - generic [ref=e193]: Phản hồi · Cần xử lý ngay
+          - paragraph [ref=e194]: Mỗi phản ánh là cơ hội giữ khách — nếu xử lý nhanh và đúng cách.
+          - generic [ref=e195]:
+            - generic [ref=e196]: 
+            - generic [ref=e197]: Phản hồi ngay lập tức, kết nối dược sĩ can thiệp khi cần
+        - generic [ref=e198]:
+          - generic [ref=e199]:
+            - generic [ref=e200]: "6"
+            - generic [ref=e202]: 
+          - heading "Khách không ghi được thông tin" [level=3] [ref=e203]
+          - generic [ref=e204]: Tối giản · Không áp lực
+          - paragraph [ref=e205]: Không có đủ thông tin cũng không bỏ qua — chỉ cần hướng dẫn tối giản, không tạo áp lực.
+          - generic [ref=e206]:
+            - generic [ref=e207]: 
+            - generic [ref=e208]: Hướng dẫn cơ bản ngay sau mua — nhanh, thân thiện, không phức tạp
+    - generic [ref=e210]:
+      - generic [ref=e211]:
+        - generic [ref=e212]: Cách hoạt động
+        - heading "Quy Trình Hoạt Động Hàng Ngày" [level=2] [ref=e213]
+        - paragraph [ref=e214]: Từ khi khách rời quầy đến lần mua tiếp theo — Dược Sĩ Hải không bỏ sót một khoảnh khắc nào.
+      - generic [ref=e215]:
+        - generic [ref=e216]:
+          - generic [ref=e218]: "1"
+          - generic [ref=e219]:
+            - generic [ref=e220]:
+              - generic [ref=e221]: 
+              - text: Khách mua thuốc tại quầy
+            - generic [ref=e222]: "Nhân viên thực hiện 3 bước đơn giản ngay tại quầy:"
+            - generic [ref=e223]:
+              - generic [ref=e224]:
+                - generic [ref=e226]: 
+                - generic [ref=e227]: Hỏi số điện thoại khách và nhập vào phần mềm nhà thuốc
+              - generic [ref=e228]:
+                - generic [ref=e230]: 
+                - generic [ref=e231]:
+                  - text: Hướng dẫn khách quét QR để kết bạn Zalo với
+                  - strong [ref=e232]: DS. Hải – Nhà Thuốc Trúc Tâm
+              - generic [ref=e233]:
+                - generic [ref=e235]: 
+                - generic [ref=e236]: Hệ thống tự động phân loại khách vào nhóm chăm sóc phù hợp
+        - generic [ref=e237]:
+          - generic [ref=e239]: "2"
+          - generic [ref=e240]:
+            - generic [ref=e241]:
+              - generic [ref=e242]: 
+              - text: Gửi hướng dẫn ngay
+            - generic [ref=e243]: "Trong vài phút: hướng dẫn dùng thuốc cá nhân hóa được gửi qua Zalo — đúng tên khách, đúng loại thuốc, đúng liều lượng."
+        - generic [ref=e244]:
+          - generic [ref=e246]: "3"
+          - generic [ref=e247]:
+            - generic [ref=e248]:
+              - generic [ref=e249]: 
+              - text: Theo dõi chủ động
+            - generic [ref=e250]: Nhắc uống thuốc, hỏi thăm đúng thời điểm theo từng nhóm khách hàng — tự động, đúng lịch, không cần ai nhớ.
+        - generic [ref=e251]:
+          - generic [ref=e253]: "4"
+          - generic [ref=e254]:
+            - generic [ref=e255]:
+              - generic [ref=e256]: 
+              - text: Nhận và phân loại phản hồi
+            - generic [ref=e257]: Phản hồi bình thường → tiếp tục theo dõi. Dấu hiệu bất thường → kết nối dược sĩ ngay lập tức. Không bỏ sót một ca nào.
+        - generic [ref=e258]:
+          - generic [ref=e260]: "5"
+          - generic [ref=e261]:
+            - generic [ref=e262]:
+              - generic [ref=e263]: 
+              - text: Nhắc refill và tái khám
+            - generic [ref=e264]: Trước 5 ngày khi thuốc sắp hết, trước 3 ngày khi đến lịch khám — khách không quên, nhà thuốc không mất doanh thu tái mua.
+        - generic [ref=e265]:
+          - generic [ref=e267]: "6"
+          - generic [ref=e268]:
+            - generic [ref=e269]:
+              - generic [ref=e270]: 
+              - text: Báo cáo định kỳ
+            - generic [ref=e271]: "Dashboard đầy đủ: tỉ lệ tuân thủ thuốc, doanh thu tái mua, số ca can thiệp — để Dược Sĩ Hải nắm chính xác mọi diễn biến."
+    - generic [ref=e273]:
+      - generic [ref=e274]:
+        - generic [ref=e275]: Kết quả kỳ vọng
+        - heading "Chỉ Số Kỳ Vọng Sau 3 Tháng" [level=2] [ref=e276]
+        - paragraph [ref=e277]: Dựa trên dữ liệu từ các nhà thuốc triển khai tương tự — các con số dưới đây là mục tiêu thực tế, không phải lý thuyết.
+      - generic [ref=e278]:
+        - generic [ref=e279]:
+          - generic [ref=e281]: 
+          - generic [ref=e282]: "Hiện tại: ~45%"
+          - generic [ref=e283]: 80%
+          - generic [ref=e284]:
+            - text: Tỉ lệ tuân thủ thuốc
+            - text: (bệnh mãn tính)
+        - generic [ref=e285]:
+          - generic [ref=e287]: 
+          - generic [ref=e288]: "Hiện tại: ~35%"
+          - generic [ref=e289]: 65%
+          - generic [ref=e290]:
+            - text: Tỉ lệ khách quay lại
+            - text: mua refill
+        - generic [ref=e291]:
+          - generic [ref=e293]: 
+          - generic [ref=e294]: "Hiện tại: ~45 phút"
+          - generic [ref=e295]: <5 phút
+          - generic [ref=e296]:
+            - text: Thời gian phản hồi
+            - text: khi khách nhắn
+        - generic [ref=e297]:
+          - generic [ref=e299]: 
+          - generic [ref=e300]: "Hiện tại: 25 khách"
+          - generic [ref=e301]: 400+
+          - generic [ref=e302]:
+            - text: Khách được theo dõi
+            - text: cùng một lúc
+        - generic [ref=e303]:
+          - generic [ref=e305]: 
+          - generic [ref=e306]: "Hiện tại: ~5%"
+          - generic [ref=e307]: ~35%
+          - generic [ref=e308]:
+            - text: Phát hiện phản ứng
+            - text: phụ sớm
+        - generic [ref=e309]:
+          - generic [ref=e311]: 
+          - generic [ref=e312]: Baseline hiện tại
+          - generic [ref=e313]: +30%
+          - generic [ref=e314]:
+            - text: Doanh thu tái mua
+            - text: ước tính tăng thêm
+      - generic [ref=e316]:
+        - generic [ref=e317]: 
+        - generic [ref=e318]: Chỉ số được ước tính dựa trên dữ liệu thực tế từ các nhà thuốc tương tự. Kết quả thực tế có thể thay đổi theo quy mô và cách vận hành của từng nhà thuốc.
+    - generic [ref=e320]:
+      - generic [ref=e321]:
+        - generic [ref=e322]: Điểm khác biệt
+        - heading "Cách Dược Sĩ Hải Chăm Sóc Khác Biệt" [level=2] [ref=e323]
+        - paragraph [ref=e324]: Không phải phần mềm quản lý. Không phải broadcast. Dược Sĩ Hải mang sự chăm sóc thật sự đến từng khách — điều chưa nhà thuốc nào ở Việt Nam làm được.
+      - generic [ref=e325]:
+        - generic [ref=e326]:
+          - generic [ref=e328]: 
+          - heading "Zalo cá nhân, không phải broadcast" [level=3] [ref=e329]
+          - paragraph [ref=e330]: Dược Sĩ Hải nhắn 1-1, không phải broadcast. Khách hàng nhận được tin nhắn có tên mình, đúng thuốc mình đang uống — cảm nhận được sự quan tâm thật sự, không phải marketing tự động vô hồn.
+        - generic [ref=e331]:
+          - generic [ref=e333]: 
+          - heading "Tuân thủ GPP" [level=3] [ref=e334]
+          - paragraph [ref=e335]: Mọi kịch bản tin nhắn được thiết kế theo Tiêu chuẩn Thực hành Tốt Nhà Thuốc (GPP) — bảo vệ nhà thuốc về mặt pháp lý, đảm bảo thông tin dược học chính xác.
+        - generic [ref=e336]:
+          - generic [ref=e338]: 
+          - heading "Hải dẫn dắt, AI hỗ trợ" [level=3] [ref=e339]
+          - paragraph [ref=e340]: Hệ thống đảm bảo không khách nào bị bỏ sót — nhưng mọi quyết định quan trọng vẫn do Dược Sĩ Hải ra. Nhân viên tập trung tư vấn chuyên sâu, không phải gõ tin nhắn thủ công.
+    - generic [ref=e342]:
+      - generic [ref=e343]:
+        - generic [ref=e344]: Triển khai
+        - heading "Lộ Trình Triển Khai" [level=2] [ref=e345]
+        - paragraph [ref=e346]: Từ hôm nay đến khi Dược Sĩ Hải chủ động chăm sóc đầy đủ 6 nhóm khách — chỉ mất 4 tuần.
+      - generic [ref=e347]:
+        - generic [ref=e348]:
+          - generic [ref=e349]: "1"
+          - generic [ref=e350]: Tuần 1
+          - generic [ref=e351]: Onboarding
+          - generic [ref=e352]: Cài đặt hệ thống, kết nối Zalo Official Account, nhập dữ liệu khách hàng hiện có
+        - generic [ref=e353]:
+          - generic [ref=e354]: "2"
+          - generic [ref=e355]: Tuần 2
+          - generic [ref=e356]: Chạy thử pilot
+          - generic [ref=e357]: Training nhân viên + chạy thử 20 khách hàng đầu tiên để kiểm tra kịch bản
+        - generic [ref=e358]:
+          - generic [ref=e359]: "3"
+          - generic [ref=e360]: Tuần 3
+          - generic [ref=e361]: Go live Nhóm 1+2
+          - generic [ref=e362]: Mở rộng sang Nhóm 1 (bệnh mãn tính) và Nhóm 2 (OTC) — hai nhóm có tác động lớn nhất
+        - generic [ref=e363]:
+          - generic [ref=e364]: "4"
+          - generic [ref=e365]: Tháng 2
+          - generic [ref=e366]: Mở rộng đầy đủ
+          - generic [ref=e367]: Triển khai cả 6 nhóm khách hàng, tinh chỉnh kịch bản theo phản hồi thực tế
+        - generic [ref=e368]:
+          - generic [ref=e369]: "5"
+          - generic [ref=e370]: Tháng 3
+          - generic [ref=e371]: Báo cáo ROI
+          - generic [ref=e372]: Báo cáo KPI đầy đủ — so sánh trước/sau, đánh giá ROI, lên kế hoạch tối ưu
+    - generic [ref=e375]:
+      - generic [ref=e376]:
+        - generic [ref=e377]: 
+        - text: Tài liệu dành riêng cho Nhà Thuốc Trúc Tâm
+      - heading "Không chỉ bán thuốc. Bạn đang xây dựng mối quan hệ dài hạn với khách hàng." [level=2] [ref=e378]:
+        - text: Không chỉ bán thuốc.
+        - text: Bạn đang xây dựng mối quan hệ dài hạn với khách hàng.
+      - link " Xem kịch bản chi tiết" [ref=e380] [cursor=pointer]:
+        - /url: pages/kichban.html
+        - generic [ref=e381]: 
+        - text: Xem kịch bản chi tiết
+  - contentinfo [ref=e382]:
+    - generic [ref=e383]:
+      - generic [ref=e384]:
+        - generic [ref=e385]:
+          - generic [ref=e386]: MeCare
+          - paragraph [ref=e387]: Trợ lý AI Zalo chăm sóc khách hàng thông minh cho nhà thuốc Việt Nam. Chăm sóc đúng người, đúng lúc, đúng cách.
+        - generic [ref=e388]:
+          - generic [ref=e389]: Điều hướng
+          - list [ref=e390]:
+            - listitem [ref=e391]:
+              - link "Tổng quan" [ref=e392] [cursor=pointer]:
+                - /url: "#tong-quan"
+            - listitem [ref=e393]:
+              - link "Quy trình" [ref=e394] [cursor=pointer]:
+                - /url: "#quy-trinh"
+            - listitem [ref=e395]:
+              - link "Chỉ số" [ref=e396] [cursor=pointer]:
+                - /url: "#chi-so"
+            - listitem [ref=e397]:
+              - link "Kịch bản chăm sóc" [ref=e398] [cursor=pointer]:
+                - /url: pages/kichban.html
+        - generic [ref=e399]:
+          - generic [ref=e400]: Liên hệ
+          - list [ref=e401]:
+            - listitem [ref=e402]:
+              - link "hello@mecare.vn" [ref=e403] [cursor=pointer]:
+                - /url: mailto:hello@mecare.vn
+            - listitem [ref=e404]:
+              - 'link "Zalo: MeCare" [ref=e405] [cursor=pointer]':
+                - /url: https://zalo.me/mecare
+      - generic [ref=e406]:
+        - generic [ref=e407]:
+          - text: © 2026 MeCare. Tài liệu này được tạo riêng cho
+          - strong [ref=e408]: Nhà Thuốc Trúc Tâm
+          - text: . Không phân phối lại.
+        - link "Zalo MeCare" [ref=e410] [cursor=pointer]:
+          - /url: https://zalo.me/mecare
+          - generic [ref=e411]: 
