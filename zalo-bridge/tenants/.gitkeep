@@ -1,0 +1,2 @@
+# Giữ thư mục per-tenant Zalo session trong VCS. Phiên thật (tenants/<slug>/)
+# bị .gitignore chặn — chỉ cô lập per-tenant ở runtime (NFR-6).

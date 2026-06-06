@@ -1,0 +1,145 @@
+# MeCare — Docker Compose stack self-host (Story 1.1, AR-2 foundation)
+# Chạy toàn bộ service nền tảng trên 1 VPS. Pin tag cụ thể (KHÔNG `latest`)
+# chống breaking change OSS. Secrets/config đọc từ env — KHÔNG hardcode.
+
+services:
+  # ── DB engine chung; DB riêng cho baserow và n8n ──
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-mecare}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: ${POSTGRES_DB:-mecare}
+      POSTGRES_BASEROW_DB: ${POSTGRES_BASEROW_DB:-baserow}
+      POSTGRES_N8N_DB: ${POSTGRES_N8N_DB:-n8n}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mecare}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mecare
+    # KHÔNG expose Postgres ra public (anti-pattern). Chỉ network nội bộ.
+
+  # ── CRM/DB nguồn sự thật + UI ──
+  baserow:
+    image: baserow/baserow:1.30.1
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      BASEROW_PUBLIC_URL: ${BASEROW_PUBLIC_URL:-http://localhost:8080}
+      SECRET_KEY: ${BASEROW_SECRET_KEY:-change-me-baserow-secret}
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ${POSTGRES_BASEROW_DB:-baserow}
+      DATABASE_USER: ${POSTGRES_USER:-mecare}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+    volumes:
+      - baserow_data:/baserow/data
+    ports:
+      - "${BASEROW_HTTP_PORT:-8080}:80"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost/api/_health/ || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 90s
+    networks:
+      - mecare
+
+  # ── Scheduler + quota + watchdog (n8n 2.x) ──
+  n8n:
+    image: n8nio/n8n:2.25.5
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: ${POSTGRES_N8N_DB:-n8n}
+      DB_POSTGRESDB_USER: ${POSTGRES_USER:-mecare}
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      N8N_HOST: ${N8N_HOST:-localhost}
+      N8N_PORT: ${N8N_PORT:-5678}
+      N8N_PROTOCOL: ${N8N_PROTOCOL:-http}
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-change-me-n8n-encryption-key}
+      # Queue mode tùy chọn v1 (regular = mặc định; queue khi cần scale worker)
+      EXECUTIONS_MODE: ${N8N_EXECUTIONS_MODE:-regular}
+      GENERIC_TIMEZONE: ${GENERIC_TIMEZONE:-Asia/Ho_Chi_Minh}
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n/workflows:/workflows:ro
+    ports:
+      - "${N8N_HTTP_PORT:-5678}:5678"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5678/healthz || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mecare
+
+  # ── Lõi hội thoại reactive + memory (SQLite + sqlite-vec) + channel ──
+  # Foundation stub ở Story 1.1 (xem openclaw/server.js). Runtime thật: Epic 2+.
+  openclaw:
+    build:
+      context: ./openclaw
+    restart: unless-stopped
+    depends_on:
+      zalo-bridge:
+        condition: service_healthy
+    environment:
+      # Egress cloud DUY NHẤT: OpenClaw -> OpenRouter (DeepSeek V4 Flash, non-TQ)
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-deepseek/deepseek-chat-v4-flash}
+      OPENCLAW_MEMORY_PATH: /data/memory/mecare.db
+    volumes:
+      - ./openclaw/config:/app/config:ro
+      - ./openclaw/plugins:/app/plugins:ro
+      - openclaw_memory:/data/memory
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8000/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - mecare
+
+  # ── Lớp Zalo + anti-ban + de-anonymize PII (điểm DUY NHẤT biết PII thật) ──
+  zalo-bridge:
+    build:
+      context: ./zalo-bridge
+    restart: unless-stopped
+    environment:
+      ZALO_BRIDGE_PORT: ${ZALO_BRIDGE_PORT:-3000}
+    volumes:
+      # Phiên Zalo cô lập per-tenant (NFR-6) — không trộn state giữa tenant
+      - ./zalo-bridge/tenants:/app/tenants
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - mecare
+
+volumes:
+  pgdata:
+  baserow_data:
+  n8n_data:
+  openclaw_memory:
+
+networks:
+  mecare:
+    driver: bridge

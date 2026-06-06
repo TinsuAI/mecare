@@ -1,0 +1,22 @@
+# OpenClaw — Provider config: DeepSeek V4 Flash qua OpenRouter (Story 1.1 stub)
+# Egress cloud DUY NHẤT của toàn stack. NFR-5: pin provider non-TQ
+# (data residency dữ liệu sức khỏe). Khóa đọc TỪ ENV — KHÔNG hardcode.
+
+provider:
+  type: openrouter
+  # Đọc khóa từ biến môi trường (KHÔNG commit giá trị thật)
+  api_key_env: OPENROUTER_API_KEY
+  base_url: https://openrouter.ai/api/v1
+
+  model: deepseek/deepseek-chat-v4-flash
+  # Giá tham chiếu: $0.098 / $0.197 per 1M token, ctx 1M
+
+  # Pin provider non-TQ: chỉ định nhà cung cấp suy luận ngoài Trung Quốc
+  # và KHÔNG fallback sang provider TQ.
+  routing:
+    pin_non_cn: true
+    allow_fallbacks: false
+    # Ưu tiên provider có pháp lý ngoài TQ (điền cụ thể khi onboarding)
+    order:
+      - Fireworks
+      - Together

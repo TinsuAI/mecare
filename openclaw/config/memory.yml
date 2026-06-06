@@ -1,0 +1,17 @@
+# OpenClaw — Memory store config (Story 1.1 stub)
+# SQLite + sqlite-vec nằm TRONG OpenClaw (KHÔNG phải service riêng).
+# Baserow authoritative; memory recall-only → rebuild được từ Baserow.
+
+memory:
+  engine: sqlite
+  # Đường dẫn nằm trên named volume self-host (persist qua restart)
+  path: ${OPENCLAW_MEMORY_PATH:-/data/memory/mecare.db}
+
+  vector:
+    # sqlite-vec extension cho recall ngữ nghĩa
+    extension: sqlite-vec
+    dimensions: 1024
+
+  # Recall-only: memory không phải nguồn sự thật, có thể xoá & rebuild
+  authoritative: false
+  rebuildable_from: baserow

@@ -74,3 +74,20 @@ videos/node_modules/
 videos/out/
 videos/.remotion/
 videos/.esm-cache/
+.claude/.story-automator-active
+
+# ── MeCare per-tenant secrets & data volumes (Story 1.1, AC1/AC4) ──
+# Chặn rõ mọi file env per-tenant; chỉ chừa _template.env (placeholder, committed).
+tenants/*.env
+!tenants/_template.env
+
+# Data volumes nếu dùng bind-mount (named volume Docker không nằm trong repo)
+baserow/data/
+postgres/data/
+openclaw/data/
+# Phiên Zalo per-tenant (runtime) bị chặn; chừa .gitkeep để VCS giữ thư mục (NFR-6).
+zalo-bridge/tenants/*
+!zalo-bridge/tenants/.gitkeep
+
+# .env.example là placeholder chung (committed) — chừa khỏi rule *.env.* ở trên
+!.env.example

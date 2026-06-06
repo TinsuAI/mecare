@@ -1,0 +1,24 @@
+# OpenClaw — Gateway config (Story 1.1 stub)
+# Lõi hội thoại reactive. Channel = openzalo (qua zalo-bridge).
+# Story này chỉ cần config hợp lệ để OpenClaw khởi động không lỗi;
+# logic agent/anti-ban thuộc Epic 2+.
+
+gateway:
+  name: mecare-openclaw
+  # Cổng healthcheck nội bộ
+  port: 8000
+
+channels:
+  - type: openzalo
+    # zalo-bridge là điểm DUY NHẤT biết PII thật; OpenClaw nói chuyện
+    # với bridge qua network nội bộ Docker (snake_case JSON inter-component).
+    bridge_url: http://zalo-bridge:3000
+    enabled: true
+
+provider:
+  # Cấu hình chi tiết ở provider-openrouter.yml
+  ref: openrouter
+
+memory:
+  # Cấu hình chi tiết ở memory.yml (SQLite + sqlite-vec)
+  ref: memory

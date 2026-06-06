@@ -1,0 +1,9 @@
+{
+  "name": "mecare-tests",
+  "private": true,
+  "type": "module",
+  "description": "Story 1.1 automated regression tests (Node built-in runner, zero deps)",
+  "scripts": {
+    "test": "node --test"
+  }
+}
