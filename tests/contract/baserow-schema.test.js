@@ -144,13 +144,16 @@ describe("Seed — draft khung, persona Dược Sĩ Hải (KHÔNG 'Ngọc')", ()
     assert.equal(ph.persona_name, "Dược Sĩ Hải");
   });
 
-  test("6 nhóm MessageTemplates draft, body_template rỗng", () => {
+  // Story 1.4 đã ĐIỀN nội dung: body_template không còn rỗng (xem kichban-content.test.js
+  // cho assertion nội dung chi tiết). Test này giữ contract khung: 6 nhóm + draft.
+  test("6 nhóm MessageTemplates draft, body_template đã điền (Story 1.4)", () => {
     const rows = seedByTable.MessageTemplates.rows;
     assert.equal(rows.length, 6, "phải đủ 6 nhóm");
     assert.deepEqual(rows.map((r) => r.care_group).sort(), [1, 2, 3, 4, 5, 6]);
     for (const r of rows) {
       assert.equal(r.status, "draft");
-      assert.equal(r.body_template, "", "body_template phải rỗng (nội dung = Story 1.4)");
+      assert.ok(typeof r.body_template === "string" && r.body_template.trim().length > 0,
+        "body_template phải đã điền (Story 1.4)");
     }
   });
 
@@ -160,16 +163,16 @@ describe("Seed — draft khung, persona Dược Sĩ Hải (KHÔNG 'Ngọc')", ()
     assert.ok(!/Ngọc|Ngoc/i.test(raw), "TUYỆT ĐỐI không copy persona cũ 'Ngọc' vào seed");
   });
 
-  test("FaqEntries seed: draft khung tructam, question/answer/mandatory_suffix TRỐNG", () => {
+  // Story 1.4 đã ĐIỀN: question/answer không còn rỗng. Contract khung: draft + tenant tructam.
+  test("FaqEntries seed: draft tructam, question/answer đã điền (Story 1.4)", () => {
     const faq = seedByTable.FaqEntries;
     assert.ok(faq, "thiếu seed FaqEntries");
     assert.equal(faq.tenant_slug, "tructam", "seed FAQ phải gắn tenant tructam");
-    assert.ok(faq.rows.length >= 1, "phải có ≥1 record FAQ khung");
+    assert.ok(faq.rows.length >= 1, "phải có ≥1 record FAQ");
     for (const r of faq.rows) {
       assert.equal(r.status, "draft", "FAQ seed phải draft");
-      assert.equal(r.question, "", "question phải rỗng (Story 1.4 điền)");
-      assert.equal(r.answer, "", "answer phải rỗng (Story 1.4 điền)");
-      assert.equal(r.mandatory_suffix, "", "mandatory_suffix phải rỗng (Story 1.4 điền)");
+      assert.ok(r.question && r.question.length > 0, "question phải đã điền (Story 1.4)");
+      assert.ok(r.answer && r.answer.length > 0, "answer phải đã điền (Story 1.4)");
     }
   });
 });

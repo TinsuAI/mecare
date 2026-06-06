@@ -2,16 +2,88 @@
   "table": "FaqEntries",
   "tenant_slug": "tructam",
   "key": ["scope"],
-  "_note": "Khung FAQ draft. question/answer/mandatory_suffix TRỐNG — Story 1.4 điền nội dung + câu bắt buộc TPCN, rồi duyệt.",
+  "_note": "FAQ reactive — persona 'Dược Sĩ Hải' + relay (AI luôn là người nói; khách không thấy chuyển giao). Story 1.4 điền/duyệt. Mở rộng từ 1 scope 'general' sang nhiều scope theo chủ đề. mandatory_suffix scope 'tpcn' nguyên văn 'thực phẩm bảo vệ sức khỏe, không phải thuốc điều trị bệnh'. scope 'missed-dose' nguyên văn 'không uống gấp đôi để bù liều'; scope 'otc-red-flags' cờ đỏ 38.5°C/>2 ngày. Đã loại bỏ persona cũ.",
   "rows": [
     {
       "scope": "general",
-      "question": "",
-      "answer": "",
+      "question": "Em có thể hỏi gì ở đây ạ?",
+      "answer": "Dạ, em là Dược Sĩ Hải — Nhà thuốc Trúc Tâm ạ. Anh/chị cứ nhắn em bất cứ lúc nào về: cách dùng thuốc, liều dùng, lưu ý khi uống, mua lại thuốc, hay bất kỳ điều gì bất thường sau khi dùng. Em luôn ở đây để hỗ trợ anh/chị ạ 🙏",
       "mandatory_suffix": "",
       "status": "draft",
-      "version": 0,
-      "updated_by": "seed-1.2"
+      "version": 1,
+      "updated_by": "story-1.4"
+    },
+    {
+      "scope": "cach-dung-thuoc",
+      "question": "Cho em hỏi cách dùng/liều dùng thuốc này thế nào ạ?",
+      "answer": "Dạ, em hiểu rồi ạ — cảm ơn anh/chị đã hỏi ngay nhé, đúng rồi đấy ạ!\n\n[TRẢ LỜI CỤ THỂ THEO CÂU HỎI — liều dùng, thời điểm uống trước/sau ăn, lưu ý đặc thù]\n\nNếu câu trả lời này anh/chị vẫn chưa rõ hoặc muốn em giải thích kỹ thêm, anh/chị cứ nói một tiếng là em tư vấn sâu hơn ngay bây giờ nhé! 🙏",
+      "mandatory_suffix": "",
+      "status": "draft",
+      "version": 1,
+      "updated_by": "story-1.4"
+    },
+    {
+      "scope": "missed-dose",
+      "question": "Em lỡ quên uống thuốc thì làm sao ạ?",
+      "answer": "Dạ, anh/chị đừng lo ạ. Nếu vừa quên uống:\n– Còn trong vòng 1–2 tiếng: vẫn uống được bình thường ạ\n– Nếu đã qua lâu: bỏ qua liều đó, uống liều tiếp theo đúng giờ thôi nhé\n\nQuan trọng nhất là không uống gấp đôi để bù liều anh/chị ơi — có thể gây ra phản ứng không mong muốn ạ.",
+      "mandatory_suffix": "Quy tắc bù liều: không uống gấp đôi để bù liều.",
+      "status": "draft",
+      "version": 1,
+      "updated_by": "story-1.4"
+    },
+    {
+      "scope": "otc-red-flags",
+      "question": "Em uống thuốc mấy ngày rồi mà chưa đỡ / nặng hơn thì sao ạ?",
+      "answer": "Dạ, cảm ơn anh/chị đã nhắn lại cho em ạ. Nếu sau đủ số ngày dùng thuốc mà triệu chứng chưa cải thiện hoặc có vẻ nặng hơn — đây thường là dấu hiệu cơ thể cần được bác sĩ kiểm tra kỹ hơn rồi ạ.\n\nEm khuyến nghị anh/chị đến gặp bác sĩ sớm nhé, đặc biệt nếu có một trong các dấu hiệu sau:\n– Sốt trên 38.5°C kéo dài hơn 2 ngày\n– Khó thở hoặc đau tức ngực\n– Nôn ói nhiều lần hoặc tiêu chảy liên tục không dứt\n\nAnh/chị cần em hỗ trợ tìm phòng khám gần nhất không ạ? Em tìm giúp liền!",
+      "mandatory_suffix": "Cờ đỏ OTC cần gặp bác sĩ: sốt trên 38.5°C kéo dài hơn 2 ngày; khó thở/đau tức ngực; nôn ói/tiêu chảy liên tục.",
+      "status": "draft",
+      "version": 1,
+      "updated_by": "story-1.4"
+    },
+    {
+      "scope": "phan-ung-co-hai",
+      "question": "Em thấy có biểu hiện lạ sau khi uống thuốc (nổi mẩn, buồn nôn, chóng mặt...) thì sao ạ?",
+      "answer": "Dạ, anh/chị ơi — em cảm ơn anh/chị đã nhắn ngay cho em ạ, quan trọng lắm đấy!\n\nEm đang xem thật kỹ trường hợp của anh/chị ngay bây giờ — em sẽ báo lại anh/chị trong vài phút thôi ạ.\n\nTrong lúc chờ, anh/chị lưu ý:\n– Tạm ngưng dùng thuốc\n– Uống nhiều nước\n– Nghỉ ngơi, không gắng sức",
+      "mandatory_suffix": "Cảnh báo cấp cứu: nếu khó thở, sưng mặt/lưỡi, nổi mẩn đỏ lan rộng nhanh → gọi cấp cứu 115 ngay, không chờ. Cấp cứu phát song song, không phụ thuộc relay.",
+      "status": "draft",
+      "version": 1,
+      "updated_by": "story-1.4"
+    },
+    {
+      "scope": "tpcn",
+      "question": "Thực phẩm chức năng này có chữa được bệnh không ạ?",
+      "answer": "Dạ, để em chia sẻ rõ cho anh/chị ạ. [TÊN SẢN PHẨM] có tác dụng hỗ trợ sức khỏe, cần dùng đều đặn ít nhất [SỐ TUẦN] tuần mới thấy rõ hiệu quả ạ. Anh/chị dùng đúng liều và đúng thời điểm khuyến nghị để sản phẩm phát huy tốt nhất nhé.",
+      "mandatory_suffix": "thực phẩm bảo vệ sức khỏe, không phải thuốc điều trị bệnh",
+      "status": "draft",
+      "version": 1,
+      "updated_by": "story-1.4"
+    },
+    {
+      "scope": "khieu-nai-chat-luong",
+      "question": "Em muốn phản ánh / khiếu nại về chất lượng sản phẩm ạ.",
+      "answer": "Dạ, anh/chị kính mến,\n\nEm Hải và Nhà thuốc Trúc Tâm xin tiếp nhận phản ánh của anh/chị ạ — chân thành xin lỗi anh/chị về trải nghiệm không tốt này.\n\nĐể bên em xử lý đúng cách và bảo vệ quyền lợi cho anh/chị, anh/chị có thể gửi cho em:\n– Ảnh sản phẩm và hộp/lọ (mặt nhãn có số lô, hạn sử dụng)\n– Mô tả ngắn vấn đề anh/chị gặp phải\n\nBên em cam kết:\n✅ Phản hồi ngay khi nhận đủ thông tin\n✅ Xử lý theo đúng quy trình — đổi hàng, hoàn tiền, hoặc báo nhà sản xuất tùy tình huống\n✅ Giữ bí mật thông tin của anh/chị\n\nCảm ơn anh/chị đã cho bên em biết — đây là cách để mình cùng nhau cải thiện ạ 🙏",
+      "mandatory_suffix": "Khiếu nại chất lượng: thu thập ảnh số lô/hạn sử dụng + mô tả; định tuyến đổi hàng / hoàn tiền / báo nhà sản xuất; giữ bí mật thông tin khách.",
+      "status": "draft",
+      "version": 1,
+      "updated_by": "story-1.4"
+    },
+    {
+      "scope": "doi-thuoc-thay-the",
+      "question": "Nhà thuốc hết thuốc trong đơn của em, đổi thuốc khác được không ạ?",
+      "answer": "Dạ, em có thể cung cấp thuốc thay thế tương đương (cùng hoạt chất, cùng liều lượng và dạng bào chế) ạ. Em đã kiểm tra hai loại tương đương về mặt điều trị.\n\nTuy nhiên việc đổi thuốc chỉ được thực hiện khi anh/chị đồng ý nhé — đây là quy định bắt buộc để đảm bảo quyền lợi cho anh/chị ạ. Anh/chị đồng ý dùng thuốc thay thế này không ạ, hay muốn em giải thích thêm trước khi quyết định?",
+      "mandatory_suffix": "Đổi thuốc thay thế chỉ khi khách đồng ý + đã kiểm tra tương đương. Thuốc kê đơn không bán thêm tự do; đơn bác sĩ có giá trị 5 ngày.",
+      "status": "draft",
+      "version": 1,
+      "updated_by": "story-1.4"
+    },
+    {
+      "scope": "quyen-rieng-tu",
+      "question": "Em không muốn chia sẻ thông tin sức khỏe có được không ạ?",
+      "answer": "Dạ, em hiểu ạ — thông tin sức khỏe là riêng tư, anh/chị không nhất thiết phải chia sẻ đâu ạ.\n\nHướng dẫn dùng thuốc đã có trên nhãn và tờ hướng dẫn trong hộp. Nếu có bất kỳ điều gì bất thường sau khi dùng — dù nhỏ — anh/chị có thể nhắn em bất kỳ lúc nào ạ.",
+      "mandatory_suffix": "Nhà thuốc Trúc Tâm không lưu hay chia sẻ thông tin sức khỏe của khách ra bên ngoài.",
+      "status": "draft",
+      "version": 1,
+      "updated_by": "story-1.4"
     }
   ]
 }

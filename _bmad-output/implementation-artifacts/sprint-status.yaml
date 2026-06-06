@@ -1,5 +1,5 @@
 # generated: 2026-06-06
-# last_updated: 2026-06-06
+# last_updated: 2026-06-06 (1-4 done — review complete)
 # project: MeCare
 # project_key: NOKEY
 # tracking_system: file-system
@@ -37,6 +37,7 @@
 generated: 2026-06-06
 last_updated: 2026-06-06
 project: MeCare
+# 1-4 promoted to ready-for-dev via create-story 2026-06-06
 project_key: NOKEY
 tracking_system: file-system
 story_location: "{project-root}/_bmad-output/implementation-artifacts"
@@ -47,7 +48,7 @@ development_status:
   1-1-scaffold-repo-docker-compose-stack-self-host: done
   1-2-khoi-tao-baserow-schema-nguon-su-that: done
   1-3-sinh-ma-ca-chuan-lam-idempotency-key: done
-  1-4-sua-duyet-kich-ban-duoc-si-hai-g1: backlog
+  1-4-sua-duyet-kich-ban-duoc-si-hai-g1: done
   1-5-spike-guardrail-y-te-openclaw-g2: backlog
   1-6-spike-multi-tenant-zalo-openclaw-g6: backlog
   epic-1-retrospective: optional

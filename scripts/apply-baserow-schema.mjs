@@ -15,12 +15,14 @@
 // Usage:
 //   node scripts/apply-baserow-schema.mjs              # schema + seed
 //   node scripts/apply-baserow-schema.mjs --schema     # chỉ schema
-//   node scripts/apply-baserow-schema.mjs --seed       # chỉ seed
+//   node scripts/apply-baserow-schema.mjs --seed       # chỉ seed (insert-only, skip key trùng)
+//   node scripts/apply-baserow-schema.mjs --seed --update-seed  # upsert: insert mới + UPDATE hàng đã tồn tại theo key
 //   node scripts/apply-baserow-schema.mjs --dry-run    # parse + validate, KHÔNG gọi API
 
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { upsertSeed } from "../openclaw/lib/kichban-ops.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -37,6 +39,9 @@ const args = new Set(process.argv.slice(2));
 const DRY_RUN = args.has("--dry-run");
 const ONLY_SCHEMA = args.has("--schema");
 const ONLY_SEED = args.has("--seed");
+const UPDATE_SEED = args.has("--update-seed"); // upsert: cập nhật nội dung hàng đã tồn tại theo key
+// Logic upsert (insert + PATCH giữ trạng thái duyệt) dùng chung từ openclaw/lib/kichban-ops.mjs
+// để cùng được test offline — KHÔNG reimplement inline (tránh divergence).
 
 function log(...m) { console.log(...m); }
 function die(msg) { console.error("✗", msg); process.exit(1); }
@@ -240,18 +245,18 @@ async function applySeed(dbId, seed, tableIdByName) {
     const ids = Array.isArray(link) ? link.map((x) => x.id) : [];
     return ids.includes(tenantRowId);
   };
-  const matches = (row, r) => sameTenant(r) && keys.every((k) => String(row[k]) === String(r[k]));
+  // Store adapter khớp interface kichban-ops (list/create/update). list() chỉ trả hàng CỦA
+  // tenant này (NFR-6): dedup theo key không đụng tenant khác (vd care_group 1..6 trùng số).
+  const store = {
+    list: async () => existing.results.filter(sameTenant),
+    create: (payload) => api("POST", `/api/database/rows/table/${table.id}/?user_field_names=true`, payload),
+    update: (id, patch) => api("PATCH", `/api/database/rows/table/${table.id}/${id}/?user_field_names=true`, patch),
+  };
+  // decorate: gắn link tenant khi INSERT hàng mới (update không đụng pharmacy_id).
+  const decorate = tenantRowId !== null ? (row) => ({ ...row, pharmacy_id: [tenantRowId] }) : null;
 
-  let inserted = 0, skipped = 0;
-  for (const row of seed.rows) {
-    const payload = { ...row };
-    if (tenantRowId !== null) payload.pharmacy_id = [tenantRowId];
-    const dup = existing.results.find((r) => matches(row, r));
-    if (dup) { skipped++; continue; }
-    await api("POST", `/api/database/rows/table/${table.id}/?user_field_names=true`, payload);
-    inserted++;
-  }
-  log(`• Seed ${seed.table}: +${inserted} mới, ${skipped} bỏ qua (idempotent)`);
+  const res = await upsertSeed({ store, seedRows: seed.rows, keyFields: keys, update: UPDATE_SEED, decorate });
+  log(`• Seed ${seed.table}: +${res.inserted} mới, ${res.updated} cập nhật, ${res.skipped} bỏ qua (idempotent${UPDATE_SEED ? ", upsert" : ""})`);
 }
 
 // ── Main ─────────────────────────────────────────────────────────────────────
