@@ -1,0 +1,17 @@
+{
+  "table": "FaqEntries",
+  "tenant_slug": "tructam",
+  "key": ["scope"],
+  "_note": "Khung FAQ draft. question/answer/mandatory_suffix TRỐNG — Story 1.4 điền nội dung + câu bắt buộc TPCN, rồi duyệt.",
+  "rows": [
+    {
+      "scope": "general",
+      "question": "",
+      "answer": "",
+      "mandatory_suffix": "",
+      "status": "draft",
+      "version": 0,
+      "updated_by": "seed-1.2"
+    }
+  ]
+}

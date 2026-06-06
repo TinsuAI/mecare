@@ -1,0 +1,11 @@
+{
+  "table": "QuotaCounter",
+  "description": "Trần gói tháng per-tenant.",
+  "primary": "period_month",
+  "fields": [
+    { "name": "pharmacy_id", "type": "link_row", "link_table": "Pharmacies" },
+    { "name": "period_month", "type": "text", "note": "YYYY-MM" },
+    { "name": "sent_count", "type": "number", "decimals": 0 },
+    { "name": "cap", "type": "number", "decimals": 0 }
+  ]
+}

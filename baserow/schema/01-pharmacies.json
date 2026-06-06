@@ -1,0 +1,14 @@
+{
+  "table": "Pharmacies",
+  "description": "Tenant root — mỗi nhà thuốc 1 record. KHÔNG có pharmacy_id (chính nó là tenant boundary).",
+  "tenant_root": true,
+  "primary": "pharmacy_slug",
+  "fields": [
+    { "name": "pharmacy_slug", "type": "text", "unique": true, "note": "slug tenant, dùng trong mã ca ESC-<slug>-..." },
+    { "name": "persona_name", "type": "text", "note": "Dược Sĩ Hải (KHÔNG 'Ngọc')" },
+    { "name": "zalo_session_ref", "type": "text" },
+    { "name": "monthly_quota", "type": "number", "decimals": 0 },
+    { "name": "working_hours", "type": "text", "note": "vd 08:00-21:00" },
+    { "name": "created_at", "type": "date", "include_time": true }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "table": "FaqEntries",
+  "description": "FAQ reactive (nguồn sự thật). mandatory_suffix = câu bắt buộc TPCN. status draft/approved.",
+  "primary": "scope",
+  "fields": [
+    { "name": "pharmacy_id", "type": "link_row", "link_table": "Pharmacies" },
+    { "name": "scope", "type": "text", "note": "phạm vi FAQ" },
+    { "name": "question", "type": "long_text" },
+    { "name": "answer", "type": "long_text" },
+    { "name": "mandatory_suffix", "type": "long_text", "note": "câu bắt buộc TPCN — để trống chờ Story 1.4" },
+    { "name": "status", "type": "single_select", "options": ["draft", "approved"] },
+    { "name": "version", "type": "number", "decimals": 0 },
+    { "name": "updated_by", "type": "text" },
+    { "name": "approved_at", "type": "date", "include_time": true },
+    { "name": "approved_by", "type": "text" }
+  ]
+}

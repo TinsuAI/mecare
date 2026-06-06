@@ -1,0 +1,16 @@
+{
+  "table": "EscalationCases",
+  "description": "Ca leo thang. case_id (text unique) = mã ca; logic sinh mã = Story 1.3 (story này chỉ tạo field).",
+  "primary": "case_id",
+  "fields": [
+    { "name": "case_id", "type": "text", "unique": true, "note": "ESC-<pharmacy_slug>-<YYYYMMDD>-<seq>" },
+    { "name": "pharmacy_id", "type": "link_row", "link_table": "Pharmacies" },
+    { "name": "customer_id", "type": "link_row", "link_table": "Customers" },
+    { "name": "trigger", "type": "long_text" },
+    { "name": "customer_content", "type": "long_text" },
+    { "name": "pharmacist_reply", "type": "long_text" },
+    { "name": "state", "type": "single_select", "options": ["open", "waiting_pharmacist", "resolved"] },
+    { "name": "created_at", "type": "date", "include_time": true },
+    { "name": "resolved_at", "type": "date", "include_time": true }
+  ]
+}

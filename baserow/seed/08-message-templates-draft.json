@@ -1,0 +1,14 @@
+{
+  "table": "MessageTemplates",
+  "tenant_slug": "tructam",
+  "key": ["care_group"],
+  "_note": "Khung draft 6 nhóm. body_template TRỐNG (placeholder) — nội dung persona 'Dược Sĩ Hải' thật do Story 1.4 điền/duyệt. TUYỆT ĐỐI không copy persona cũ 'Ngọc'.",
+  "rows": [
+    { "care_group": 1, "body_template": "", "status": "draft", "version": 0, "updated_by": "seed-1.2" },
+    { "care_group": 2, "body_template": "", "status": "draft", "version": 0, "updated_by": "seed-1.2" },
+    { "care_group": 3, "body_template": "", "status": "draft", "version": 0, "updated_by": "seed-1.2" },
+    { "care_group": 4, "body_template": "", "status": "draft", "version": 0, "updated_by": "seed-1.2" },
+    { "care_group": 5, "body_template": "", "status": "draft", "version": 0, "updated_by": "seed-1.2" },
+    { "care_group": 6, "body_template": "", "status": "draft", "version": 0, "updated_by": "seed-1.2" }
+  ]
+}

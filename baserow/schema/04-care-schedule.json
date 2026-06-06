@@ -1,0 +1,13 @@
+{
+  "table": "CareSchedule",
+  "description": "Lịch nhắc due theo nhóm chăm sóc.",
+  "primary": "cadence_type",
+  "fields": [
+    { "name": "pharmacy_id", "type": "link_row", "link_table": "Pharmacies" },
+    { "name": "customer_id", "type": "link_row", "link_table": "Customers" },
+    { "name": "care_group", "type": "number", "decimals": 0 },
+    { "name": "due_at", "type": "date", "include_time": true },
+    { "name": "cadence_type", "type": "single_select", "options": ["once", "weekly", "monthly", "quarterly"] },
+    { "name": "status", "type": "single_select", "options": ["pending", "sent", "done", "skipped"] }
+  ]
+}

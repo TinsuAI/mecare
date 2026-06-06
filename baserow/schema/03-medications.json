@@ -1,0 +1,13 @@
+{
+  "table": "Purchases",
+  "description": "Thuốc/đơn mua (Medications/Purchases per AR-3). Tên bảng 'Purchases' PascalCase số nhiều.",
+  "primary": "product_name",
+  "fields": [
+    { "name": "pharmacy_id", "type": "link_row", "link_table": "Pharmacies" },
+    { "name": "customer_id", "type": "link_row", "link_table": "Customers" },
+    { "name": "product_name", "type": "text" },
+    { "name": "qty", "type": "number", "decimals": 0 },
+    { "name": "purchased_at", "type": "date", "include_time": true },
+    { "name": "note", "type": "long_text" }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "table": "MessageTemplates",
+  "description": "Kịch bản proactive (nguồn sự thật). status draft/approved; chỉ approved dùng tải thật (enforce Epic 4/5).",
+  "primary": "care_group",
+  "fields": [
+    { "name": "pharmacy_id", "type": "link_row", "link_table": "Pharmacies" },
+    { "name": "care_group", "type": "number", "decimals": 0, "note": "1..6" },
+    { "name": "body_template", "type": "long_text" },
+    { "name": "status", "type": "single_select", "options": ["draft", "approved"] },
+    { "name": "version", "type": "number", "decimals": 0 },
+    { "name": "updated_by", "type": "text" },
+    { "name": "approved_at", "type": "date", "include_time": true },
+    { "name": "approved_by", "type": "text" }
+  ]
+}
