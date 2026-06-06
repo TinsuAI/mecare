@@ -102,7 +102,7 @@ Nếu thành công, MeCare trở thành **lớp chăm sóc khách hàng mặc đ
 - **Trigger leo thang** — Điều kiện buộc leo thang (phản ứng có hại, chỉ số vượt ngưỡng, đổi thuốc, khiếu nại nghiêm trọng, AI không chắc chắn…).
 - **CRM** — Hệ quản lý hồ sơ khách, phân nhóm, lịch sử hội thoại và chỉ số, dựng trên **Baserow**.
 - **Dashboard** — Màn hình chỉ số trong CRM cho chủ nhà thuốc.
-- **Kịch bản chăm sóc** — Bộ mẫu tin nhắn + quy tắc đã duyệt cho 6 nhóm (nguồn: `kichban-chamsoc-khachhang.md`).
+- **Kịch bản chăm sóc** — Bộ mẫu tin nhắn + quy tắc đã duyệt cho 6 nhóm, **lưu trên Baserow** (template proactive + FAQ reactive); chủ hiệu thuốc tự sửa + tự duyệt (draft→approved), chỉ bản approved được AI dùng. Seed ban đầu từ `kichban-chamsoc-khachhang.md`.
 - **Tin chăm sóc** — Một tin nhắn Zalo do hệ thống gửi cho khách. Đơn vị tính của trần gói (≤1.000 tin/tháng).
 - **Trần gói** — Giới hạn 1.000 tin chăm sóc/tháng/nhà thuốc; vừa là điểm giá vừa là van an toàn chống khóa tài khoản.
 - **Hermes agent** — Tác vụ AI soạn tin/hội thoại theo kịch bản (chi tiết ở addendum).
@@ -290,7 +290,7 @@ Hệ thống phát hiện khi phiên Zalo mất kết nối hoặc automation l�
 
 ### 4.5 CRM & Dashboard (Baserow)
 
-**Mô tả:** Chủ nhà thuốc thấy hồ sơ từng khách, nhóm nào cần chăm, lịch sử hội thoại, và các chỉ số hiệu quả. Realizes UJ-3.
+**Mô tả:** Chủ nhà thuốc thấy hồ sơ từng khách, nhóm nào cần chăm, lịch sử hội thoại, và các chỉ số hiệu quả; ngoài ra **tự sửa + tự duyệt kịch bản chăm sóc** (template proactive + FAQ) trực tiếp trên Baserow. Realizes UJ-3.
 
 **Functional Requirements:**
 

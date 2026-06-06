@@ -140,6 +140,9 @@ Khách ──Zalo── [openzalo channel] ─┐
   - `Messages` (mọi tin: chủ động / trả lời / leo thang / phương án dược sĩ — FR-10)
   - `EscalationCases` (mã ca, trigger, nội dung khách, phương án, trạng thái, timestamp)
   - `QuotaCounter` (tin/tháng/tenant — trần gói)
+  - `MessageTemplates` (template proactive per nhóm: `body_template`, `status` draft/approved, `version`, `updated_by`, `approved_at`) — **nguồn sự thật kịch bản chủ động**
+  - `FaqEntries` (FAQ reactive: `question`, `answer`, `mandatory_suffix` TPCN, `status`, `version`, `updated_by`, `approved_at`) — **nguồn sự thật FAQ**
+- **Kịch bản = Baserow authoritative.** Chủ hiệu thuốc tự sửa + tự duyệt (draft→approved) qua Baserow UI per-tenant; chỉ `status=approved` được dùng. `openclaw/kichban/` (nếu giữ) = cache phái sinh, rebuild từ Baserow.
 - **DB engine:** PostgreSQL dùng chung (Baserow + n8n schema riêng).
 - **Memory layer (OpenClaw, SQLite + sqlite-vec) = phái sinh, recall-only.** Index hội thoại + hoạt động hiệu thuốc để bơm context cho agent. Rebuild được từ Baserow `Messages`. KHÔNG giữ số liệu dashboard cần (tránh dual source of truth).
 - **Multi-tenancy:** phân vùng theo `pharmacy_id` mọi bảng; mỗi tenant 1 phiên Zalo + persona + quota riêng, cô lập (1 phiên hỏng không kéo tenant khác).
@@ -154,7 +157,7 @@ Khách ──Zalo── [openzalo channel] ─┐
 ### API & Communication Patterns
 
 - **Hội thoại (reactive):** Khách →Zalo→ openzalo channel → OpenClaw agent → trả lời / phát hiện trigger.
-- **Chủ động (proactive):** n8n cron → query Baserow `CareSchedule` due → enforce quota/rate-limit → điền **template cứng** (guardrail hybrid) → gửi qua openzca → ghi `Messages`.
+- **Chủ động (proactive):** n8n cron → query Baserow `CareSchedule` due → lấy **template cứng từ Baserow `MessageTemplates`** (chỉ `status=approved`, đúng nhóm) → enforce quota/rate-limit → điền placeholder (guardrail hybrid) → gửi qua openzca → ghi `Messages`. Không có template approved → không gửi + cảnh báo.
 - **Relay leo thang:** OpenClaw phát trigger → tạo `EscalationCase` có **mã ca duy nhất** → gửi Zalo dược sĩ thật (kèm mã ca) → phương án về **khớp đúng mã ca** (chống race condition — adversarial review flag) → agent nhắn lại khách giữ nguyên nội dung chuyên môn → ghi Baserow. **Idempotency key = mã ca.** Timeout: n8n watchdog, ca không treo im lặng (ngưỡng phút = Open Q7).
 - Component talk: Baserow REST API + webhooks; OpenClaw ↔ n8n qua HTTP/webhook; openzca CLI qua zalo-bridge.
 
@@ -172,8 +175,8 @@ Khách ──Zalo── [openzalo channel] ─┐
 ### AI / Agent
 
 - **Provider:** **DeepSeek V4 Flash qua OpenRouter** (`$0.098/$0.197` per 1M, ctx 1M, MoE 284B/13B). Cắm vào OpenClaw provider plugin. Pin provider non-TQ.
-- **Guardrail Hybrid (R2):** proactive = template cứng (n8n điền từ kịch bản, agent không sinh tự do); reactive FAQ = agent + **RAG kịch bản đã duyệt** + prompt guardrail + auto-leo-thang khi không chắc (catch-all FR-8). Cấp cứu → 115 song song relay.
-- RAG nguồn = `kichban-chamsoc-khachhang.md` (đã duyệt; cần cập nhật persona Ngọc→Hải + mô hình relay trước go-live — Open Q3).
+- **Guardrail Hybrid (R2):** proactive = template cứng (n8n điền từ template Baserow, agent không sinh tự do); reactive FAQ = agent + **RAG kịch bản đã duyệt** + prompt guardrail + auto-leo-thang khi không chắc (catch-all FR-8). Cấp cứu → 115 song song relay.
+- **Nguồn sự thật kịch bản = Baserow** (`MessageTemplates` + `FaqEntries`, chỉ `status=approved`); RAG/template re-index từ Baserow qua webhook on-change. Chủ hiệu thuốc tự sửa + tự duyệt. Seed ban đầu từ `kichban-chamsoc-khachhang.md` (cần cập nhật persona Ngọc→Hải + mô hình relay trước go-live — Open Q3).
 - **Hermes agent bỏ** như runtime riêng (OpenClaw tự là agent; model qua provider).
 
 ### Decision Impact / Implementation Sequence
@@ -216,7 +219,7 @@ Khách ──Zalo── [openzalo channel] ─┐
 ### Structure Patterns
 
 - Repo layout: `docker-compose.yml` (root) · `n8n/` (workflow JSON export) · `openclaw/` (config, plugins, RAG kịch bản) · `zalo-bridge/` (TS openzca wrapper) · `baserow/` (schema migration/seed) · `docs/`.
-- Kịch bản RAG: `openclaw/kichban/` — 1 file/nhóm, tên `nhom-<n>-<ten>.md`.
+- Kịch bản: nguồn sự thật = Baserow `MessageTemplates`/`FaqEntries`. `openclaw/kichban/` (nếu giữ) = cache RAG phái sinh, rebuild từ Baserow on-change.
 - Secrets/config per-tenant: `tenants/<pharmacy_slug>.env` (KHÔNG commit).
 
 ### Format Patterns
@@ -301,7 +304,7 @@ mecare/
 │   │       ├── create_escalation_case
 │   │       ├── lookup_customer
 │   │       └── send_care_message
-│   ├── kichban/                    # RAG kịch bản đã duyệt (1 file/nhóm)
+│   ├── kichban/                    # cache RAG phái sinh từ Baserow (1 file/nhóm)
 │   │   ├── nhom-1-man-tinh.md
 │   │   ├── nhom-2-otc.md
 │   │   ├── nhom-3-ke-don.md
@@ -343,11 +346,11 @@ mecare/
 | FR | Sống ở |
 |---|---|
 | FR-1, FR-2 (nhập/phân nhóm) | `baserow/views/` form + `openclaw/plugins/tools/lookup_customer` |
-| FR-3 (soạn tin) | `openclaw/kichban/` + template n8n (proactive) / agent RAG (reactive) |
+| FR-3 (soạn tin) | Baserow `MessageTemplates` (approved) + n8n điền placeholder (proactive) / agent RAG `FaqEntries` (reactive) |
 | FR-4 (lập lịch) | `n8n/workflows/MC-Schedule-DueReminders` + Baserow `CareSchedule` |
 | FR-5 (rate/trần gói) | `n8n/MC-Quota-Enforce` + `zalo-bridge/throttle.ts` |
 | FR-6 (phản hồi/opt-out) | OpenClaw agent + Baserow `Customers` |
-| FR-7 (FAQ) | OpenClaw agent + `openclaw/kichban/` RAG |
+| FR-7 (FAQ) | OpenClaw agent + RAG trên Baserow `FaqEntries` (approved) |
 | FR-8 (trigger) | `openclaw/guardrails/` + agent |
 | FR-9, FR-10 (relay/lưu) | `create_escalation_case` + `n8n/MC-Relay-Watchdog` + Baserow `EscalationCases`/`Messages` |
 | FR-11, FR-12, FR-13 (Zalo an toàn) | `zalo-bridge/` toàn bộ |

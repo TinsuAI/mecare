@@ -62,7 +62,7 @@ Tài liệu này cung cấp bản phân rã epic và story đầy đủ cho MeCa
 - **AR-2 (Initialization / Story đầu tiên):** Dựng Docker Compose stack self-host 1 VPS: `openclaw` + `n8n` + `postgres` (chung engine, schema riêng) + `baserow` + `zalo-bridge` + memory store (SQLite + sqlite-vec trong OpenClaw). Đây là foundation story bắt buộc trước mọi FR.
 - **AR-3 (Baserow schema = nguồn sự thật):** Entities lõi: `Pharmacies`, `Customers` (care_group 1..6, `is_complaint_active` cờ Nhóm 5 cắt ngang KHÔNG ghi đè care_group), `Medications/Purchases`, `CareSchedule`, `Messages` (audit-first, FR-10), `EscalationCases` (mã ca), `QuotaCounter`. Naming: Table PascalCase số nhiều, field snake_case, FK `<entity>_id`.
 - **AR-4 (Mã ca = correlation/idempotency key):** Format cố định `ESC-<pharmacy_slug>-<YYYYMMDD>-<seq>`, duy nhất toàn hệ, dùng làm idempotency key mọi nơi (Baserow, relay, log) — chống race condition/map nhầm ca đồng thời.
-- **AR-5 (Guardrail Hybrid — R2):** Proactive = template cứng (n8n điền từ kịch bản, agent không sinh tự do); reactive FAQ = agent + RAG kịch bản đã duyệt + prompt guardrail + auto-leo-thang khi không chắc. RAG nguồn = `openclaw/kichban/` (1 file/nhóm).
+- **AR-5 (Guardrail Hybrid — R2):** Proactive = template cứng (n8n điền từ template kịch bản, agent không sinh tự do); reactive FAQ = agent + RAG kịch bản đã duyệt + prompt guardrail + auto-leo-thang khi không chắc. **Nguồn sự thật kịch bản = Baserow** (bảng `MessageTemplates` + `FaqEntries`, chỉ record `status=approved`); template proactive + RAG FAQ re-index từ Baserow qua webhook on-change. `openclaw/kichban/` (nếu giữ) chỉ là cache phái sinh, rebuild được từ Baserow. Chủ hiệu thuốc tự sửa + tự duyệt (draft→approved) qua Baserow.
 - **AR-6 (Anti-ban throttle placement):** Throttle đặt ở zalo-bridge (jitter, trần ngày, biến thể, warm-up, giờ HC); n8n enforce trần gói tháng — quota check 2 tầng trước khi gửi.
 - **AR-7 (Audit-first + retry):** Mọi tin gửi/nhận ghi `Messages` Baserow TRƯỚC khi xử tiếp; gửi Zalo lỗi → retry backoff jitter, tối đa 3 → phát `session.lost` alert, tin vào queue không drop; trạng thái relay `open → waiting_pharmacist → resolved` + watchdog n8n quá SLA.
 - **AR-8 (Observability solo):** Alert kênh riêng (Zalo/Telegram Tinsu) cho: phiên hỏng, ca treo quá SLA, chạm trần gói.
@@ -185,8 +185,12 @@ So that mọi tính năng sau ghi/đọc trên một schema nhất quán, cách 
 
 **Given** Baserow đã chạy (Story 1.1)
 **When** áp dụng schema theo AR-3
-**Then** tạo bảng: `Pharmacies`, `Customers`, `Medications`/`Purchases`, `CareSchedule`, `Messages`, `EscalationCases`, `QuotaCounter`
+**Then** tạo bảng: `Pharmacies`, `Customers`, `Medications`/`Purchases`, `CareSchedule`, `Messages`, `EscalationCases`, `QuotaCounter`, `MessageTemplates`, `FaqEntries`
 **And** naming: Table PascalCase số nhiều, field snake_case, FK `<entity>_id`
+
+**Given** bảng kịch bản `MessageTemplates` (proactive) và `FaqEntries` (reactive)
+**When** kiểm tra field
+**Then** mỗi bảng có `nhom`/`scope`, nội dung (`body_template` / `question`+`answer`), `status` (draft/approved), `version`, `updated_by`, `approved_at`; `FaqEntries` có `mandatory_suffix` (TPCN); seed nội dung 6 nhóm từ kịch bản đã viết lại (Story 1.4) với `status=draft`
 
 **Given** bảng `Customers`
 **When** kiểm tra field
@@ -229,16 +233,16 @@ So that AI có nguồn kịch bản đã phê duyệt, không dùng persona cũ 
 **Acceptance Criteria:**
 
 **Given** file nguồn `kichban-chamsoc-khachhang.md` (persona cũ "Ngọc", mô hình 2-vai)
-**When** chuyển hóa sang `openclaw/kichban/` (1 file/nhóm)
-**Then** mọi persona là "Dược Sĩ Hải"; mô tả luồng theo mô hình relay dược sĩ thật (không 2-vai cũ)
+**When** chuyển hóa vào **Baserow** (`MessageTemplates` + `FaqEntries`, không phải file `openclaw/kichban/`)
+**Then** mọi persona là "Dược Sĩ Hải"; mô tả luồng theo mô hình relay dược sĩ thật (không 2-vai cũ); mỗi record `status=draft`
 
 **Given** kịch bản từng nhóm
 **When** rà nội dung an toàn y tế
 **Then** TPCN kèm câu bắt buộc nguyên văn; OTC sốt có ngưỡng cờ đỏ >38.5°C >2 ngày; quy tắc bù liều "không uống gấp đôi" hiện diện
 
-**Given** kịch bản đã viết lại
-**When** chủ sản phẩm rà duyệt
-**Then** đánh dấu trạng thái "đã duyệt" trước khi dùng cho tải thật (điều kiện chặn go-live, không chặn bắt đầu code — Open Q3)
+**Given** kịch bản đã viết lại trong Baserow
+**When** rà duyệt
+**Then** đặt `status=approved` + ghi `approved_at`/`approved_by` trước khi dùng cho tải thật (điều kiện chặn go-live, không chặn bắt đầu code — Open Q3)
 
 ### Story 1.5: Spike guardrail y tế OpenClaw (G2)
 
@@ -433,9 +437,9 @@ So that nội dung đúng kịch bản đã duyệt, giọng persona thống nh�
 
 **Acceptance Criteria:**
 
-**Given** khách thuộc một nhóm và có mẫu kịch bản đã duyệt
+**Given** khách thuộc một nhóm
 **When** n8n soạn tin
-**Then** điền đúng placeholder từ hồ sơ; giọng persona "Dược Sĩ Hải" thống nhất; agent KHÔNG sinh tự do (AR-5 template cứng)
+**Then** lấy `body_template` từ Baserow `MessageTemplates` (chỉ `status=approved`, đúng nhóm); điền đúng placeholder từ hồ sơ; giọng persona "Dược Sĩ Hải" thống nhất; agent KHÔNG sinh tự do (AR-5 template cứng); không có template approved cho nhóm → KHÔNG gửi + cảnh báo
 
 **Given** thiếu dữ liệu bắt buộc cho placeholder
 **When** soạn tin
@@ -517,7 +521,7 @@ So that tôi giải đáp nhanh mà không cần chờ dược sĩ.
 **Acceptance Criteria:**
 
 **Given** câu hỏi trong phạm vi kịch bản (cách dùng thuốc, dụng cụ, TPCN)
-**When** agent + RAG kịch bản đã duyệt xử lý (AR-5)
+**When** agent + RAG xử lý (AR-5) trên `FaqEntries` Baserow (chỉ `status=approved`); re-index khi Baserow webhook báo đổi
 **Then** trả lời tức thì, mục tiêu <5 phút trong giờ (NFR-3); không chẩn đoán
 
 **Given** câu hỏi về TPCN
@@ -627,6 +631,30 @@ So that tôi theo dõi mức dùng gói và tải chăm sóc.
 **When** có tin gửi / ca mới
 **Then** chỉ số phản ánh đúng theo chu kỳ tháng/nhà thuốc
 
+### Story 6.3: Quản lý & tự duyệt kịch bản (chủ hiệu thuốc)
+
+As a chủ nhà thuốc,
+I want sửa template chăm sóc + FAQ trực tiếp trên Baserow và tự bấm duyệt,
+So that kịch bản khớp nhu cầu nhà thuốc mà không cần MeCare can thiệp.
+
+**Acceptance Criteria:**
+
+**Given** Baserow views `MessageTemplates` + `FaqEntries` cho tenant
+**When** chủ mở (lọc theo nhóm, token-auth per-tenant)
+**Then** chỉnh sửa được record của `pharmacy_id` mình
+
+**Given** chủ sửa một record
+**When** lưu
+**Then** record tự về `status=draft`; chủ bấm duyệt → `status=approved`, ghi `version`/`updated_by`/`approved_at`
+
+**Given** chủ bấm duyệt
+**When** xác nhận
+**Then** hiển thị **cảnh báo R2**: chủ chịu trách nhiệm nội dung y tế; không khuyến khích chẩn đoán/đổi liều ngoài giới hạn an toàn (NFR-2)
+
+**Given** record được sửa
+**When** kiểm tra audit
+**Then** lưu version cũ, rollback được; chỉ record `status=approved` mới vào template proactive (Story 4.1) / RAG FAQ (Story 5.1)
+
 ---
 
 ## Epic 7: Onboarding & go-live một nhà thuốc
@@ -644,7 +672,7 @@ So that mỗi lần onboard nhất quán và đúng an toàn.
 
 **Given** một nhà thuốc mới
 **When** chạy runbook (`docs/runbook-onboarding`)
-**Then** kết nối Tài khoản Zalo chăm sóc; nạp/duyệt kịch bản 6 nhóm; khởi tạo CRM (tenant `pharmacy_id`, `tenants/<slug>.env`); cấu hình Zalo dược sĩ thật cho relay
+**Then** kết nối Tài khoản Zalo chăm sóc; seed kịch bản 6 nhóm vào Baserow (`status=draft`) + hướng dẫn chủ duyệt; khởi tạo CRM (tenant `pharmacy_id`, `tenants/<slug>.env`); cấu hình Zalo dược sĩ thật cho relay
 
 **Given** kịch bản nạp vào
 **When** trước khi mở tải thật
