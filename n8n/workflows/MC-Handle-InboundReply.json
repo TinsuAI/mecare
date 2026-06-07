@@ -1,0 +1,273 @@
+{
+  "name": "MC-Handle-InboundReply",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "inbound-reply",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 240],
+      "webhookId": "mc-inbound-reply"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_MESSAGES }}/?user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            { "name": "pharmacy_id", "value": "={{ $json.body.pharmacy_id }}" },
+            { "name": "customer_ref", "value": "={{ $json.body.customer_id }}" },
+            { "name": "care_group", "value": "={{ $json.body.care_group }}" },
+            { "name": "type", "value": "reply" },
+            { "name": "content", "value": "={{ $json.body.message_content }}" },
+            { "name": "status", "value": "sent" },
+            { "name": "ts", "value": "={{ $json.body.ts }}" }
+          ]
+        }
+      },
+      "id": "log-inbound-message",
+      "name": "Log Inbound Message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [240, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "const content = ($('Webhook Trigger').first().json.body.message_content ?? '').trim().toLowerCase();\nconst care_group = $('Webhook Trigger').first().json.body.care_group;\nconst customer_id = $('Webhook Trigger').first().json.body.customer_id;\nconst pharmacy_id = $('Webhook Trigger').first().json.body.pharmacy_id;\nconst OPT_OUT_KW = ['dừng', 'thôi', 'không nhắn nữa', 'stop', 'hủy', 'bỏ đi', 'không cần', 'thôi nhắn'];\nconst is_opt_out = OPT_OUT_KW.some(kw => content.includes(kw));\nconst is_done_signal = !is_opt_out && (/^1[\\s\\b.,]?/.test(content) || ['đỡ rồi','xong rồi','done'].some(kw => content.includes(kw)));\nconst is_continue_signal = !is_opt_out && !is_done_signal && (/^2[\\s\\b.,]?/.test(content) || content.includes('chưa đỡ'));\nconst is_escalation = !is_opt_out && !is_done_signal && !is_continue_signal && (/^3[\\s\\b.,]?/.test(content) || ['nặng hơn','tệ hơn'].some(kw => content.includes(kw)));\nconst classified_type = is_opt_out ? 'opt_out' : is_done_signal ? 'done_signal' : is_continue_signal ? 'continue_signal' : is_escalation ? 'escalation_trigger' : 'free_form';\nreturn [{ json: { pharmacy_id, customer_id, care_group, message_content: content, classified_type, is_opt_out, is_done_signal, is_escalation } }];"
+      },
+      "id": "classify-response",
+      "name": "Classify Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 240]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.care_group }}",
+              "rightValue": 6,
+              "operator": { "type": "number", "operation": "equal" }
+            }
+          ]
+        }
+      },
+      "id": "guard-is-group6",
+      "name": "Guard: Is Group 6",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [720, 240]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_CUSTOMERS }}/{{ $json.customer_id }}/?user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "group6_unlocked": true
+        }
+      },
+      "id": "unlock-group6-customer",
+      "name": "Unlock Group 6 Customer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [960, 120]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.classified_type }}",
+              "rightValue": "opt_out",
+              "operator": { "type": "string", "operation": "equal" }
+            }
+          ]
+        }
+      },
+      "id": "guard-is-opt-out",
+      "name": "Guard: Is Opt-Out",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1200, 240]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_CUSTOMERS }}/{{ $json.customer_id }}/?user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "is_opted_out": true
+        }
+      },
+      "id": "update-customer-opted-out",
+      "name": "Update Customer Opted Out",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1440, 120]
+    },
+    {
+      "parameters": {
+        "jsCode": "const customerId = $json.customer_id;\nconst pharmacyId = $json.pharmacy_id;\nconst baserowUrl = $env.BASEROW_URL;\nconst token = $env.BASEROW_TOKEN;\nconst table = $env.BASEROW_TABLE_CARE_SCHEDULE;\nconst statuses = ['pending', 'rate_limited'];\nlet cancelledCount = 0;\nfor (const status of statuses) {\n  const res = await $http.get(`${baserowUrl}/api/database/rows/table/${table}/?filter__field_customer_id__link_row_has=${customerId}&filter__field_status__equal=${status}&user_field_names=true`);\n  const rows = res.body?.results ?? [];\n  for (const row of rows) {\n    await $http.patch(`${baserowUrl}/api/database/rows/table/${table}/${row.id}/?user_field_names=true`, { body: { status: 'skipped' }, headers: { Authorization: `Token ${token}` } });\n    cancelledCount++;\n  }\n}\nreturn [{ json: { ...$input.first().json, cancelled_count: cancelledCount, actions: ['opted_out', 'schedule_cleared'] } }];"
+      },
+      "id": "cancel-pending-schedule",
+      "name": "Cancel Pending Schedule",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1680, 120]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.classified_type }}",
+              "rightValue": "done_signal",
+              "operator": { "type": "string", "operation": "equal" }
+            }
+          ]
+        }
+      },
+      "id": "guard-is-done-signal",
+      "name": "Guard: Is Done Signal",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1440, 360]
+    },
+    {
+      "parameters": {
+        "jsCode": "const customerId = $json.customer_id;\nconst baserowUrl = $env.BASEROW_URL;\nconst token = $env.BASEROW_TOKEN;\nconst table = $env.BASEROW_TABLE_CARE_SCHEDULE;\nconst res = await $http.get(`${baserowUrl}/api/database/rows/table/${table}/?filter__field_customer_id__link_row_has=${customerId}&filter__field_status__equal=pending&user_field_names=true`);\nconst rows = res.body?.results ?? [];\nfor (const row of rows) {\n  await $http.patch(`${baserowUrl}/api/database/rows/table/${table}/${row.id}/?user_field_names=true`, { body: { status: 'done' }, headers: { Authorization: `Token ${token}` } });\n}\nreturn [{ json: { ...$input.first().json, closed_count: rows.length, actions: ['messages_logged', 'schedule_closed'] } }];"
+      },
+      "id": "cancel-followup-schedule",
+      "name": "Cancel Follow-Up Schedule",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1680, 360]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "r1", "name": "classified_type", "value": "={{ $json.classified_type }}", "type": "string" },
+            { "id": "r2", "name": "pharmacy_id", "value": "={{ $json.pharmacy_id }}", "type": "string" },
+            { "id": "r3", "name": "customer_id", "value": "={{ $json.customer_id }}", "type": "string" },
+            { "id": "r4", "name": "actions_taken", "value": "={{ $json.actions ?? [] }}", "type": "array" }
+          ]
+        }
+      },
+      "id": "return-result",
+      "name": "Return Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [1920, 240]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [{ "node": "Log Inbound Message", "type": "main", "index": 0 }]
+      ]
+    },
+    "Log Inbound Message": {
+      "main": [
+        [{ "node": "Classify Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Classify Response": {
+      "main": [
+        [{ "node": "Guard: Is Group 6", "type": "main", "index": 0 }]
+      ]
+    },
+    "Guard: Is Group 6": {
+      "main": [
+        [{ "node": "Unlock Group 6 Customer", "type": "main", "index": 0 }],
+        [{ "node": "Guard: Is Opt-Out", "type": "main", "index": 0 }]
+      ]
+    },
+    "Unlock Group 6 Customer": {
+      "main": [
+        [{ "node": "Guard: Is Opt-Out", "type": "main", "index": 0 }]
+      ]
+    },
+    "Guard: Is Opt-Out": {
+      "main": [
+        [{ "node": "Update Customer Opted Out", "type": "main", "index": 0 }],
+        [{ "node": "Guard: Is Done Signal", "type": "main", "index": 0 }]
+      ]
+    },
+    "Update Customer Opted Out": {
+      "main": [
+        [{ "node": "Cancel Pending Schedule", "type": "main", "index": 0 }]
+      ]
+    },
+    "Cancel Pending Schedule": {
+      "main": [
+        [{ "node": "Return Result", "type": "main", "index": 0 }]
+      ]
+    },
+    "Guard: Is Done Signal": {
+      "main": [
+        [{ "node": "Cancel Follow-Up Schedule", "type": "main", "index": 0 }],
+        [{ "node": "Return Result", "type": "main", "index": 0 }]
+      ]
+    },
+    "Cancel Follow-Up Schedule": {
+      "main": [
+        [{ "node": "Return Result", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "id": "mc-handle-inbound-reply",
+  "tags": []
+}

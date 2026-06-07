@@ -9,6 +9,8 @@
     { "name": "care_group", "type": "number", "decimals": 0, "note": "integer 1..6 (không enforce range ở Baserow — validate lớp app)" },
     { "name": "is_complaint_active", "type": "boolean", "note": "cờ Nhóm 5 cắt ngang — KHÔNG ghi đè care_group" },
     { "name": "friend_status", "type": "single_select", "options": ["none", "pending", "friended", "declined"], "note": "trạng thái opt-in kết bạn Zalo" },
+    { "name": "is_opted_out", "type": "boolean", "default": false, "note": "khách từ chối nhận tin chăm sóc (soft opt-out) — dừng toàn bộ proactive messaging" },
+    { "name": "group6_unlocked", "type": "boolean", "default": false, "note": "Nhóm 6 đã phản hồi ít nhất 1 lần → cho phép gửi proactive; null/false = chưa unlock" },
     { "name": "notes", "type": "long_text" },
     { "name": "created_at", "type": "date", "include_time": true },
     { "name": "updated_at", "type": "date", "include_time": true }

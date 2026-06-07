@@ -341,4 +341,61 @@ describe("MC-Schedule-DueReminders workflow structure", () => {
     );
     assert.ok(hasCountGt0, "Guard: Quota Row Exists must check count > 0");
   });
+
+  // Story 4.4 — Opt-out / Group 6 guard nodes
+  test("5.45 — có node 'Get Customer' (httpRequest GET) sau Process Each Row (AC5, AC6)", () => {
+    const node = workflow.nodes.find(
+      (n) => n.name === "Get Customer" && n.type === "n8n-nodes-base.httpRequest"
+    );
+    assert.ok(node, "'Get Customer' httpRequest node not found");
+    assert.equal(node.parameters?.method ?? "GET", "GET", "Get Customer must use GET");
+  });
+
+  test("5.46 — 'Get Customer' URL tham chiếu BASEROW_TABLE_CUSTOMERS (AC5, AC6)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Get Customer");
+    assert.ok(node, "'Get Customer' node not found");
+    const url = node?.parameters?.url ?? "";
+    assert.ok(
+      url.includes("BASEROW_TABLE_CUSTOMERS"),
+      `Get Customer URL must reference BASEROW_TABLE_CUSTOMERS, got: ${url}`
+    );
+  });
+
+  test("5.47 — có node 'Guard: Customer Opted Out' (if) (AC5)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Guard: Customer Opted Out" && n.type === "n8n-nodes-base.if"
+    );
+    assert.ok(found, "'Guard: Customer Opted Out' if node not found");
+  });
+
+  test("5.48 — 'Guard: Customer Opted Out' condition kiểm tra is_opted_out (AC5)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Guard: Customer Opted Out");
+    assert.ok(node, "'Guard: Customer Opted Out' node not found");
+    const conditions = node?.parameters?.conditions?.conditions ?? [];
+    const hasOptedOutCheck = conditions.some(
+      (c) => String(c.leftValue).includes("is_opted_out")
+    );
+    assert.ok(hasOptedOutCheck, "Guard: Customer Opted Out must check is_opted_out");
+  });
+
+  test("5.49 — có node 'Guard: Group 6 Locked' (if) (AC6)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Guard: Group 6 Locked" && n.type === "n8n-nodes-base.if"
+    );
+    assert.ok(found, "'Guard: Group 6 Locked' if node not found");
+  });
+
+  test("5.50 — 'Guard: Group 6 Locked' condition kiểm tra care_group=6 và group6_unlocked (AC6)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Guard: Group 6 Locked");
+    assert.ok(node, "'Guard: Group 6 Locked' node not found");
+    const conditions = node?.parameters?.conditions?.conditions ?? [];
+    const hasCareGroup6 = conditions.some(
+      (c) => String(c.leftValue).includes("care_group") && c.rightValue === 6
+    );
+    const hasGroupUnlocked = conditions.some(
+      (c) => String(c.leftValue).includes("group6_unlocked")
+    );
+    assert.ok(hasCareGroup6, "Guard: Group 6 Locked must check care_group === 6");
+    assert.ok(hasGroupUnlocked, "Guard: Group 6 Locked must check group6_unlocked");
+  });
 });
