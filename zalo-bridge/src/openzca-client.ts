@@ -1,5 +1,19 @@
 export type OpenzcaResult = { ok: true } | { ok: false; error: string };
 
+export async function checkOpenzcaHealth(): Promise<{ ok: boolean; error?: string }> {
+  const openzcaUrl = process.env.OPENZCA_URL ?? "";
+  if (!openzcaUrl) return { ok: true };
+  try {
+    const resp = await fetch(`${openzcaUrl}/healthz`, {
+      signal: AbortSignal.timeout(5_000),
+    });
+    if (!resp.ok) return { ok: false, error: `HTTP ${resp.status}` };
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
 export async function sendViaOpenzca(
   pharmacyId: string,
   customerPhone: string,

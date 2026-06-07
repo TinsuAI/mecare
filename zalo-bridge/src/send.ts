@@ -1,7 +1,8 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { randomUUID } from "node:crypto";
 import { checkOptIn } from "./opt-in-gate.ts";
-import { getRiskState, recordSignal } from "./risk-monitor.ts";
+import { getRiskState, recordSignal, emitAlert } from "./risk-monitor.ts";
+import { getSessionState, recordSessionEvent } from "./session-monitor.ts";
 import {
   isBusinessHour,
   checkDailyCap,
@@ -78,6 +79,19 @@ export async function handleSend(
       content: variantContent,
     });
 
+    if (getSessionState().state === "lost") {
+      await queueDeadLetter(auditRowId, {
+        message_id,
+        pharmacy_id,
+        customer_phone,
+        content: variantContent,
+        error_text: "session_lost",
+      }).catch(console.error);
+      res.writeHead(202, { "content-type": "application/json" });
+      res.end(JSON.stringify({ queued: true, message_id }));
+      return;
+    }
+
     const MAX_RETRIES = 3;
     let attempt = 0;
     let lastError = "";
@@ -100,6 +114,7 @@ export async function handleSend(
     }
 
     if (sendOk) {
+      recordSessionEvent("send_success");
       if (auditRowId !== null) {
         await updateMessageStatus(auditRowId, "sent").catch(console.error);
       }
@@ -109,6 +124,8 @@ export async function handleSend(
       return;
     }
 
+    recordSessionEvent("send_failure", lastError);
+
     await queueDeadLetter(auditRowId, {
       message_id,
       pharmacy_id,
@@ -117,21 +134,7 @@ export async function handleSend(
       error_text: lastError,
     }).catch(console.error);
 
-    const alertUrl = process.env.ALERT_WEBHOOK_URL ?? "";
-    if (alertUrl) {
-      fetch(alertUrl, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          event: "session.lost",
-          pharmacy_id,
-          message_id,
-          service: "zalo-bridge",
-          timestamp_ms: Date.now(),
-        }),
-        signal: AbortSignal.timeout(5000),
-      }).catch(console.error);
-    }
+    void emitAlert("session.lost", pharmacy_id + ":" + lastError);
 
     res.writeHead(202, { "content-type": "application/json" });
     res.end(JSON.stringify({ queued: true, message_id }));

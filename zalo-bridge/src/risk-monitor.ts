@@ -22,7 +22,7 @@ function pruneWindow(nowMs: number): void {
   signals.splice(0, i);
 }
 
-async function sendAlert(event: string, reason: string): Promise<void> {
+export async function emitAlert(event: string, reason: string): Promise<void> {
   console.error("[ALERT]", event, "reason=" + reason);
   const url = process.env.ALERT_WEBHOOK_URL ?? "";
   if (!url) return;
@@ -53,7 +53,7 @@ function evaluateAndAct(): void {
     if (currentState !== "paused") {
       currentState = "paused";
       const reason = blockSpam >= blockThreshold ? "block_spam_threshold" : "error_threshold";
-      void sendAlert("risk.paused", reason);
+      void emitAlert("risk.paused", reason);
     }
     return;
   }
@@ -79,7 +79,7 @@ export function getRiskState(nowMs?: number): {
   // Threshold re-evaluation is NOT done here — thresholds only trigger on new signals via recordSignal.
   if (currentState === "paused" && process.env.RISK_AUTO_RESUME === "true" && signals.length === 0) {
     currentState = "normal";
-    void sendAlert("risk.resumed", "auto");
+    void emitAlert("risk.resumed", "auto");
   }
 
   let block = 0;
@@ -103,5 +103,5 @@ export function getRiskState(nowMs?: number): {
 export function resetToNormal(reason = "manual"): void {
   if (currentState === "normal") return;
   currentState = "normal";
-  void sendAlert("risk.resumed", reason);
+  void emitAlert("risk.resumed", reason);
 }

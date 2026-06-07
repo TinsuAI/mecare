@@ -114,6 +114,7 @@ describe("Story 2.4: audit-first + retry + dead-letter", () => {
         DAILY_SEND_CAP: "50",
         ALERT_WEBHOOK_URL: `http://127.0.0.1:${MOCK_OPENZCA_PORT}/alert`,
         RISK_ERROR_COUNT_THRESHOLD: "99",
+        SESSION_HEALTH_INTERVAL_MS: "3600000",
       },
     });
   });
@@ -190,8 +191,8 @@ describe("Story 2.4: audit-first + retry + dead-letter", () => {
     assert.ok(alertCall, "session.lost alert should be fired");
     assert.equal(alertCall.body?.event, "session.lost");
     assert.equal(alertCall.body?.service, "zalo-bridge");
-    assert.ok(typeof alertCall.body?.message_id === "string");
-    assert.equal(alertCall.body?.pharmacy_id, "pharm-ac2", "alert body must include pharmacy_id");
+    assert.ok(typeof alertCall.body?.reason === "string", "alert body must have reason field");
+    assert.ok(alertCall.body?.reason.includes("pharm-ac2"), "alert reason must include pharmacy_id");
   });
 
   test("AC3: idempotent — exactly one POST and one PATCH per send", async () => {
