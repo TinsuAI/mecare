@@ -1,0 +1,529 @@
+{
+  "name": "MC-Compose-MessageFromTemplate",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger-001",
+      "name": "Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_MESSAGES }}/?filter__field_message_id__equal={{ $json.message_id }}&user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        }
+      },
+      "id": "check-idempotency",
+      "name": "Check Idempotency",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-duplicate",
+      "name": "Guard: Duplicate",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "r1",
+              "name": "result",
+              "value": "skip",
+              "type": "string"
+            },
+            {
+              "id": "r2",
+              "name": "reason",
+              "value": "duplicate_message_id",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "return-duplicate-skip",
+      "name": "Return: Duplicate Skip",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        720,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_MESSAGE_TEMPLATES }}/?filter__field_care_group__equal={{ $('Trigger').first().json.care_group }}&filter__field_status__equal=approved&filter__field_pharmacy_id__equal={{ $('Trigger').first().json.pharmacy_id }}&user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        }
+      },
+      "id": "fetch-template",
+      "name": "Fetch Template",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        720,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-no-template",
+      "name": "Guard: No Template",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        960,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "r3",
+              "name": "result",
+              "value": "skip",
+              "type": "string"
+            },
+            {
+              "id": "r4",
+              "name": "reason",
+              "value": "no_template",
+              "type": "string"
+            },
+            {
+              "id": "r5",
+              "name": "care_group",
+              "value": "={{ $('Trigger').first().json.care_group }}",
+              "type": "number"
+            },
+            {
+              "id": "r6",
+              "name": "pharmacy_id",
+              "value": "={{ $('Trigger').first().json.pharmacy_id }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "return-no-template-skip",
+      "name": "Return: No Template Skip",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_CUSTOMERS }}/{{ $('Trigger').first().json.customer_id }}/?user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        }
+      },
+      "id": "fetch-customer",
+      "name": "Fetch Customer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1200,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Inline from n8n/lib/compose-message.js (n8n cannot import local modules)\nfunction detectMissingPlaceholders(bodyTemplate, placeholderMap) {\n  const seen = [];\n  const re = /\\[([^\\]]+)\\]/g;\n  let match;\n  while ((match = re.exec(bodyTemplate)) !== null) {\n    const key = match[1];\n    if (!seen.includes(key)) seen.push(key);\n  }\n  return seen.filter((key) => !placeholderMap[key]);\n}\n\nfunction substituteTemplate(bodyTemplate, placeholderMap) {\n  const missing = detectMissingPlaceholders(bodyTemplate, placeholderMap);\n  if (missing.length > 0) return { ok: false, missing };\n  const content = bodyTemplate.replace(/\\[([^\\]]+)\\]/g, (_, key) => placeholderMap[key] ?? '');\n  return { ok: true, content };\n}\n\nconst triggerData = $('Trigger').first().json;\nconst templateRow = $('Fetch Template').first().json.results[0];\nconst customerRow = $('Fetch Customer').first().json;\nconst care_group = triggerData.care_group;\nconst bodyTemplate = templateRow.body_template;\n\nconst placeholderMap = {\n  'TÊN': customerRow.full_name || '',\n  'TÊN THUỐC': customerRow.notes || '',\n  'NGÀY TÁI KHÁM': triggerData.due_at || '',\n};\n\nconst result = substituteTemplate(bodyTemplate, placeholderMap);\nreturn [{ json: { ...result, care_group } }];"
+      },
+      "id": "resolve-placeholders",
+      "name": "Resolve Placeholders",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-missing-placeholder",
+      "name": "Guard: Missing Placeholder",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "r7",
+              "name": "result",
+              "value": "skip",
+              "type": "string"
+            },
+            {
+              "id": "r8",
+              "name": "reason",
+              "value": "missing_placeholder",
+              "type": "string"
+            },
+            {
+              "id": "r9",
+              "name": "missing_fields",
+              "value": "={{ $json.missing }}",
+              "type": "array"
+            }
+          ]
+        }
+      },
+      "id": "return-missing-skip",
+      "name": "Return: Missing Placeholder Skip",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        1920,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Inline from n8n/lib/compose-message.js\nfunction appendTpcnSuffix(content, careGroup) {\n  if (careGroup === 4) {\n    return content + '\\n\\nLưu ý: thực phẩm bảo vệ sức khỏe, không phải thuốc điều trị bệnh.';\n  }\n  return content;\n}\n\nconst { content, care_group } = $input.first().json;\nconst composed_content = appendTpcnSuffix(content, Number(care_group));\nreturn [{ json: { composed_content, care_group } }];"
+      },
+      "id": "append-tpcn-suffix",
+      "name": "Append TPCN Suffix",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Inline from n8n/lib/compose-message.js\nconst crypto = require('crypto');\nfunction buildCustomerRef(pharmacyId, customerId) {\n  return crypto.createHash('sha256').update(pharmacyId + ':' + customerId).digest('hex');\n}\n\nconst { pharmacy_id, customer_id, message_id } = $('Trigger').first().json;\nconst { composed_content, care_group } = $input.first().json;\nconst customer_ref = buildCustomerRef(pharmacy_id, customer_id);\nconst care_group_int = Number(care_group);\nconst jsonBody = JSON.stringify({\n  pharmacy_id,\n  customer_ref,\n  message_id,\n  care_group: care_group_int,\n  type: 'proactive',\n  content: composed_content,\n  status: 'pending',\n  ts: new Date().toISOString()\n});\nreturn [{ json: { composed_content, care_group: care_group_int, customer_ref, message_id, pharmacy_id, jsonBody } }];"
+      },
+      "id": "build-customer-ref",
+      "name": "Build customer_ref",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_MESSAGES }}/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={{ $json.jsonBody }}"
+      },
+      "id": "audit-first-write",
+      "name": "Audit-First Write Messages",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2400,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "r10",
+              "name": "result",
+              "value": "composed",
+              "type": "string"
+            },
+            {
+              "id": "r11",
+              "name": "message_id",
+              "value": "={{ $('Build customer_ref').first().json.message_id }}",
+              "type": "string"
+            },
+            {
+              "id": "r12",
+              "name": "content",
+              "value": "={{ $('Build customer_ref').first().json.composed_content }}",
+              "type": "string"
+            },
+            {
+              "id": "r13",
+              "name": "customer_ref",
+              "value": "={{ $('Build customer_ref').first().json.customer_ref }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "return-result",
+      "name": "Return Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        2640,
+        360
+      ]
+    }
+  ],
+  "connections": {
+    "Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check Idempotency",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Idempotency": {
+      "main": [
+        [
+          {
+            "node": "Guard: Duplicate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Duplicate": {
+      "main": [
+        [
+          {
+            "node": "Return: Duplicate Skip",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fetch Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Template": {
+      "main": [
+        [
+          {
+            "node": "Guard: No Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: No Template": {
+      "main": [
+        [
+          {
+            "node": "Return: No Template Skip",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fetch Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Customer": {
+      "main": [
+        [
+          {
+            "node": "Resolve Placeholders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve Placeholders": {
+      "main": [
+        [
+          {
+            "node": "Guard: Missing Placeholder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Missing Placeholder": {
+      "main": [
+        [
+          {
+            "node": "Return: Missing Placeholder Skip",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append TPCN Suffix",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append TPCN Suffix": {
+      "main": [
+        [
+          {
+            "node": "Build customer_ref",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build customer_ref": {
+      "main": [
+        [
+          {
+            "node": "Audit-First Write Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit-First Write Messages": {
+      "main": [
+        [
+          {
+            "node": "Return Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
