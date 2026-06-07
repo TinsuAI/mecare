@@ -165,3 +165,111 @@ describe("/send endpoint integration (Story 2.1 AC#1,#2,#6)", () => {
     assert.equal(res.json.blocked, true);
   });
 });
+
+// ── unit contract: resolveFriendStatus plain-string path ──────
+// Baserow can return friend_status as a raw string (not {value} object)
+
+describe("checkOptIn — plain string friend_status (resolveFriendStatus branch)", () => {
+  beforeEach(() => {
+    process.env.BASEROW_URL = "http://baserow-test:80";
+    process.env.BASEROW_TOKEN = "test-token";
+    process.env.CUSTOMERS_TABLE_ID = "999";
+  });
+
+  test("friend_status plain string 'friended' → allowed", async () => {
+    mockFetch(async () => ({
+      ok: true,
+      json: async () => ({ results: [{ friend_status: "friended", phone: "0911111111" }] }),
+    }));
+    const result = await checkOptIn("tructam", "0911111111");
+    assert.deepEqual(result, { blocked: false });
+  });
+
+  test("friend_status plain string 'none' → blocked opt_in_required", async () => {
+    mockFetch(async () => ({
+      ok: true,
+      json: async () => ({ results: [{ friend_status: "none", phone: "0912222222" }] }),
+    }));
+    const result = await checkOptIn("tructam", "0912222222");
+    assert.deepEqual(result, { blocked: true, reason: "opt_in_required", friend_status: "none" });
+  });
+
+  test("friend_status null/missing → blocked opt_in_required (defaults to 'none')", async () => {
+    mockFetch(async () => ({
+      ok: true,
+      json: async () => ({ results: [{ phone: "0913333333" }] }),
+    }));
+    const result = await checkOptIn("tructam", "0913333333");
+    assert.deepEqual(result, { blocked: true, reason: "opt_in_required", friend_status: "none" });
+  });
+});
+
+// ── integration: /send with mock Baserow (AC#1, AC#2, AC#3) ──
+// Tests the full HTTP path with a controllable Baserow mock to cover
+// happy path 202, opt_in_required 403, and customer_not_found 403.
+
+const PORT3 = 31305;
+const MOCK_BASEROW_PORT = 31306;
+let srv3;
+let mockBaserowSrv;
+let mockBaserowResponse = null;
+
+describe("/send endpoint — mock Baserow (AC#1, AC#2, AC#3)", () => {
+  before(async () => {
+    mockBaserowSrv = http.createServer((_req, res) => {
+      res.writeHead(200, { "content-type": "application/json" });
+      res.end(JSON.stringify(mockBaserowResponse ?? { results: [] }));
+    });
+    await new Promise((resolve) => mockBaserowSrv.listen(MOCK_BASEROW_PORT, "127.0.0.1", resolve));
+
+    srv3 = await startServer({
+      entry: "zalo-bridge/src/index.ts",
+      port: PORT3,
+      env: {
+        ZALO_BRIDGE_PORT: String(PORT3),
+        BASEROW_URL: `http://127.0.0.1:${MOCK_BASEROW_PORT}`,
+        BASEROW_TOKEN: "test",
+        CUSTOMERS_TABLE_ID: "1",
+      },
+    });
+  });
+  after(async () => {
+    await srv3?.stop();
+    await new Promise((resolve) => mockBaserowSrv.close(resolve));
+  });
+
+  test("friended customer → 202 queued (AC#2 happy path)", async () => {
+    mockBaserowResponse = { results: [{ friend_status: { value: "friended" }, phone: "0901234567" }] };
+    const res = await post(PORT3, "/send", {
+      pharmacy_id: "tructam",
+      customer_phone: "0901234567",
+      content: "Chào anh/chị",
+    });
+    assert.equal(res.status, 202);
+    assert.deepEqual(res.json, { queued: true });
+  });
+
+  test("non-friended customer → 403 opt_in_required (AC#1)", async () => {
+    mockBaserowResponse = { results: [{ friend_status: { value: "pending" }, phone: "0902222222" }] };
+    const res = await post(PORT3, "/send", {
+      pharmacy_id: "tructam",
+      customer_phone: "0902222222",
+      content: "Chào anh/chị",
+    });
+    assert.equal(res.status, 403);
+    assert.equal(res.json.blocked, true);
+    assert.equal(res.json.reason, "opt_in_required");
+  });
+
+  test("customer not found in Baserow → 403 customer_not_found (AC#3)", async () => {
+    mockBaserowResponse = { results: [] };
+    const res = await post(PORT3, "/send", {
+      pharmacy_id: "tructam",
+      customer_phone: "0999999999",
+      content: "Chào anh/chị",
+    });
+    assert.equal(res.status, 403);
+    assert.equal(res.json.blocked, true);
+    assert.equal(res.json.reason, "customer_not_found");
+  });
+});

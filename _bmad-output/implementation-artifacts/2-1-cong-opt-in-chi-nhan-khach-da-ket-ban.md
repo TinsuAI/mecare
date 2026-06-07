@@ -1,6 +1,6 @@
 # Story 2.1: Cổng opt-in — chỉ nhắn khách đã kết bạn
 
-Status: review
+Status: done
 
 ## Story
 
@@ -10,7 +10,7 @@ so that không add lạnh/scrape/nhắn người lạ — giảm rủi ro bị b
 
 ## Acceptance Criteria
 
-1. **Given** một khách có `friend_status` ≠ `"friended"` (bao gồm `"none"`, `"pending"`, `"declined"`), **When** zalo-bridge nhận request gửi tin cho khách đó, **Then** chặn gửi ngay, trả về `{ "blocked": true, "reason": "opt_in_required", "friend_status": "<status>" }`, ghi log `[opt-in-gate] BLOCKED pharmacy_id=<id> customer_ref=<ref> friend_status=<status>`, KHÔNG gọi openzca, KHÔNG add lạnh/scrape.
+1. **Given** một khách có `friend_status` ≠ `"friended"` (bao gồm `"none"`, `"pending"`, `"declined"`), **When** zalo-bridge nhận request gửi tin cho khách đó, **Then** chặn gửi ngay, trả về `{ "blocked": true, "reason": "opt_in_required", "friend_status": "<status>" }`, ghi log `[opt-in-gate] BLOCKED pharmacy_id=<id> customer_phone=<phone> friend_status=<status>`, KHÔNG gọi openzca, KHÔNG add lạnh/scrape.
 
 2. **Given** một khách có `friend_status` = `"friended"`, **When** zalo-bridge nhận request gửi tin, **Then** opt-in gate trả về `{ "blocked": false }`, cho phép luồng gửi tiếp tục.
 
@@ -20,7 +20,7 @@ so that không add lạnh/scrape/nhắn người lạ — giảm rủi ro bị b
 
 5. **Given** khách vừa kết bạn tại quầy, **When** nhân viên cập nhật Baserow (Story 3.1 phụ trách UI), `friend_status` được set thành `"friended"`, **Then** các request gửi tiếp theo cho khách đó sẽ pass qua opt-in gate (Baserow là source of truth — gate query real-time).
 
-6. **Given** zalo-bridge nhận POST `/send`, **When** payload thiếu `pharmacy_id` hoặc `customer_ref` hoặc `content`, **Then** trả về `400 { "error": "missing_fields", "required": ["pharmacy_id", "customer_ref", "content"] }`.
+6. **Given** zalo-bridge nhận POST `/send`, **When** payload thiếu `pharmacy_id` hoặc `customer_phone` hoặc `content`, **Then** trả về `400 { "error": "missing_fields", "required": ["pharmacy_id", "customer_phone", "content"] }`.
 
 ## Tasks / Subtasks
 
@@ -59,8 +59,8 @@ so that không add lạnh/scrape/nhắn người lạ — giảm rủi ro bị b
   - [x] 5.2: `docker-compose.yml` service `zalo-bridge` pass `BASEROW_TOKEN`, `BASEROW_URL`, `CUSTOMERS_TABLE_ID` qua `environment:` block
 
 - [x] Task 6: Chạy full test suite — xác nhận không regression (AC: tất cả)
-  - [x] 6.1: 303 tests pass (baseline 293 Story 1.9 + 10 mới)
-  - [x] 6.2: 10 contract tests mới pass (Task 4: 7 unit + 3 integration)
+  - [x] 6.1: 309 tests pass (baseline 293 Story 1.9 + 16 mới)
+  - [x] 6.2: 16 contract tests mới pass (Task 4+QA: 7 unit + 3 integration + 3 plain-string + 3 mock-Baserow)
   - [x] 6.3: `tests/api/zalo-bridge.test.js` healthcheck vẫn pass (không phá endpoint cũ)
 
 ## Dev Notes
@@ -153,13 +153,44 @@ claude-sonnet-4-6
 - Used `customer_phone` (not `customer_ref`) per dev notes — phone is current identifier until Epic 4/5 adds token anonymization
 - Imports use `.ts` extension (not `.js`) — Node 24 native strip-types requires explicit `.ts` in same-source imports
 - `friend_status` Baserow single_select handled via `resolveFriendStatus()` — supports both `{ value: "..." }` object and raw string
-- 303 tests pass (10 new: 7 unit contract + 3 HTTP integration)
+- 309 tests pass (16 new: 7 unit + 3 integration + 3 plain-string branch + 3 mock-Baserow; QA gap-fill added post-dev)
 
 ### File List
 
 - `zalo-bridge/src/opt-in-gate.ts` — CREATED
 - `zalo-bridge/src/send.ts` — CREATED
 - `zalo-bridge/src/index.ts` — MODIFIED (added /send route)
-- `tests/contract/opt-in-gate.test.js` — CREATED
+- `tests/contract/opt-in-gate.test.js` — CREATED + MODIFIED (QA gap-fill: +6 tests for plain-string branch + mock-Baserow server)
 - `.env.example` — MODIFIED (added BASEROW_TOKEN, BASEROW_URL, CUSTOMERS_TABLE_ID)
 - `docker-compose.yml` — MODIFIED (added env vars for zalo-bridge)
+
+## Senior Developer Review (AI)
+
+**Reviewer:** gabenidolcs (AI) | **Date:** 2026-06-07 | **Outcome:** APPROVED
+
+### Issues Found & Auto-Fixed
+
+| # | Sev | Issue | Fix Applied |
+|---|-----|-------|-------------|
+| 1 | MEDIUM | AC#1 log format used `customer_ref=<ref>` — mismatches impl which logs `customer_phone=` | Updated AC#1 text to `customer_phone=<phone>` |
+| 2 | MEDIUM | AC#6 `required` array listed `customer_ref` — impl returns `customer_phone` per dev notes decision | Updated AC#6 to `customer_phone` |
+| 3 | MEDIUM | Task 6.1/6.2 + completion notes said 303 tests / 10 new — actual 309 / 16 new after QA gap-fill | Updated counts throughout |
+| 4 | MEDIUM | `tests/contract/opt-in-gate.test.js` had 6 uncommitted QA gap tests (plain-string branch + mock Baserow) | File List updated; changes committed |
+| 5 | LOW | `{ blocked: true, ...gate }` spreads `blocked` twice (harmless — gate.blocked always true at that point) | No fix — acceptable, behavior correct |
+
+### AC Coverage Verified
+
+- AC#1 ✓ — non-friended blocked, 403, `opt_in_required`, log `customer_phone=`
+- AC#2 ✓ — friended passes, 202, mock-Baserow integration test
+- AC#3 ✓ — 0 rows → `customer_not_found`, 403, integration test
+- AC#4 ✓ — fetch throws → fail-closed, `lookup_error`, Baserow HTTP 500 covered
+- AC#5 ✓ — real-time Baserow query; `friend_status` update immediately effective
+- AC#6 ✓ — missing fields → 400, `required: [pharmacy_id, customer_phone, content]`
+
+### Code Quality
+
+- `resolveFriendStatus()` correctly handles null/string/`{value}` shapes ✓
+- Fail-closed on all error paths ✓
+- TypeScript types discriminated union `OptInResult` — exhaustive ✓
+- No hardcoded table IDs ✓
+- `.ts` import extension correct for Node 24 strip-types ✓

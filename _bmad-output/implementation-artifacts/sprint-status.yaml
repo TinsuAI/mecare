@@ -58,7 +58,7 @@ development_status:
 
   # Epic 2: Lớp Zalo Cá Nhân an toàn (anti-ban — R1)
   epic-2: in-progress
-  2-1-cong-opt-in-chi-nhan-khach-da-ket-ban: review
+  2-1-cong-opt-in-chi-nhan-khach-da-ket-ban: done
   2-2-nhip-gui-giong-nguoi-warm-up-tai-zalo-bridge: backlog
   2-3-auto-throttle-theo-tin-hieu-rui-ro: backlog
   2-4-audit-first-retry-queue-khi-gui: backlog
