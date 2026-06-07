@@ -187,4 +187,172 @@ describe("MC-Handle-InboundReply workflow structure", () => {
     );
     assert.ok(checksCareGroup6, "Guard: Is Group 6 must check care_group === 6");
   });
+
+  // Story 5.1 — free_form FAQ branch (AC1, AC4, AC5, AC6, AC7, AC9)
+  test("8.23 — 'Guard: Is Free Form' if node tồn tại (AC1)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Guard: Is Free Form" && n.type === "n8n-nodes-base.if"
+    );
+    assert.ok(found, "'Guard: Is Free Form' if node not found");
+  });
+
+  test("8.24 — 'Guard: Is Free Form' condition kiểm tra classified_type === 'free_form' (AC1)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Guard: Is Free Form");
+    assert.ok(node, "'Guard: Is Free Form' node not found");
+    const conditions = node?.parameters?.conditions?.conditions ?? [];
+    const checksFreeForm = conditions.some(
+      (c) => String(c.leftValue).includes("classified_type") && c.rightValue === "free_form"
+    );
+    assert.ok(checksFreeForm, "Guard: Is Free Form must check classified_type === 'free_form'");
+  });
+
+  test("8.25 — 'Guard: Is Complaint Active' if node tồn tại (AC6)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Guard: Is Complaint Active" && n.type === "n8n-nodes-base.if"
+    );
+    assert.ok(found, "'Guard: Is Complaint Active' if node not found");
+  });
+
+  test("8.26 — 'Guard: Is Complaint Active' condition kiểm tra is_complaint_active (AC6)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Guard: Is Complaint Active");
+    assert.ok(node, "'Guard: Is Complaint Active' node not found");
+    const conditions = node?.parameters?.conditions?.conditions ?? [];
+    const checksComplaint = conditions.some(
+      (c) => String(c.leftValue).includes("is_complaint_active")
+    );
+    assert.ok(checksComplaint, "Guard: Is Complaint Active must check is_complaint_active");
+  });
+
+  test("8.27 — 'Log Escalation Trigger' set node tồn tại (AC5, AC6)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Log Escalation Trigger");
+    assert.ok(node, "'Log Escalation Trigger' set node not found");
+    assert.equal(node.type, "n8n-nodes-base.set", "Log Escalation Trigger must be set node");
+    const assignments = node?.parameters?.assignments?.assignments ?? [];
+    const setsEscalation = assignments.some(
+      (a) => a.name === "classified_type" && a.value === "escalation_trigger"
+    );
+    assert.ok(setsEscalation, "Log Escalation Trigger must set classified_type=escalation_trigger");
+  });
+
+  test("8.28 — 'Call OpenClaw FAQ' httpRequest POST tới faq_lookup endpoint (AC2)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Call OpenClaw FAQ");
+    assert.ok(node, "'Call OpenClaw FAQ' node not found");
+    assert.equal(node.type, "n8n-nodes-base.httpRequest");
+    assert.equal(node.parameters?.method, "POST");
+    const url = node.parameters?.url ?? "";
+    assert.ok(url.includes("faq_lookup"), "Call OpenClaw FAQ URL must include faq_lookup");
+    const params = node.parameters?.bodyParameters?.parameters ?? [];
+    const hasPharmacyId = params.some((p) => p.name === "pharmacy_id");
+    const hasMessageContent = params.some((p) => p.name === "message_content");
+    assert.ok(hasPharmacyId, "Call OpenClaw FAQ body must include pharmacy_id");
+    assert.ok(hasMessageContent, "Call OpenClaw FAQ body must include message_content");
+  });
+
+  test("8.29 — 'Guard: Can Answer' if node tồn tại (AC2, AC5)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Guard: Can Answer" && n.type === "n8n-nodes-base.if"
+    );
+    assert.ok(found, "'Guard: Can Answer' if node not found");
+  });
+
+  test("8.30 — 'Guard: Can Answer' condition kiểm tra can_answer === false (AC5)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Guard: Can Answer");
+    assert.ok(node, "'Guard: Can Answer' node not found");
+    const conditions = node?.parameters?.conditions?.conditions ?? [];
+    const checksCanAnswer = conditions.some(
+      (c) => String(c.leftValue).includes("can_answer") && c.rightValue === false
+    );
+    assert.ok(checksCanAnswer, "Guard: Can Answer must check can_answer === false");
+  });
+
+  test("8.31 — 'Format FAQ Reply' code node tồn tại với mandatory_suffix logic (AC3, AC4)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Format FAQ Reply");
+    assert.ok(node, "'Format FAQ Reply' code node not found");
+    assert.equal(node.type, "n8n-nodes-base.code");
+    const code = node?.parameters?.jsCode ?? "";
+    assert.ok(code.includes("mandatory_suffix"), "Format FAQ Reply must handle mandatory_suffix");
+    assert.ok(code.includes("is_tpcn"), "Format FAQ Reply must check is_tpcn flag");
+    assert.ok(code.includes("final_answer"), "Format FAQ Reply must produce final_answer");
+  });
+
+  test("8.32 — 'Audit: Write Messages Pending' POST Baserow Messages status=pending trước MC-Zalo-Send (AC7)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Audit: Write Messages Pending");
+    assert.ok(node, "'Audit: Write Messages Pending' node not found");
+    assert.equal(node.type, "n8n-nodes-base.httpRequest");
+    assert.equal(node.parameters?.method, "POST");
+    const url = node.parameters?.url ?? "";
+    assert.ok(url.includes("BASEROW_TABLE_MESSAGES"), "Audit: Write Messages Pending must POST to BASEROW_TABLE_MESSAGES");
+    const params = node.parameters?.bodyParameters?.parameters ?? [];
+    const statusParam = params.find((p) => p.name === "status");
+    assert.ok(statusParam, "Audit: Write Messages Pending must have status param");
+    assert.equal(statusParam.value, "pending", "Audit: Write Messages Pending status must be 'pending'");
+    const typeParam = params.find((p) => p.name === "type");
+    assert.ok(typeParam, "Audit: Write Messages Pending must have type param");
+    assert.equal(typeParam.value, "reply", "Audit: Write Messages Pending type must be 'reply'");
+    const connAfterAudit = workflow.connections?.["Audit: Write Messages Pending"]?.main?.[0]?.[0]?.node;
+    assert.equal(connAfterAudit, "Execute MC-Zalo-Send", "Audit must connect to Execute MC-Zalo-Send (audit-first AC7)");
+  });
+
+  test("8.33 — 'Execute MC-Zalo-Send' executeWorkflow node tồn tại (AC7)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Execute MC-Zalo-Send");
+    assert.ok(node, "'Execute MC-Zalo-Send' node not found");
+    assert.equal(node.type, "n8n-nodes-base.executeWorkflow");
+    const workflowId = node.parameters?.workflowId?.value ?? node.parameters?.workflowId ?? "";
+    assert.ok(String(workflowId).includes("MC-Zalo-Send"), "Execute MC-Zalo-Send must reference MC-Zalo-Send workflow");
+  });
+
+  test("8.34 — 'Update Messages Status' code node tồn tại (AC7)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Update Messages Status" && n.type === "n8n-nodes-base.code"
+    );
+    assert.ok(found, "'Update Messages Status' code node not found");
+  });
+
+  test("8.35 — Update Messages Status code references Audit: Write Messages Pending.id (AC7)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Update Messages Status");
+    assert.ok(node, "'Update Messages Status' node not found");
+    const code = node?.parameters?.jsCode ?? "";
+    assert.ok(
+      code.includes("Audit: Write Messages Pending") || code.includes("messageId"),
+      "Update Messages Status must reference audit node message_id"
+    );
+    assert.ok(
+      code.includes("sent") && code.includes("failed"),
+      "Update Messages Status must handle sent/failed status"
+    );
+  });
+
+  test("8.36 — Guard: Is Done Signal false branch kết nối tới Guard: Is Free Form (Story 5.1 AC1)", () => {
+    const falseBranchTarget = workflow.connections?.["Guard: Is Done Signal"]?.main?.[1]?.[0]?.node;
+    assert.equal(
+      falseBranchTarget,
+      "Guard: Is Free Form",
+      `Guard: Is Done Signal false branch must go to 'Guard: Is Free Form', got '${falseBranchTarget}'`
+    );
+  });
+
+  test("8.37 — Guard: Can Answer true branch kết nối tới Log Escalation Trigger (AC5)", () => {
+    const trueBranchTarget = workflow.connections?.["Guard: Can Answer"]?.main?.[0]?.[0]?.node;
+    assert.equal(
+      trueBranchTarget,
+      "Log Escalation Trigger",
+      `Guard: Can Answer true (can_answer=false) must go to 'Log Escalation Trigger', got '${trueBranchTarget}'`
+    );
+  });
+
+  test("8.38 — Guard: Is Complaint Active true branch kết nối tới Log Escalation Trigger (AC6)", () => {
+    const trueBranchTarget = workflow.connections?.["Guard: Is Complaint Active"]?.main?.[0]?.[0]?.node;
+    assert.equal(
+      trueBranchTarget,
+      "Log Escalation Trigger",
+      `Guard: Is Complaint Active true must go to 'Log Escalation Trigger', got '${trueBranchTarget}'`
+    );
+  });
+
+  test("8.39 — workflow có >= 19 nodes (11 cũ + 8 mới Story 5.1)", () => {
+    assert.ok(
+      workflow.nodes.length >= 19,
+      `expected >= 19 nodes (11 Epic4 + 8 Story5.1), got ${workflow.nodes.length}`
+    );
+  });
 });

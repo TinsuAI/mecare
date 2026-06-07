@@ -227,7 +227,7 @@ describe("Seed — draft khung, persona Dược Sĩ Hải (KHÔNG 'Ngọc')", ()
     const faq = seedByTable.FaqEntries;
     assert.ok(faq, "thiếu seed FaqEntries");
     assert.equal(faq.tenant_slug, "tructam", "seed FAQ phải gắn tenant tructam");
-    assert.equal(faq.rows.length, 9, "FaqEntries seed phải đúng 9 rows (AC3 Story 1.8)");
+    assert.ok(faq.rows.length >= 9, `FaqEntries seed phải có ít nhất 9 rows (hiện có ${faq.rows.length}) — Story 5.1 mở rộng seed thêm scope tpcn-lieu-dung + dung-cu`);
     for (const r of faq.rows) {
       assert.equal(r.status, "draft", "FAQ seed phải draft");
       assert.ok(r.question && r.question.length > 0, "question phải đã điền (Story 1.4)");

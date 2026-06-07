@@ -59,6 +59,24 @@
       "updated_by": "story-1.4"
     },
     {
+      "scope": "tpcn-lieu-dung",
+      "question": "Uống thực phẩm chức năng liều bao nhiêu là đúng ạ? Uống nhiều hơn có tốt hơn không?",
+      "answer": "Dạ, anh/chị nên dùng đúng liều ghi trên nhãn hoặc theo hướng dẫn của dược sĩ ạ. Với thực phẩm chức năng, uống nhiều hơn liều khuyến nghị KHÔNG tăng thêm hiệu quả — thậm chí có thể gây ra tác dụng không mong muốn với một số thành phần. Anh/chị cứ tuân thủ liều ghi trên hộp là đúng nhất ạ.",
+      "mandatory_suffix": "thực phẩm bảo vệ sức khỏe, không phải thuốc điều trị bệnh — không tự tăng liều",
+      "status": "draft",
+      "version": 1,
+      "updated_by": "story-5.1"
+    },
+    {
+      "scope": "dung-cu",
+      "question": "Cách sử dụng dụng cụ đo đường huyết / huyết áp tại nhà đúng cách ạ?",
+      "answer": "Dạ, anh/chị làm theo các bước sau để đo chính xác nhất ạ:\n\nMáy đo huyết áp: nghỉ ngơi ≥5 phút trước khi đo; ngồi thẳng lưng, tay đặt ngang tim; đo 2 lần cách nhau 1-2 phút, lấy giá trị trung bình.\n\nMáy đo đường huyết: rửa tay sạch và khô trước khi lấy máu; lấy máu ở cạnh bên ngón tay; ghi lại giá trị kèm thời điểm đo (trước/sau ăn).\n\nAnh/chị cần em giải thích thêm về kết quả đọc được không ạ?",
+      "mandatory_suffix": "",
+      "status": "draft",
+      "version": 1,
+      "updated_by": "story-5.1"
+    },
+    {
       "scope": "khieu-nai-chat-luong",
       "question": "Em muốn phản ánh / khiếu nại về chất lượng sản phẩm ạ.",
       "answer": "Dạ, anh/chị kính mến,\n\nEm Hải và Nhà thuốc Trúc Tâm xin tiếp nhận phản ánh của anh/chị ạ — chân thành xin lỗi anh/chị về trải nghiệm không tốt này.\n\nĐể bên em xử lý đúng cách và bảo vệ quyền lợi cho anh/chị, anh/chị có thể gửi cho em:\n– Ảnh sản phẩm và hộp/lọ (mặt nhãn có số lô, hạn sử dụng)\n– Mô tả ngắn vấn đề anh/chị gặp phải\n\nBên em cam kết:\n✅ Phản hồi ngay khi nhận đủ thông tin\n✅ Xử lý theo đúng quy trình — đổi hàng, hoàn tiền, hoặc báo nhà sản xuất tùy tình huống\n✅ Giữ bí mật thông tin của anh/chị\n\nCảm ơn anh/chị đã cho bên em biết — đây là cách để mình cùng nhau cải thiện ạ 🙏",

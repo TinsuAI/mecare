@@ -1,0 +1,238 @@
+{
+  "name": "MC-Sync-FaqEntries",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "MC-Sync-FaqEntries",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        240
+      ],
+      "webhookId": "mc-sync-faq-entries"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_FAQ_ENTRIES }}/?user_field_names=true&filter__field_status__equal=approved&filter__field_pharmacy_id__link_row_has={{ $json.body.pharmacy_id ?? $json.body.row.pharmacy_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-approved-faqs",
+      "name": "Fetch Approved FAQs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        240,
+        240
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = $json.results ?? [];\nreturn results.map(r => ({ json: r }));"
+      },
+      "id": "expand-results",
+      "name": "Expand Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 100,
+        "options": {}
+      },
+      "id": "split-in-batches",
+      "name": "Split In Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        720,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst entries = items.map(i => i.json);\nconst pharmacyId = $('Webhook Trigger').first().json.body.pharmacy_id\n  ?? $('Webhook Trigger').first().json.body.row?.pharmacy_id\n  ?? (entries[0]?.pharmacy_id ? (Array.isArray(entries[0].pharmacy_id) ? entries[0].pharmacy_id[0]?.id : entries[0].pharmacy_id) : null);\nreturn [{ json: { pharmacy_id: String(pharmacyId ?? ''), entries } }];"
+      },
+      "id": "collect-batch",
+      "name": "Collect Batch",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://openclaw:8000/tools/reindex_faq",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.OPENCLAW_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pharmacy_id",
+              "value": "={{ $json.pharmacy_id }}"
+            },
+            {
+              "name": "entries",
+              "value": "={{ $json.entries }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "post-reindex-openclaw",
+      "name": "POST Reindex OpenClaw",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1200,
+        240
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "s1",
+              "name": "status",
+              "value": "reindexed",
+              "type": "string"
+            },
+            {
+              "id": "s2",
+              "name": "indexed",
+              "value": "={{ $json.indexed }}",
+              "type": "number"
+            },
+            {
+              "id": "s3",
+              "name": "pharmacy_id",
+              "value": "={{ $json.pharmacy_id }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "return-result",
+      "name": "Return Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        1440,
+        240
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Approved FAQs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Approved FAQs": {
+      "main": [
+        [
+          {
+            "node": "Expand Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Expand Results": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches": {
+      "main": [
+        [
+          {
+            "node": "Collect Batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Batch": {
+      "main": [
+        [
+          {
+            "node": "POST Reindex OpenClaw",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST Reindex OpenClaw": {
+      "main": [
+        [
+          {
+            "node": "Return Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "id": "mc-sync-faq-entries",
+  "tags": []
+}

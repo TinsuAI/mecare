@@ -296,6 +296,285 @@
         1920,
         240
       ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $('Classify Response').first().json.classified_type }}",
+              "rightValue": "free_form",
+              "operator": {
+                "type": "string",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-is-free-form",
+      "name": "Guard: Is Free Form",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $('Webhook Trigger').first().json.body.is_complaint_active }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-is-complaint-active",
+      "name": "Guard: Is Complaint Active",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e1",
+              "name": "classified_type",
+              "value": "escalation_trigger",
+              "type": "string"
+            },
+            {
+              "id": "e2",
+              "name": "pharmacy_id",
+              "value": "={{ $('Classify Response').first().json.pharmacy_id }}",
+              "type": "string"
+            },
+            {
+              "id": "e3",
+              "name": "customer_id",
+              "value": "={{ $('Classify Response').first().json.customer_id }}",
+              "type": "string"
+            },
+            {
+              "id": "e4",
+              "name": "actions_taken",
+              "value": "={{ ['escalation_logged'] }}",
+              "type": "array"
+            }
+          ]
+        }
+      },
+      "id": "log-escalation-trigger",
+      "name": "Log Escalation Trigger",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        2400,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://openclaw:8000/tools/faq_lookup",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.OPENCLAW_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pharmacy_id",
+              "value": "={{ $('Classify Response').first().json.pharmacy_id }}"
+            },
+            {
+              "name": "message_content",
+              "value": "={{ $('Classify Response').first().json.message_content }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "call-openclaw-faq",
+      "name": "Call OpenClaw FAQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2400,
+        600
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.can_answer }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-can-answer",
+      "name": "Guard: Can Answer",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const faqResult = $('Call OpenClaw FAQ').first().json;\nconst answer = String(faqResult.answer ?? '');\nconst isTpcn = Boolean(faqResult.is_tpcn);\nconst mandatorySuffix = (isTpcn && faqResult.mandatory_suffix) ? faqResult.mandatory_suffix : null;\nconst finalAnswer = mandatorySuffix ? `${answer}\\n\\n${mandatorySuffix}` : answer;\nreturn [{ json: {\n  final_answer: finalAnswer,\n  is_tpcn: isTpcn,\n  scope: faqResult.scope ?? '',\n  customer_id: $('Classify Response').first().json.customer_id,\n  pharmacy_id: $('Classify Response').first().json.pharmacy_id\n}}];"
+      },
+      "id": "format-faq-reply",
+      "name": "Format FAQ Reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2880,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_MESSAGES }}/?user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "type",
+              "value": "reply"
+            },
+            {
+              "name": "status",
+              "value": "pending"
+            },
+            {
+              "name": "customer_ref",
+              "value": "={{ $json.customer_id }}"
+            },
+            {
+              "name": "pharmacy_id",
+              "value": "={{ $json.pharmacy_id }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.final_answer }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "audit-write-messages-pending",
+      "name": "Audit: Write Messages Pending",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        3120,
+        600
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "MC-Zalo-Send",
+          "mode": "name"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "pharmacy_id",
+              "stringValue": "={{ $('Format FAQ Reply').first().json.pharmacy_id }}"
+            },
+            {
+              "name": "customer_id",
+              "stringValue": "={{ $('Format FAQ Reply').first().json.customer_id }}"
+            },
+            {
+              "name": "message_id",
+              "stringValue": "={{ $json.id }}"
+            },
+            {
+              "name": "content",
+              "stringValue": "={{ $('Format FAQ Reply').first().json.final_answer }}"
+            }
+          ]
+        }
+      },
+      "id": "execute-mc-zalo-send",
+      "name": "Execute MC-Zalo-Send",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        3360,
+        600
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const messageId = $('Audit: Write Messages Pending').first().json.id;\nconst sendResult = $('Execute MC-Zalo-Send').first().json;\nconst status = (sendResult && !sendResult.error) ? 'sent' : 'failed';\nconst baserowUrl = $env.BASEROW_URL;\nconst token = $env.BASEROW_TOKEN;\nconst table = $env.BASEROW_TABLE_MESSAGES;\ntry {\n  await $http.patch(\n    `${baserowUrl}/api/database/rows/table/${table}/${messageId}/?user_field_names=true`,\n    { body: { status }, headers: { Authorization: `Token ${token}` } }\n  );\n} catch (e) {\n  console.error('[MC-Handle-InboundReply] Update Messages Status failed:', e.message);\n}\nconst classifyData = $('Classify Response').first().json;\nreturn [{ json: {\n  classified_type: classifyData.classified_type,\n  pharmacy_id: classifyData.pharmacy_id,\n  customer_id: classifyData.customer_id,\n  message_id: messageId,\n  status,\n  actions: ['faq_answered']\n}}];"
+      },
+      "id": "update-messages-status",
+      "name": "Update Messages Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3600,
+        600
+      ]
     }
   ],
   "connections": {
@@ -412,7 +691,7 @@
         ],
         [
           {
-            "node": "Return Result",
+            "node": "Guard: Is Free Form",
             "type": "main",
             "index": 0
           }
@@ -420,6 +699,126 @@
       ]
     },
     "Cancel Follow-Up Schedule": {
+      "main": [
+        [
+          {
+            "node": "Return Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Is Free Form": {
+      "main": [
+        [
+          {
+            "node": "Guard: Is Complaint Active",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Is Complaint Active": {
+      "main": [
+        [
+          {
+            "node": "Log Escalation Trigger",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call OpenClaw FAQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Escalation Trigger": {
+      "main": [
+        [
+          {
+            "node": "Return Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call OpenClaw FAQ": {
+      "main": [
+        [
+          {
+            "node": "Guard: Can Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Can Answer": {
+      "main": [
+        [
+          {
+            "node": "Log Escalation Trigger",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format FAQ Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format FAQ Reply": {
+      "main": [
+        [
+          {
+            "node": "Audit: Write Messages Pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit: Write Messages Pending": {
+      "main": [
+        [
+          {
+            "node": "Execute MC-Zalo-Send",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute MC-Zalo-Send": {
+      "main": [
+        [
+          {
+            "node": "Update Messages Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Messages Status": {
       "main": [
         [
           {

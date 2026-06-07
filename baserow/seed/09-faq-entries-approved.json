@@ -1,0 +1,52 @@
+{
+  "table": "FaqEntries",
+  "tenant_slug": "tructam",
+  "key": ["scope"],
+  "_note": "Story 5.1: approved records cho RAG e2e test. Áp dụng SAU 09-faq-entries-draft.json (update status draft→approved cho ≥3 records). Tách ra để không phá vỡ invariant 'draft seed' của Story 1.4.",
+  "rows": [
+    {
+      "scope": "tpcn",
+      "question": "Thực phẩm chức năng này có chữa được bệnh không ạ?",
+      "answer": "Dạ, để em chia sẻ rõ cho anh/chị ạ. [TÊN SẢN PHẨM] có tác dụng hỗ trợ sức khỏe, cần dùng đều đặn ít nhất [SỐ TUẦN] tuần mới thấy rõ hiệu quả ạ. Anh/chị dùng đúng liều và đúng thời điểm khuyến nghị để sản phẩm phát huy tốt nhất nhé.",
+      "mandatory_suffix": "thực phẩm bảo vệ sức khỏe, không phải thuốc điều trị bệnh",
+      "status": "approved",
+      "version": 1,
+      "updated_by": "story-5.1",
+      "approved_at": "2026-06-07T08:00:00Z",
+      "approved_by": "story-5.1-seed"
+    },
+    {
+      "scope": "tpcn-lieu-dung",
+      "question": "Uống thực phẩm chức năng liều bao nhiêu là đúng ạ? Uống nhiều hơn có tốt hơn không?",
+      "answer": "Dạ, anh/chị nên dùng đúng liều ghi trên nhãn hoặc theo hướng dẫn của dược sĩ ạ. Với thực phẩm chức năng, uống nhiều hơn liều khuyến nghị KHÔNG tăng thêm hiệu quả — thậm chí có thể gây ra tác dụng không mong muốn với một số thành phần. Anh/chị cứ tuân thủ liều ghi trên hộp là đúng nhất ạ.",
+      "mandatory_suffix": "thực phẩm bảo vệ sức khỏe, không phải thuốc điều trị bệnh — không tự tăng liều",
+      "status": "approved",
+      "version": 1,
+      "updated_by": "story-5.1",
+      "approved_at": "2026-06-07T08:00:00Z",
+      "approved_by": "story-5.1-seed"
+    },
+    {
+      "scope": "dung-cu",
+      "question": "Cách sử dụng dụng cụ đo đường huyết / huyết áp tại nhà đúng cách ạ?",
+      "answer": "Dạ, anh/chị làm theo các bước sau để đo chính xác nhất ạ:\n\nMáy đo huyết áp: nghỉ ngơi ≥5 phút trước khi đo; ngồi thẳng lưng, tay đặt ngang tim; đo 2 lần cách nhau 1-2 phút, lấy giá trị trung bình.\n\nMáy đo đường huyết: rửa tay sạch và khô trước khi lấy máu; lấy máu ở cạnh bên ngón tay; ghi lại giá trị kèm thời điểm đo (trước/sau ăn).\n\nAnh/chị cần em giải thích thêm về kết quả đọc được không ạ?",
+      "mandatory_suffix": "",
+      "status": "approved",
+      "version": 1,
+      "updated_by": "story-5.1",
+      "approved_at": "2026-06-07T08:00:00Z",
+      "approved_by": "story-5.1-seed"
+    },
+    {
+      "scope": "cach-dung-thuoc",
+      "question": "Cho em hỏi cách dùng/liều dùng thuốc này thế nào ạ?",
+      "answer": "Dạ, em hiểu rồi ạ — cảm ơn anh/chị đã hỏi ngay nhé, đúng rồi đấy ạ!\n\n[TRẢ LỜI CỤ THỂ THEO CÂU HỎI — liều dùng, thời điểm uống trước/sau ăn, lưu ý đặc thù]\n\nNếu câu trả lời này anh/chị vẫn chưa rõ hoặc muốn em giải thích kỹ thêm, anh/chị cứ nói một tiếng là em tư vấn sâu hơn ngay bây giờ nhé!",
+      "mandatory_suffix": "",
+      "status": "approved",
+      "version": 1,
+      "updated_by": "story-5.1",
+      "approved_at": "2026-06-07T08:00:00Z",
+      "approved_by": "story-5.1-seed"
+    }
+  ]
+}

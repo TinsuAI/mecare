@@ -1,0 +1,39 @@
+{
+  "name": "faq_lookup",
+  "version": "1.0.0",
+  "description": "Tra cứu câu hỏi thường gặp trong phạm vi kịch bản (FaqEntries Baserow). Trả lời chính xác trong scope; từ chối khi ngoài scope hoặc confidence < 0.75.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "pharmacy_id": {
+        "type": "string",
+        "description": "ID nhà thuốc (multi-tenant isolation)"
+      },
+      "message_content": {
+        "type": "string",
+        "description": "Nội dung tin nhắn của khách (đã normalize)"
+      }
+    },
+    "required": ["pharmacy_id", "message_content"]
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "can_answer": { "type": "boolean" },
+      "answer": { "type": "string" },
+      "is_tpcn": { "type": "boolean" },
+      "mandatory_suffix": { "type": ["string", "null"] },
+      "scope": { "type": "string" }
+    },
+    "required": ["can_answer", "answer", "is_tpcn", "mandatory_suffix", "scope"]
+  },
+  "endpoint": "/tools/faq_lookup",
+  "guardrail": "faq-guardrail",
+  "rag": {
+    "engine": "sqlite-vec",
+    "table": "FaqEntries",
+    "filter": { "status": "approved" },
+    "similarity_threshold": 0.75,
+    "embedding_dimensions": 1024
+  }
+}

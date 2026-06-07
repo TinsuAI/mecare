@@ -1,0 +1,50 @@
+# OpenClaw — FAQ Guardrail (Story 5.1)
+# NFR-2: agent KHÔNG tự chẩn đoán bệnh, KHÔNG tự thay đổi liều/thuốc.
+# 3 rules: no_diagnosis_rule, tpcn_suffix_rule, catch_all_rule.
+
+guardrail: faq-guardrail
+version: "1.0.0"
+
+rules:
+  - id: no_diagnosis_rule
+    description: >
+      Từ chối câu trả lời chứa khẳng định chẩn đoán bệnh hoặc tự ý đổi liều/thuốc
+      (prompt injection prevention, NFR-2). Khi trigger → can_answer=false, không gửi.
+    action: reject
+    triggers:
+      - pattern: "chẩn đoán"
+      - pattern: "bạn bị bệnh"
+      - pattern: "anh bị"
+      - pattern: "chị bị"
+      - pattern: "em bị"
+      - pattern: "thay đổi liều"
+      - pattern: "tăng liều"
+      - pattern: "giảm liều"
+      - pattern: "đổi thuốc"
+      - pattern: "tự kê"
+    on_trigger:
+      can_answer: false
+      scope: "out_of_scope"
+
+  - id: tpcn_suffix_rule
+    description: >
+      Nếu FaqEntry.scope chứa 'tpcn' → is_tpcn=true và bắt buộc append
+      mandatory_suffix NGUYÊN VĂN vào cuối câu trả lời (AC4, NFR-2).
+      Không tóm tắt, không viết lại.
+    action: enforce_suffix
+    condition:
+      scope_contains: "tpcn"
+    on_trigger:
+      is_tpcn: true
+      append_mandatory_suffix: true
+
+  - id: catch_all_rule
+    description: >
+      Nếu RAG similarity score < 0.75 (không đủ tin cậy) → can_answer=false.
+      Fail-safe: không tự trả lời, log escalation_trigger (AC5).
+    action: reject
+    condition:
+      confidence_below: 0.75
+    on_trigger:
+      can_answer: false
+      scope: "out_of_scope"

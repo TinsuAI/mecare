@@ -15,6 +15,20 @@ channels:
     bridge_url: http://zalo-bridge:3000
     enabled: true
 
+# Story 5.1: Khi nhận tin inbound từ Zalo, OpenClaw forward payload sang n8n
+# để phân loại + trả lời FAQ hoặc leo thang theo kịch bản.
+hooks:
+  on_inbound_message:
+    url: http://n8n:5678/webhook/MC-Handle-InboundReply
+    method: POST
+    payload_fields:
+      - customer_id
+      - pharmacy_id
+      - care_group
+      - message_content
+      - is_opted_out
+      - is_complaint_active
+
 provider:
   # Cấu hình chi tiết ở provider-openrouter.yml
   ref: openrouter
