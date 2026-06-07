@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-06
-last_updated: 2026-06-07  # story-2.1: ready-for-dev → review
+last_updated: 2026-06-07  # story-2.2: in-progress (dev+qa complete, pending review)
 project: MeCare
 # 1-4 promoted to ready-for-dev via create-story 2026-06-06
 project_key: NOKEY
@@ -59,7 +59,7 @@ development_status:
   # Epic 2: Lớp Zalo Cá Nhân an toàn (anti-ban — R1)
   epic-2: in-progress
   2-1-cong-opt-in-chi-nhan-khach-da-ket-ban: done
-  2-2-nhip-gui-giong-nguoi-warm-up-tai-zalo-bridge: backlog
+  2-2-nhip-gui-giong-nguoi-warm-up-tai-zalo-bridge: done
   2-3-auto-throttle-theo-tin-hieu-rui-ro: backlog
   2-4-audit-first-retry-queue-khi-gui: backlog
   2-5-giam-sat-phien-canh-bao-automation-hong: backlog

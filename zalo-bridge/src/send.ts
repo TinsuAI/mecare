@@ -1,6 +1,13 @@
-// Story 2.1: /send handler — validates payload, runs opt-in gate, stubs openzca.
+// Story 2.2: /send handler — validates payload, runs opt-in gate, throttle, stubs openzca.
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { checkOptIn } from "./opt-in-gate.ts";
+import {
+  isBusinessHour,
+  checkDailyCap,
+  incrementDailyCount,
+  jitterMs,
+  applyVariant,
+} from "./throttle.ts";
 
 const REQUIRED_FIELDS = ["pharmacy_id", "customer_phone", "content"] as const;
 
@@ -25,6 +32,7 @@ export async function handleSend(
 
     const pharmacy_id = String(payload.pharmacy_id);
     const customer_phone = String(payload.customer_phone);
+    const content = String(payload.content);
 
     const gate = await checkOptIn(pharmacy_id, customer_phone);
     if (gate.blocked) {
@@ -33,8 +41,30 @@ export async function handleSend(
       return;
     }
 
+    if (!isBusinessHour()) {
+      res.writeHead(503, { "content-type": "application/json" });
+      res.end(JSON.stringify({ error: "outside_business_hours" }));
+      return;
+    }
+
+    const capCheck = checkDailyCap(pharmacy_id);
+    if (!capCheck.allowed) {
+      res.writeHead(429, { "content-type": "application/json" });
+      res.end(JSON.stringify({ error: "daily_cap_exceeded", pharmacy_id }));
+      return;
+    }
+
+    // Increment before await to prevent race: two concurrent requests both passing cap check.
+    incrementDailyCount(pharmacy_id);
+
+    const seed = Date.now() % 1000;
+    // variantContent replaces content for openzca call in Story 2.4.
+    const variantContent = applyVariant(content, seed);
+    const delay = jitterMs();
+    await new Promise<void>((r) => setTimeout(r, delay));
+
     console.log(
-      `[send] ALLOWED pharmacy_id=${pharmacy_id} customer_phone=${customer_phone} — openzca stub (Story 2.2+)`
+      `[send] QUEUED pharmacy_id=${pharmacy_id} customer_phone=${customer_phone} variant=${seed % 3} jitter=${delay}ms content_len=${variantContent.length}`
     );
     res.writeHead(202, { "content-type": "application/json" });
     res.end(JSON.stringify({ queued: true }));
