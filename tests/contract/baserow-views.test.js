@@ -241,3 +241,78 @@ describe("AC3 (Story 3.2) — SOP doc: đổi nhóm + ghi log 2 bước", () => 
     assert.match(sopDoc, /to_group/, "SOP phải nhắc field to_group");
   });
 });
+
+// ── Story 5.4: Messages history + EscalationCases list views (AC7, AC8) ──
+
+const messagesHistory = loadView("05-messages-history.json");
+const escalationList  = loadView("06-escalation-cases-list.json");
+
+describe("AC7 (Story 5.4) — messages-history grid view", () => {
+  test("type=grid, table=Messages, name=messages-history", () => {
+    assert.equal(messagesHistory.type, "grid");
+    assert.equal(messagesHistory.table, "Messages");
+    assert.equal(messagesHistory.name, "messages-history");
+  });
+
+  test("sortings: ts DESC (mới nhất lên đầu)", () => {
+    assert.ok(Array.isArray(messagesHistory.sortings), "thiếu sortings");
+    assert.equal(messagesHistory.sortings[0].field, "ts");
+    assert.equal(messagesHistory.sortings[0].order, "DESC");
+  });
+
+  test("customer_ref, type, status, case_id, content, ts, pharmacy_id visible", () => {
+    const visible = new Set(
+      messagesHistory.fields.filter((f) => f.hidden === false).map((f) => f.name)
+    );
+    for (const name of ["customer_ref", "type", "status", "case_id", "content", "ts", "pharmacy_id"]) {
+      assert.ok(visible.has(name), `${name} phải visible trong messages-history`);
+    }
+  });
+
+  test("error hidden (chỉ hiện khi debug)", () => {
+    const hidden = new Set(
+      messagesHistory.fields.filter((f) => f.hidden === true).map((f) => f.name)
+    );
+    assert.ok(hidden.has("error"), "error phải hidden trong messages-history");
+  });
+
+  test("description tồn tại và đề cập AR-7 hoặc audit", () => {
+    assert.ok(messagesHistory.description, "messages-history thiếu description");
+    assert.match(messagesHistory.description, /AR-7|audit/i, "description phải đề cập AR-7 hoặc audit");
+  });
+});
+
+describe("AC8 (Story 5.4) — escalation-cases-list grid view", () => {
+  test("type=grid, table=EscalationCases, name=escalation-cases-list", () => {
+    assert.equal(escalationList.type, "grid");
+    assert.equal(escalationList.table, "EscalationCases");
+    assert.equal(escalationList.name, "escalation-cases-list");
+  });
+
+  test("sortings: created_at DESC (mới nhất lên đầu)", () => {
+    assert.ok(Array.isArray(escalationList.sortings), "thiếu sortings");
+    assert.equal(escalationList.sortings[0].field, "created_at");
+    assert.equal(escalationList.sortings[0].order, "DESC");
+  });
+
+  test("case_id, state, trigger, customer_content, pharmacist_reply, created_at, resolved_at visible", () => {
+    const visible = new Set(
+      escalationList.fields.filter((f) => f.hidden === false).map((f) => f.name)
+    );
+    for (const name of ["case_id", "state", "trigger", "customer_content", "pharmacist_reply", "created_at", "resolved_at"]) {
+      assert.ok(visible.has(name), `${name} phải visible trong escalation-cases-list`);
+    }
+  });
+
+  test("pharmacy_id và customer_id hidden (FK refs — không cần hiện trực tiếp)", () => {
+    const hidden = new Set(
+      escalationList.fields.filter((f) => f.hidden === true).map((f) => f.name)
+    );
+    assert.ok(hidden.has("pharmacy_id"), "pharmacy_id phải hidden trong escalation-cases-list");
+    assert.ok(hidden.has("customer_id"), "customer_id phải hidden trong escalation-cases-list");
+  });
+
+  test("description tồn tại", () => {
+    assert.ok(escalationList.description, "escalation-cases-list thiếu description");
+  });
+});

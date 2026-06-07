@@ -118,4 +118,41 @@ describe("MC-Handle-InboundReply audit nodes (Story 5.4 AC1–AC4)", () => {
       `Expected ≥ 51 nodes, got ${workflow.nodes.length}`
     );
   });
+
+  // ─── Gap-fill: Update Relay Message Status + audit body type ───
+
+  test("13.13 — có node 'Update Relay Message Status' (AC4 status update cho relay path)", () => {
+    const found = workflow.nodes.some((n) => n.name === "Update Relay Message Status");
+    assert.ok(found, "MC-Handle-InboundReply missing 'Update Relay Message Status' node");
+  });
+
+  test("13.14 — 'Audit: Write Waiting Message Pending' body có type='escalation' (AC1)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Audit: Write Waiting Message Pending");
+    assert.ok(node, "Audit: Write Waiting Message Pending not found");
+    const paramsStr = JSON.stringify(node.parameters || {});
+    assert.ok(
+      paramsStr.includes('"escalation"'),
+      "Audit: Write Waiting Message Pending body must set type='escalation'"
+    );
+  });
+
+  test("13.15 — 'Audit: Write Relay Message Pending' body có type='escalation' (AC2)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Audit: Write Relay Message Pending");
+    assert.ok(node, "Audit: Write Relay Message Pending not found");
+    const paramsStr = JSON.stringify(node.parameters || {});
+    assert.ok(
+      paramsStr.includes('"escalation"'),
+      "Audit: Write Relay Message Pending body must set type='escalation'"
+    );
+  });
+
+  test("13.16 — 'Audit: Write Pharmacist Reply Pending' body có type='pharmacist_reply' (AC3)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Audit: Write Pharmacist Reply Pending");
+    assert.ok(node, "Audit: Write Pharmacist Reply Pending not found");
+    const paramsStr = JSON.stringify(node.parameters || {});
+    assert.ok(
+      paramsStr.includes('"pharmacist_reply"'),
+      "Audit: Write Pharmacist Reply Pending body must set type='pharmacist_reply'"
+    );
+  });
 });

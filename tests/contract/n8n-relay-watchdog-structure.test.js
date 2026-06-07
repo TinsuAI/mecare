@@ -148,4 +148,45 @@ describe("MC-Relay-Watchdog structure (Story 5.3 AC8)", () => {
       `Send SLA Alert to Tinsu URL must reference ALERT_WEBHOOK_URL, got: ${url}`
     );
   });
+
+  // ─── Gap-fill: Guard: Alert URL Set + ALERT_WEBHOOK_URL env var ───
+
+  test("12.17 — có If node 'Guard: Alert URL Set' (AC5 guard — skip alert if env empty)", () => {
+    const found = watchdog.nodes.some(
+      (n) => n.name === "Guard: Alert URL Set" && n.type === "n8n-nodes-base.if"
+    );
+    assert.ok(found, "MC-Relay-Watchdog missing 'Guard: Alert URL Set' If node (AC5)");
+  });
+
+  test("12.18 — 'Guard: Has Overdue Cases' connects to 'Guard: Alert URL Set' (AC5 chain)", () => {
+    const next = watchdog.connections?.["Guard: Has Overdue Cases"]?.main?.[0]?.[0]?.node;
+    assert.equal(
+      next,
+      "Guard: Alert URL Set",
+      `Guard: Has Overdue Cases true branch must connect to 'Guard: Alert URL Set', got '${next}'`
+    );
+  });
+
+  test("12.19 — 'Guard: Alert URL Set' true→'Send SLA Alert to Tinsu', false→'Expand Overdue Cases' (AC5)", () => {
+    const trueNext = watchdog.connections?.["Guard: Alert URL Set"]?.main?.[0]?.[0]?.node;
+    const falseNext = watchdog.connections?.["Guard: Alert URL Set"]?.main?.[1]?.[0]?.node;
+    assert.equal(
+      trueNext,
+      "Send SLA Alert to Tinsu",
+      `Guard: Alert URL Set true branch must go to 'Send SLA Alert to Tinsu', got '${trueNext}'`
+    );
+    assert.equal(
+      falseNext,
+      "Expand Overdue Cases",
+      `Guard: Alert URL Set false branch must go to 'Expand Overdue Cases', got '${falseNext}'`
+    );
+  });
+
+  test("12.20 — ALERT_WEBHOOK_URL có trong tenants/_template.env (AC6)", () => {
+    const templateEnv = fs.readFileSync(repoPath("tenants/_template.env"), "utf8");
+    assert.ok(
+      templateEnv.includes("ALERT_WEBHOOK_URL"),
+      "tenants/_template.env must contain ALERT_WEBHOOK_URL (AC6)"
+    );
+  });
 });
