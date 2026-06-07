@@ -1,6 +1,7 @@
 // Story 2.2: /send handler — validates payload, runs opt-in gate, throttle, stubs openzca.
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { checkOptIn } from "./opt-in-gate.ts";
+import { getRiskState } from "./risk-monitor.ts";
 import {
   isBusinessHour,
   checkDailyCap,
@@ -34,6 +35,13 @@ export async function handleSend(
     const customer_phone = String(payload.customer_phone);
     const content = String(payload.content);
 
+    const risk = getRiskState();
+    if (risk.state === "paused") {
+      res.writeHead(503, { "content-type": "application/json" });
+      res.end(JSON.stringify({ error: "risk_throttled", state: "paused" }));
+      return;
+    }
+
     const gate = await checkOptIn(pharmacy_id, customer_phone);
     if (gate.blocked) {
       res.writeHead(403, { "content-type": "application/json" });
@@ -66,6 +74,7 @@ export async function handleSend(
     console.log(
       `[send] QUEUED pharmacy_id=${pharmacy_id} customer_phone=${customer_phone} variant=${seed % 3} jitter=${delay}ms content_len=${variantContent.length}`
     );
+    // Story 2.4: import { recordSignal } from "./risk-monitor.ts"; call recordSignal("send_error") khi openzca trả lỗi thật
     res.writeHead(202, { "content-type": "application/json" });
     res.end(JSON.stringify({ queued: true }));
   } catch (err) {
