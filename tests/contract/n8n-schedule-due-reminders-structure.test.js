@@ -109,4 +109,152 @@ describe("MC-Schedule-DueReminders workflow structure", () => {
     assert.equal(sendNode?.continueOnFail, true, "'Send Message' missing continueOnFail=true");
     assert.equal(composeNode?.continueOnFail, true, "'Compose Message' missing continueOnFail=true");
   });
+
+  // Story 4.3 — Quota enforcement nodes
+  test("5.17 — có node 'Quota Check' (executeWorkflow → MC-Quota-Enforce, AC1)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Quota Check" && n.type === "n8n-nodes-base.executeWorkflow"
+    );
+    assert.ok(found, "'Quota Check' executeWorkflow node not found");
+  });
+
+  test("5.18 — 'Quota Check' truyền pharmacy_id, care_group, period_month (AC1)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Quota Check");
+    assert.ok(node, "Quota Check node not found");
+    const values = node?.parameters?.fields?.values ?? [];
+    const names = values.map((v) => v.name);
+    assert.ok(names.includes("pharmacy_id"), "Quota Check missing pharmacy_id field");
+    assert.ok(names.includes("care_group"), "Quota Check missing care_group field");
+    assert.ok(names.includes("period_month"), "Quota Check missing period_month field");
+  });
+
+  test("5.19 — 'Quota Check' gọi MC-Quota-Enforce (AC1)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Quota Check");
+    const workflowId = node?.parameters?.workflowId?.value ?? "";
+    assert.equal(workflowId, "MC-Quota-Enforce", "Quota Check must call MC-Quota-Enforce workflow");
+  });
+
+  test("5.20 — có node 'Guard: Quota Blocked' (if, AC1: chặn khi allowed=false)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Guard: Quota Blocked" && n.type === "n8n-nodes-base.if"
+    );
+    assert.ok(found, "'Guard: Quota Blocked' if node not found");
+  });
+
+  test("5.21 — có node 'Update CareSchedule QuotaExceeded' (httpRequest PATCH, AC5)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Update CareSchedule QuotaExceeded" && n.type === "n8n-nodes-base.httpRequest"
+    );
+    assert.ok(found, "'Update CareSchedule QuotaExceeded' httpRequest node not found");
+  });
+
+  test("5.22 — 'Update CareSchedule QuotaExceeded' đặt status=quota_exceeded (AC5)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Update CareSchedule QuotaExceeded");
+    assert.ok(node, "Update CareSchedule QuotaExceeded not found");
+    const status = node?.parameters?.body?.status ?? node?.parameters?.bodyParameters?.parameters?.find((p) => p.name === "status")?.value;
+    assert.equal(status, "quota_exceeded", "must set status=quota_exceeded");
+  });
+
+  test("5.23 — có node 'Log Quota Alert' (httpRequest POST, AC5: ghi cảnh báo)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Log Quota Alert" && n.type === "n8n-nodes-base.httpRequest"
+    );
+    assert.ok(found, "'Log Quota Alert' httpRequest node not found");
+  });
+
+  test("5.24 — có node 'Get QuotaCounter Row' (httpRequest GET, AC6)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Get QuotaCounter Row" && n.type === "n8n-nodes-base.httpRequest"
+    );
+    assert.ok(found, "'Get QuotaCounter Row' httpRequest node not found");
+  });
+
+  test("5.25 — có node 'Guard: Quota Row Exists' (if, AC6: upsert pattern)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Guard: Quota Row Exists" && n.type === "n8n-nodes-base.if"
+    );
+    assert.ok(found, "'Guard: Quota Row Exists' if node not found");
+  });
+
+  test("5.26 — có node 'Increment QuotaCounter' (httpRequest PATCH, AC6)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Increment QuotaCounter" && n.type === "n8n-nodes-base.httpRequest"
+    );
+    assert.ok(found, "'Increment QuotaCounter' httpRequest node not found");
+  });
+
+  test("5.27 — có node 'Create QuotaCounter Row' (httpRequest POST, AC6+AC7: tháng mới)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Create QuotaCounter Row" && n.type === "n8n-nodes-base.httpRequest"
+    );
+    assert.ok(found, "'Create QuotaCounter Row' httpRequest node not found");
+  });
+
+  test("5.28 — 'Create QuotaCounter Row' POST với cap=1000 (AC7: default cap)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Create QuotaCounter Row");
+    assert.ok(node, "Create QuotaCounter Row not found");
+    const params = node?.parameters?.bodyParameters?.parameters ?? [];
+    const capParam = params.find((p) => p.name === "cap");
+    assert.ok(capParam, "Create QuotaCounter Row missing 'cap' parameter");
+    assert.equal(String(capParam.value), "1000", "cap default must be 1000");
+  });
+
+  test("5.29 — có node 'Check Error Type' (if, AC2: phân loại 429 vs lỗi khác)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Check Error Type" && n.type === "n8n-nodes-base.if"
+    );
+    assert.ok(found, "'Check Error Type' if node not found");
+  });
+
+  test("5.30 — 'Check Error Type' kiểm tra daily_cap_exceeded (AC2)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Check Error Type");
+    const conditions = node?.parameters?.conditions?.conditions ?? [];
+    const hasDailyCapCheck = conditions.some(
+      (c) => c.rightValue === "daily_cap_exceeded" || String(c.rightValue).includes("daily_cap_exceeded")
+    );
+    assert.ok(hasDailyCapCheck, "Check Error Type must check for 'daily_cap_exceeded'");
+  });
+
+  test("5.31 — có node 'Update CareSchedule RateLimited' (httpRequest PATCH, AC2)", () => {
+    const found = workflow.nodes.some(
+      (n) => n.name === "Update CareSchedule RateLimited" && n.type === "n8n-nodes-base.httpRequest"
+    );
+    assert.ok(found, "'Update CareSchedule RateLimited' httpRequest node not found");
+  });
+
+  test("5.32 — 'Update CareSchedule RateLimited' đặt status=rate_limited (AC2)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Update CareSchedule RateLimited");
+    assert.ok(node, "Update CareSchedule RateLimited not found");
+    const status = node?.parameters?.body?.status;
+    assert.equal(status, "rate_limited", "must set status=rate_limited");
+  });
+
+  test("5.33 — 'Update CareSchedule SkippedOnSendFail' đặt status=send_failed (AC2: không dùng 'skipped' cho lỗi send)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Update CareSchedule SkippedOnSendFail");
+    assert.ok(node, "Update CareSchedule SkippedOnSendFail not found");
+    const status = node?.parameters?.body?.status;
+    assert.equal(status, "send_failed", "must set status=send_failed for non-429 errors");
+  });
+
+  test("5.34 — 'Generate message_id' code tính period_month GMT+7 (AC1+AC3: period_month cho quota check)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Generate message_id");
+    const code = node?.parameters?.jsCode ?? "";
+    assert.ok(
+      code.includes("period_month"),
+      "Generate message_id must compute period_month"
+    );
+    assert.ok(
+      code.includes("7 * 3600000") || code.includes("7*3600000"),
+      "period_month must use GMT+7 offset"
+    );
+  });
+
+  test("5.35 — Query CareSchedule lọc rate_limited (AC2: rate_limited rows được retry)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Query CareSchedule");
+    const url = node?.parameters?.url ?? "";
+    assert.ok(
+      url.includes("rate_limited") || url.includes("not_equal"),
+      "Query CareSchedule must include rate_limited rows (via inclusion or not_equal exclusion)"
+    );
+  });
 });

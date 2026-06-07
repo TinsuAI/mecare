@@ -1,0 +1,113 @@
+{
+    "name": "MC-Quota-Enforce",
+    "active": false,
+    "nodes": [
+        {
+            "parameters": {},
+            "id": "trigger-001",
+            "name": "Trigger",
+            "type": "n8n-nodes-base.executeWorkflowTrigger",
+            "typeVersion": 1,
+            "position": [0, 0]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {"caseSensitive": true},
+                    "conditions": [
+                        {
+                            "leftValue": "={{ $json.care_group }}",
+                            "rightValue": 5,
+                            "operator": {"type": "number", "operation": "equal"}
+                        }
+                    ]
+                }
+            },
+            "id": "guard-group5",
+            "name": "Group 5 Bypass",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [240, 0]
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {"id": "r1", "name": "allowed", "value": true, "type": "boolean"},
+                        {"id": "r2", "name": "bypassed", "value": true, "type": "boolean"},
+                        {"id": "r3", "name": "sent_count", "value": 0, "type": "number"},
+                        {"id": "r4", "name": "cap", "value": 1000, "type": "number"}
+                    ]
+                }
+            },
+            "id": "return-bypassed",
+            "name": "Return: Bypassed",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3,
+            "position": [480, -120]
+        },
+        {
+            "parameters": {
+                "method": "GET",
+                "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_QUOTA_COUNTER }}/?filter__field_pharmacy_id__equal={{ $('Trigger').first().json.pharmacy_id }}&filter__field_period_month__equal={{ $('Trigger').first().json.period_month }}&user_field_names=true",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [{"name": "Authorization", "value": "Token {{ $env.BASEROW_TOKEN }}"}]
+                }
+            },
+            "id": "get-quota-counter",
+            "name": "Get QuotaCounter",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4,
+            "position": [480, 120]
+        },
+        {
+            "parameters": {
+                "jsCode": "const data = $input.first().json;\nconst results = data.results ?? [];\nconst count = data.count ?? 0;\nif (count === 0) {\n  return [{ json: { allowed: true, sent_count: 0, cap: 1000, bypassed: false } }];\n}\nconst row = results[0];\nconst sent_count = row.sent_count ?? 0;\nconst cap = row.cap ?? 1000;\nconst allowed = sent_count < cap;\nreturn [{ json: { allowed, sent_count, cap, bypassed: false, quota_row_id: row.id } }];"
+            },
+            "id": "eval-quota",
+            "name": "Eval Quota",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [720, 120]
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {"id": "s1", "name": "allowed", "value": "={{ $json.allowed }}", "type": "boolean"},
+                        {"id": "s2", "name": "sent_count", "value": "={{ $json.sent_count }}", "type": "number"},
+                        {"id": "s3", "name": "cap", "value": "={{ $json.cap }}", "type": "number"},
+                        {"id": "s4", "name": "bypassed", "value": "={{ $json.bypassed ?? false }}", "type": "boolean"},
+                        {"id": "s5", "name": "quota_row_id", "value": "={{ $json.quota_row_id ?? null }}", "type": "number"}
+                    ]
+                }
+            },
+            "id": "return-result",
+            "name": "Return Result",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3,
+            "position": [960, 120]
+        }
+    ],
+    "connections": {
+        "Trigger": {
+            "main": [[{"node": "Group 5 Bypass", "type": "main", "index": 0}]]
+        },
+        "Group 5 Bypass": {
+            "main": [
+                [{"node": "Return: Bypassed", "type": "main", "index": 0}],
+                [{"node": "Get QuotaCounter", "type": "main", "index": 0}]
+            ]
+        },
+        "Get QuotaCounter": {
+            "main": [[{"node": "Eval Quota", "type": "main", "index": 0}]]
+        },
+        "Eval Quota": {
+            "main": [[{"node": "Return Result", "type": "main", "index": 0}]]
+        }
+    },
+    "settings": {"executionOrder": "v1"}
+}
