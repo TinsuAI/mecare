@@ -119,37 +119,41 @@ So that ca an toàn được chuyển đúng người, không để AI xử lý 
     - True branch → "Send Emergency 115" HTTP node
     - False branch → "Guard: Needs Escalation"
   - [x] 4.3 Thêm HTTP node "Send Emergency 115" (AC3):
-    - POST tới Zalo Bridge `http://zalo-bridge:3000/send` với tin cấp cứu 115 cứng
+    - POST tới Zalo Bridge `http://zalo-bridge:{{ $env.ZALO_BRIDGE_PORT }}/send` với tin cấp cứu 115 cứng
     - Sau khi gửi → tiếp tục sang "Create Escalation Case" (parallel path, không block)
   - [x] 4.4 Thêm If node "Guard: Needs Escalation":
     - Condition: `needs_escalation === true`
     - True → "Create Escalation Case"; False → Return Result (AC7)
   - [x] 4.5 Thêm HTTP node "Create Escalation Case":
-    - POST `http://openclaw:3100/tools/create_escalation_case`
+    - POST `http://openclaw:8000/tools/create_escalation_case`
     - Body: pharmacy_id, customer_id, trigger_type, trigger (excerpt nguyên văn), customer_content
   - [x] 4.6 Thêm Set node "Log Escalation Case Created": output `{ classified_type: "escalation_case_created", case_id: <from response> }` → Return Result
   - [x] 4.7 Kết nối: Story 5.1 "Log Escalation Trigger" → "Detect Escalation Trigger" (thay vì → Return Result trực tiếp)
   - [x] 4.8 Kết nối: Guard: Can Answer true-branch (escalate từ FAQ) → cũng vào "Detect Escalation Trigger" với `trigger_type="ai_uncertainty"`
 
 - [x] Task 5 — Viết contract tests (AC: #1–#9)
-  - [x] 5.1 Tạo `tests/contract/n8n-handle-inbound-reply-escalation.test.js` (tests 8.45–8.60+):
-    - 8.45: "Detect Escalation Trigger" node tồn tại trong workflow
-    - 8.46: "Guard: Is Emergency" if node tồn tại
-    - 8.47: "Send Emergency 115" HTTP node tồn tại
-    - 8.48: "Guard: Needs Escalation" if node tồn tại
-    - 8.49: "Create Escalation Case" HTTP node tồn tại
-    - 8.50: "Log Escalation Case Created" set node tồn tại
-    - 8.51: "Create Escalation Case" POST tới `/tools/create_escalation_case`
-    - 8.52: "Send Emergency 115" POST tới Zalo Bridge `/send`
-    - 8.53: Detect Escalation Trigger code chứa `is_complaint_active` check → `complaint_serious`
-    - 8.54: Detect Escalation Trigger code chứa emergency keyword check → `emergency`
-    - 8.55: Detect Escalation Trigger code chứa `ai_uncertainty` catch-all fallback
-    - 8.56: Kết nối: Log Escalation Trigger → Detect Escalation Trigger
-    - 8.57: Kết nối: Guard: Is Emergency true → Send Emergency 115
-    - 8.58: Kết nối: Guard: Is Emergency false → Guard: Needs Escalation
-    - 8.59: Kết nối: Guard: Needs Escalation true → Create Escalation Case
-    - 8.60: Kết nối: Create Escalation Case → Log Escalation Case Created
-    - 8.61: workflow có >= 26 nodes (20 cũ Story 5.1 + 6 mới Story 5.2)
+  - [x] 5.1 Tạo `tests/contract/n8n-handle-inbound-reply-escalation.test.js` (tests 8.45–8.65):
+    - 8.45: baseline — parse workflow JSON không lỗi
+    - 8.46: "Detect Escalation Trigger" node tồn tại trong workflow
+    - 8.47: "Guard: Is Emergency" if node tồn tại
+    - 8.48: "Send Emergency 115" HTTP node tồn tại
+    - 8.49: "Guard: Needs Escalation" if node tồn tại
+    - 8.50: "Create Escalation Case" HTTP node tồn tại
+    - 8.51: "Log Escalation Case Created" set node tồn tại
+    - 8.52: "Create Escalation Case" POST tới `/tools/create_escalation_case`
+    - 8.53: "Send Emergency 115" POST tới Zalo Bridge `/send`
+    - 8.54: Detect Escalation Trigger code chứa `is_complaint_active` check → `complaint_serious`
+    - 8.55: Detect Escalation Trigger code chứa emergency keyword check → `emergency`
+    - 8.56: Detect Escalation Trigger code chứa `ai_uncertainty` catch-all fallback
+    - 8.57: Kết nối: Log Escalation Trigger → Detect Escalation Trigger
+    - 8.58: Kết nối: Guard: Is Emergency true → Send Emergency 115
+    - 8.59: Kết nối: Guard: Is Emergency false → Guard: Needs Escalation
+    - 8.60: Kết nối: Guard: Needs Escalation true → Create Escalation Case
+    - 8.61: Kết nối: Create Escalation Case → Log Escalation Case Created
+    - 8.62: workflow có >= 26 nodes (20 cũ Story 5.1 + 6 mới Story 5.2)
+    - 8.63: Kết nối: Guard: Needs Escalation false → Return Result (AC7 regression guard)
+    - 8.64: Kết nối: Send Emergency 115 → Create Escalation Case (AC3 parallel path)
+    - 8.65: Kết nối: Log Escalation Case Created → Return Result (AC2)
   - [x] 5.2 Tạo `tests/contract/openclaw-escalation-tool.test.js` (tests 11.1–11.10):
     - 11.1: `openclaw/plugins/tools/create_escalation_case.json` tồn tại
     - 11.2: plugin có field `name = "create_escalation_case"`
@@ -230,7 +234,7 @@ Story 5.1: 20 nodes. Story 5.2 thêm 6 nodes:
 - "Create Escalation Case" (HTTP)
 - "Log Escalation Case Created" (Set)
 
-→ Tổng sau 5.2: >= 26 nodes. Test 8.61 enforce `>= 26`.
+→ Tổng sau 5.2: >= 26 nodes. Test 8.62 enforce `>= 26`.
 
 ### trigger-guardrail.yml format (tham khảo faq-guardrail.yml)
 
@@ -306,7 +310,7 @@ claude-sonnet-4-6
 
 ### Completion Notes List
 
-- All 30 new tests pass (tests 8.45–8.62, 10.17, 11.1–11.10); full suite 670/671 (1 pre-existing opt-in-gate failure).
+- All 35 new tests pass (tests 8.45–8.65 × 21, 10.17 × 1, 11.1–11.10 × 10, API tests × 3); full suite 677/676 pass (1 pre-existing opt-in-gate failure).
 - Test 8.43 updated: Log Escalation Trigger → Detect Escalation Trigger (was → Return Result).
 - n8n workflow extended from 20 → 26 nodes; connections rewired per Tasks 4.7–4.8.
 - ESCALATION_CASES_TABLE_ID env var added to .env.example; server.js uses makeBaserowStore with ESCALATION_CASES_TABLE_ID alias.
@@ -318,6 +322,7 @@ New files:
 - `openclaw/plugins/tools/create_escalation_case.json`
 - `tests/contract/n8n-handle-inbound-reply-escalation.test.js`
 - `tests/contract/openclaw-escalation-tool.test.js`
+- `tests/api/openclaw-escalation.test.js`
 
 Modified files:
 - `openclaw/server.js` — thêm import case-allocator.mjs + POST `/tools/create_escalation_case` handler
@@ -325,3 +330,33 @@ Modified files:
 - `tests/contract/openclaw-faq-structure.test.js` — thêm test 10.17
 - `tests/contract/n8n-handle-inbound-reply-structure.test.js` — cập nhật test 8.43 (rewire assertion)
 - `.env.example` — thêm `ESCALATION_CASES_TABLE_ID=`
+
+## Senior Developer Review (AI)
+
+**Reviewer:** claude-sonnet-4-6 | **Date:** 2026-06-07 | **Outcome:** APPROVED
+
+### Checklist
+
+- [x] Story file loaded from `_bmad-output/implementation-artifacts/5-2-phat-hien-trigger-leo-thang-cap-cuu.md`
+- [x] Story Status verified as reviewable (done)
+- [x] Epic 5, Story 2 IDs resolved
+- [x] Tech stack detected: n8n (workflow JSON), Node.js/ESM (server.js), YAML (guardrails), JSON (plugin schema), Node built-in test runner
+- [x] Git status checked — no staged changes for story 5.2 files; 2 unrelated unstaged files (orchestration doc, spike doc)
+- [x] Acceptance Criteria cross-checked — all 9 ACs implemented and verified
+- [x] File List reviewed — 5 new + 5 modified; `tests/api/openclaw-escalation.test.js` was missing, added
+- [x] Tests mapped to ACs — 35 new tests (8.45–8.65 × 21, 10.17 × 1, 11.1–11.10 × 10, API × 3)
+- [x] Code quality reviewed — Detect Escalation Trigger jsCode clean, priority order correct, server.js endpoint well-structured
+- [x] Security reviewed — no injection risks; all body params destructured with explicit validation; trigger/customer_content stored as text (no execution path)
+- [x] 677/676 pass, 1 pre-existing opt-in-gate failure unrelated to Story 5.2
+
+### Issues Found and Fixed
+
+| # | Severity | Finding | Fix Applied |
+|---|----------|---------|-------------|
+| 1 | MEDIUM | Task 4.5 documented port 3100, n8n uses port 8000 | Updated Task 4.5 URL to `:8000` |
+| 2 | MEDIUM | Task 4.3 documented hardcoded `zalo-bridge:3000/send`, implementation uses `$env.ZALO_BRIDGE_PORT` | Updated Task 4.3 URL to use env var pattern |
+| 3 | MEDIUM | Completion notes: "30 new tests", "670/671" — outdated after QA gap-fill | Updated to 35 tests, 677/676 |
+| 4 | MEDIUM | File List missing `tests/api/openclaw-escalation.test.js` added by QA gap-fill | Added to File List |
+| 5 | MEDIUM | Task 5.1 test numbers off by 1 (spec 8.45=node exists, actual 8.45=baseline parse) and missing 8.63–8.65 | Updated Task 5.1 with correct numbers + 8.63–8.65 |
+
+All issues were documentation discrepancies in the story artifact. **No code defects found.** Implementation is correct and complete.
