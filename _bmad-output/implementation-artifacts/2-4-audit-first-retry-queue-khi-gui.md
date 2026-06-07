@@ -295,19 +295,17 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
-### Completion Notes List
-
-### File List
-
 ### Completion Notes
 
-- 387/387 tests pass (370 prior + 17 new)
+- 394/394 tests pass (370 prior + 17 new from implementation + 7 QA gap-fills added in review)
+- messages-client.ts: createMessageRecord/updateMessageStatus both use AbortSignal.timeout(10_000) — prevents stall on slow Baserow
 - messages-client.ts: createMessageRecord never throws (returns null on any failure — audit-first without blocking send)
 - openzca-client.ts: stub mode when OPENZCA_URL unset — full CI/dev without real openzca process
 - send.ts: jitter now inside retry loop (each attempt gets fresh jitter); audit write before first jitter (AR-7 compliant)
 - baserow-schema.test.js: Messages.pharmacy_id allowed as text with TEMP_TEXT_TABLES exception
 - opt-in-gate.test.js + send-throttle.test.js: { queued: true } assertions updated to accept sent or queued
 - send-audit.test.js AC2: 100ms wait after 202 response to allow fire-and-forget alert delivery
+- QA gap-fills: send-audit.test.js (+2: 400 missing fields paths), messages-client.test.js (+1: non-2xx swallow), openzca-client.test.js (+2: 4xx + request body), messages-client.test.js (+2: body field validation + queueDeadLetter fault tolerance)
 
 ### File List
 

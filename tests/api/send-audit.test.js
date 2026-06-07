@@ -191,6 +191,7 @@ describe("Story 2.4: audit-first + retry + dead-letter", () => {
     assert.equal(alertCall.body?.event, "session.lost");
     assert.equal(alertCall.body?.service, "zalo-bridge");
     assert.ok(typeof alertCall.body?.message_id === "string");
+    assert.equal(alertCall.body?.pharmacy_id, "pharm-ac2", "alert body must include pharmacy_id");
   });
 
   test("AC3: idempotent — exactly one POST and one PATCH per send", async () => {
@@ -214,5 +215,18 @@ describe("Story 2.4: audit-first + retry + dead-letter", () => {
       (e) => e.source === "baserow" && e.method === "PATCH" && e.body?.status === "sent"
     );
     assert.equal(sentPatches.length, 1, "should have exactly one status=sent PATCH");
+  });
+
+  test("400 on missing required fields", async () => {
+    const res = await post(BRIDGE_PORT, "/send", {});
+    assert.equal(res.status, 400);
+    assert.equal(res.json?.error, "missing_fields");
+    assert.ok(Array.isArray(res.json?.required), "response should list required fields");
+  });
+
+  test("400 when only some fields present", async () => {
+    const res = await post(BRIDGE_PORT, "/send", { pharmacy_id: "pharm-x" });
+    assert.equal(res.status, 400);
+    assert.equal(res.json?.error, "missing_fields");
   });
 });

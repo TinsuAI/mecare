@@ -103,6 +103,11 @@ describe("updateMessageStatus", () => {
     globalThis.fetch = async () => { throw new Error("network"); };
     await assert.doesNotReject(() => updateMessageStatus(100, "sent"));
   });
+
+  test("non-2xx response → does NOT throw (swallowed)", async () => {
+    globalThis.fetch = async () => ({ ok: false, status: 503, text: async () => "unavailable" });
+    await assert.doesNotReject(() => updateMessageStatus(100, "queued"));
+  });
 });
 
 // ── queueDeadLetter ────────────────────────────────────────────
@@ -146,5 +151,45 @@ describe("queueDeadLetter", () => {
     assert.ok(methods.includes("POST"), "should call POST to create");
     assert.ok(methods.includes("PATCH"), "should call PATCH to update");
     assert.ok(methods.indexOf("POST") < methods.indexOf("PATCH"), "POST before PATCH");
+  });
+
+  test("fetch throws → does NOT throw (non-blocking)", async () => {
+    globalThis.fetch = async () => { throw new Error("network failure"); };
+    await assert.doesNotReject(() =>
+      queueDeadLetter(100, {
+        message_id: "uuid-dl-throw",
+        pharmacy_id: "pharm-1",
+        customer_phone: "0901111111",
+        content: "Hello",
+        error_text: "HTTP 500",
+      })
+    );
+  });
+});
+
+// ── createMessageRecord request body ─────────────────────────────
+
+describe("createMessageRecord — request body fields", () => {
+  test("sends status=pending and customer_ref (16-char hex) in body", async () => {
+    let sentBody;
+    globalThis.fetch = async (url, opts) => {
+      sentBody = JSON.parse(opts.body);
+      return { ok: true, status: 200, json: async () => ({ id: 1 }) };
+    };
+    await createMessageRecord({
+      message_id: "uuid-body-check",
+      pharmacy_id: "pharm-body",
+      customer_phone: "0901111111",
+      content: "Hello body",
+    });
+    assert.equal(sentBody.status, "pending", "body must include status=pending");
+    assert.equal(sentBody.message_id, "uuid-body-check");
+    assert.equal(sentBody.pharmacy_id, "pharm-body");
+    assert.equal(sentBody.content, "Hello body");
+    assert.ok(
+      typeof sentBody.customer_ref === "string" && sentBody.customer_ref.length === 16,
+      "customer_ref must be 16-char string"
+    );
+    assert.ok(!sentBody.customer_ref.includes("0901111111"), "customer_ref must not contain PII");
   });
 });

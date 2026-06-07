@@ -36,6 +36,7 @@ export async function createMessageRecord(params: {
           status: "pending",
           ts: new Date().toISOString(),
         }),
+        signal: AbortSignal.timeout(10_000),
       }
     );
     if (!resp.ok) {
@@ -66,6 +67,7 @@ export async function updateMessageStatus(
           status,
           ...(errorText !== undefined ? { error: errorText } : {}),
         }),
+        signal: AbortSignal.timeout(10_000),
       }
     );
   } catch {

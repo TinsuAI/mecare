@@ -50,4 +50,26 @@ describe("sendViaOpenzca", () => {
     assert.deepEqual(result, { ok: false, error: "ETIMEDOUT" });
     delete process.env.OPENZCA_URL;
   });
+
+  test("4xx response → { ok: false, error: 'HTTP 404' }", async () => {
+    process.env.OPENZCA_URL = "http://mock-openzca:3000";
+    globalThis.fetch = async () => ({ ok: false, status: 404, text: async () => "not found" });
+    const result = await sendViaOpenzca("pharm-1", "0901111111", "Hello");
+    assert.deepEqual(result, { ok: false, error: "HTTP 404" });
+    delete process.env.OPENZCA_URL;
+  });
+
+  test("request body contains pharmacy_id, recipient, content", async () => {
+    process.env.OPENZCA_URL = "http://mock-openzca:3000";
+    let sentBody;
+    globalThis.fetch = async (url, opts) => {
+      sentBody = JSON.parse(opts.body);
+      return { ok: true, status: 200 };
+    };
+    await sendViaOpenzca("pharm-body", "0901234567", "Test content");
+    assert.equal(sentBody.pharmacy_id, "pharm-body");
+    assert.equal(sentBody.recipient, "0901234567");
+    assert.equal(sentBody.content, "Test content");
+    delete process.env.OPENZCA_URL;
+  });
 });
