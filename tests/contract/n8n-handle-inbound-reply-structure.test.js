@@ -130,4 +130,61 @@ describe("MC-Handle-InboundReply workflow structure", () => {
     assert.ok(typeParam, "'type' body parameter not found");
     assert.equal(typeParam.value, "reply", "type must be 'reply'");
   });
+
+  // Story 4.4 gap-fill: AC2, AC3, AC8 classification + guard condition details
+  test("8.17 — continue_signal keywords trong Classify Response code (AC2)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Classify Response");
+    assert.ok(node, "Classify Response node not found");
+    const code = node?.parameters?.jsCode ?? "";
+    assert.ok(code.includes("continue_signal"), "'continue_signal' classification not found in classify code");
+    assert.ok(code.includes("chưa đỡ"), "continue_signal keyword 'chưa đỡ' not found in classify code");
+  });
+
+  test("8.18 — escalation_trigger keywords trong Classify Response code (AC3)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Classify Response");
+    assert.ok(node, "Classify Response node not found");
+    const code = node?.parameters?.jsCode ?? "";
+    assert.ok(code.includes("escalation_trigger"), "'escalation_trigger' classification not found in classify code");
+    assert.ok(
+      code.includes("nặng hơn") || code.includes("tệ hơn"),
+      "escalation keyword 'nặng hơn' or 'tệ hơn' not found in classify code"
+    );
+  });
+
+  test("8.19 — free_form classification tồn tại trong Classify Response code (AC8)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Classify Response");
+    assert.ok(node, "Classify Response node not found");
+    const code = node?.parameters?.jsCode ?? "";
+    assert.ok(code.includes("free_form"), "'free_form' fallback classification not found in classify code");
+  });
+
+  test("8.20 — 'Guard: Is Opt-Out' condition kiểm tra classified_type === 'opt_out' (AC4)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Guard: Is Opt-Out");
+    assert.ok(node, "'Guard: Is Opt-Out' node not found");
+    const conditions = node?.parameters?.conditions?.conditions ?? [];
+    const checksOptOut = conditions.some(
+      (c) => String(c.leftValue).includes("classified_type") && c.rightValue === "opt_out"
+    );
+    assert.ok(checksOptOut, "Guard: Is Opt-Out must check classified_type === 'opt_out'");
+  });
+
+  test("8.21 — 'Guard: Is Done Signal' condition kiểm tra classified_type === 'done_signal' (AC1)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Guard: Is Done Signal");
+    assert.ok(node, "'Guard: Is Done Signal' node not found");
+    const conditions = node?.parameters?.conditions?.conditions ?? [];
+    const checksDoneSignal = conditions.some(
+      (c) => String(c.leftValue).includes("classified_type") && c.rightValue === "done_signal"
+    );
+    assert.ok(checksDoneSignal, "Guard: Is Done Signal must check classified_type === 'done_signal'");
+  });
+
+  test("8.22 — 'Guard: Is Group 6' condition kiểm tra care_group === 6 (AC7)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Guard: Is Group 6");
+    assert.ok(node, "'Guard: Is Group 6' node not found");
+    const conditions = node?.parameters?.conditions?.conditions ?? [];
+    const checksCareGroup6 = conditions.some(
+      (c) => String(c.leftValue).includes("care_group") && c.rightValue === 6
+    );
+    assert.ok(checksCareGroup6, "Guard: Is Group 6 must check care_group === 6");
+  });
 });
