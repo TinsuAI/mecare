@@ -101,7 +101,7 @@ startSessionMonitor();
 
 process.on("SIGTERM", () => {
   stopSessionMonitor();
-  server.close();
+  server.close(() => process.exit(0));
 });
 
 server.listen(PORT, () => {

@@ -134,6 +134,8 @@ export async function handleSend(
       error_text: lastError,
     }).catch(console.error);
 
+    // Per-message dead-letter alert (Story 2.4 behavior preserved). session-monitor fires a
+    // separate alert when 3 consecutive failures cause state to transition to lost.
     void emitAlert("session.lost", pharmacy_id + ":" + lastError);
 
     res.writeHead(202, { "content-type": "application/json" });

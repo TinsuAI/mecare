@@ -26,7 +26,12 @@ export function _resetForTesting(): void {
 export function recordSessionEvent(event: SessionEvent, detail?: string): void {
   if (event === "send_success") {
     consecutiveErrors = 0;
-    if (state !== "healthy") state = "healthy";
+    // Handles degraded→healthy; lost→healthy cannot happen here because send.ts short-circuits lost sends.
+    if (state !== "healthy") {
+      state = "healthy";
+      lostReason = "";
+      lostSince = null;
+    }
     return;
   }
   if (event === "send_failure") {
@@ -67,7 +72,7 @@ export function resetSession(): void {
 }
 
 export function startSessionMonitor(intervalMs?: number): void {
-  if (timer !== null) return;
+  if (timer !== null) { console.warn("[session-monitor] already running, ignoring duplicate startSessionMonitor() call"); return; }
   const ms = intervalMs ?? Number(process.env.SESSION_HEALTH_INTERVAL_MS ?? 60_000);
   timer = setInterval(async () => {
     const result = await checkOpenzcaHealth();
