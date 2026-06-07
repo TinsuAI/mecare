@@ -84,7 +84,7 @@ development_status:
   5-1-tra-loi-tu-dong-faq-trong-pham-vi-kich-ban: done
   5-2-phat-hien-trigger-leo-thang-cap-cuu: done
   5-3-relay-ca-sang-duoc-si-that-phan-hoi-khach: done
-  5-4-luu-luong-hoi-thoai-ca-leo-thang-vao-crm-audit-first: review
+  5-4-luu-luong-hoi-thoai-ca-leo-thang-vao-crm-audit-first: done
   epic-5-retrospective: optional
 
   # Epic 6: CRM & Dashboard (Baserow)

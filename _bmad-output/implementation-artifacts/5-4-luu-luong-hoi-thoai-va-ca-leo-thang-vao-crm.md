@@ -1,6 +1,6 @@
 # Story 5.4: Lưu luồng hội thoại & ca leo thang vào CRM (audit-first)
 
-Status: review
+Status: done
 
 ## Story
 
@@ -53,7 +53,7 @@ so that tôi xem lại lịch sử hội thoại và kiểm soát chất lượn
   - [x] 5.2 Tạo `baserow/views/06-escalation-cases-list.json`
 
 - [x] Task 6 — Tests (AC1–AC8)
-  - [x] 6.1 Tạo `tests/contract/n8n-messages-audit-structure.test.js` với tests 13.1–13.12:
+  - [x] 6.1 Tạo `tests/contract/n8n-messages-audit-structure.test.js` với tests 13.1–13.16:
     - 13.1 MC-Handle-InboundReply có node "Audit: Write Waiting Message Pending" (httpRequest)
     - 13.2 MC-Handle-InboundReply có node "Audit: Write Relay Message Pending" (httpRequest)
     - 13.3 MC-Handle-InboundReply có node "Audit: Write Pharmacist Reply Pending" (httpRequest)
@@ -66,11 +66,22 @@ so that tôi xem lại lịch sử hội thoại và kiểm soát chất lượn
     - 13.10 Có node "Update Waiting Message Status" (code hoặc httpRequest)
     - 13.11 Có node "Update Pharmacist Reply Status" (code hoặc httpRequest)
     - 13.12 Tổng node count MC-Handle-InboundReply ≥ 51 (42 hiện tại + 9 nodes Task 1–3 tối thiểu)
-  - [x] 6.2 Extend `tests/contract/n8n-relay-watchdog-structure.test.js` tests 12.14–12.16:
+    - 13.13 Có node "Update Relay Message Status" (QA gap-fill AC4)
+    - 13.14 "Audit: Write Waiting Message Pending" body có type="escalation"
+    - 13.15 "Audit: Write Relay Message Pending" body có type="escalation"
+    - 13.16 "Audit: Write Pharmacist Reply Pending" body có type="pharmacist_reply"
+  - [x] 6.2 Extend `tests/contract/n8n-relay-watchdog-structure.test.js` tests 12.14–12.20:
     - 12.14 MC-Relay-Watchdog có HTTP POST node tên chứa "Alert" hoặc "Tinsu" (AC5)
     - 12.15 Node "Send SLA Alert to Tinsu" có method POST (AC5)
     - 12.16 Node "Send SLA Alert" URL tham chiếu `ALERT_WEBHOOK_URL` env var (AC5)
-  - [x] 6.3 Verify toàn bộ test suite vẫn pass (baseline hiện tại: 733/734)
+    - 12.17 Có If node "Guard: Alert URL Set" (QA gap-fill AC5 guard)
+    - 12.18 "Guard: Has Overdue Cases" → "Guard: Alert URL Set" connection
+    - 12.19 "Guard: Alert URL Set" true→"Send SLA Alert to Tinsu", false→"Expand Overdue Cases"
+    - 12.20 ALERT_WEBHOOK_URL có trong tenants/_template.env (AC6)
+  - [x] 6.3 Extend `tests/contract/baserow-views.test.js` với AC7/AC8 view tests (QA gap-fill):
+    - AC7: type=grid, table=Messages, sort ts DESC, visible fields, error hidden, description
+    - AC8: type=grid, table=EscalationCases, sort created_at DESC, visible fields, FK hidden
+  - [x] 6.4 Verify toàn bộ test suite vẫn pass (baseline hiện tại: 733/734)
 
 ## Dev Notes
 
@@ -181,7 +192,7 @@ claude-sonnet-4-6
 - Task 4: Added Guard: Alert URL Set (If) + Send SLA Alert to Tinsu (HTTP POST) to MC-Relay-Watchdog. Guard checks ALERT_WEBHOOK_URL; true→alert→Expand, false→Expand directly.
 - Task 4.3: Added ALERT_WEBHOOK_URL section to tenants/_template.env (commented-out, AR-8 header).
 - Task 5: Created baserow/views/05-messages-history.json and baserow/views/06-escalation-cases-list.json.
-- Task 6: Created n8n-messages-audit-structure.test.js (tests 13.0–13.12). Extended watchdog test with 12.14–12.16. Updated 5 existing tests broken by new connection graph (8.65, 8.80, 8.103, 8.104, 8.105). Final: 750 tests, 749 pass, 1 pre-existing runtime fail (opt-in-gate requires docker).
+- Task 6: Created n8n-messages-audit-structure.test.js (tests 13.0–13.16). Extended watchdog test with 12.14–12.20. Extended baserow-views.test.js with AC7/AC8 view tests. Updated 5 existing tests broken by new connection graph (8.65, 8.80, 8.103, 8.104, 8.105). Final: 768 tests, 767 pass, 1 pre-existing runtime fail (opt-in-gate requires docker).
 - AC3 customer_ref: used customer_id from Format Relay to Customer output (Dev Notes AC3 alternative).
 
 ### File List
@@ -195,3 +206,50 @@ claude-sonnet-4-6
 - tests/contract/n8n-relay-watchdog-structure.test.js (modified — 3 tests added)
 - tests/contract/n8n-handle-inbound-reply-escalation.test.js (modified — test 8.65 updated)
 - tests/contract/n8n-handle-inbound-reply-relay.test.js (modified — tests 8.80, 8.103, 8.104, 8.105 updated)
+- tests/contract/baserow-views.test.js (modified — AC7/AC8 view tests added)
+
+## Senior Developer Review (AI)
+
+_Reviewer: Tinsu on 2026-06-07_
+
+### Outcome: APPROVED ✅
+
+### Checklist
+
+- [x] Story file loaded
+- [x] Story Status verified as reviewable (was: review)
+- [x] Epic 5, Story 4 IDs confirmed
+- [x] Architecture/standards docs loaded (AC3 Dev Notes, AR-7/AR-8 reqs, n8n patterns)
+- [x] Tech stack: n8n HTTP Request + Code nodes, Baserow REST API, Zalo bridge
+- [x] Acceptance Criteria cross-checked against implementation — all 8 ACs implemented
+- [x] File List reviewed — 10 files (added missing baserow-views.test.js)
+- [x] Tests: 768 tests, 767/768 passing (1 pre-existing opt-in-gate Docker failure — baseline)
+- [x] Code quality: audit-first pattern consistent with reference nodes 17/19; continueOnFail=true on all 3 send nodes (AR-7 no-drop)
+- [x] Security: no PII in Messages.content (NFR-5 — customer_ref token only, no phone/name)
+- [x] Status updated to done
+
+### Findings Fixed (auto-fix)
+
+**[MEDIUM] File List missing `baserow-views.test.js`** — QA phase added AC7/AC8 Baserow view tests to this file; was not listed in story File List. Added.
+
+**[MEDIUM] Completion notes test count stale** — said "750 tests, 749/750 passing"; actual post-QA count is 768 tests, 767/768 passing. Updated.
+
+**[LOW] Task 6 entries incomplete** — Task 6.1 listed tests 13.1–13.12 but QA added 13.13–13.16; Task 6.2 listed 12.14–12.16 but QA added 12.17–12.20; no entry for baserow-views.test.js additions. Updated task list and added Task 6.3 for baserow view tests, renamed old 6.3→6.4.
+
+### Implementation Verification
+
+- All 9 audit-first nodes present in MC-Handle-InboundReply (3× UUID gen + 3× HTTP POST audit write + 3× Code PATCH status)
+- Connection graph correct: audit BEFORE send, status update AFTER send — all 6 edges verified
+- Audit body types correct: waiting/relay=escalation, pharmacist_reply=pharmacist_reply
+- `continueOnFail: true` on all 3 send nodes — AR-7 no-drop upheld
+- MC-Relay-Watchdog: Guard: Alert URL Set → true→alert, false→Expand; ALERT_WEBHOOK_URL ref correct
+- tenants/_template.env: ALERT_WEBHOOK_URL commented-out with AR-8 section header + description
+- Baserow views: 05-messages-history.json and 06-escalation-cases-list.json both match AC spec
+
+### Change Log
+
+| Date | Author | Change |
+|------|--------|--------|
+| 2026-06-07 | claude-sonnet-4-6 (dev) | Initial implementation — 9 audit nodes, SLA alert, Baserow views, tests |
+| 2026-06-07 | claude-sonnet-4-6 (QA) | Gap-fill tests 13.13–13.16, 12.17–12.20, baserow-views AC7/AC8 |
+| 2026-06-07 | claude-sonnet-4-6 (review) | APPROVED — fixed 3 story artifact documentation gaps; status → done |
