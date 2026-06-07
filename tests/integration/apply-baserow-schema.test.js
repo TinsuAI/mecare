@@ -46,10 +46,22 @@ describe("applier --dry-run (happy path, offline)", () => {
   });
 });
 
-describe("applier auth-guard (error case, offline)", () => {
+describe("applier auth-guard (error cases, offline)", () => {
   test("không auth + không --dry-run -> exit ≠0 + 'Thiếu auth'", async () => {
     const r = await runApplier([]); // schema+seed mode, no auth env
     assert.notEqual(r.code, 0, "thiếu auth phải exit khác 0");
     assert.match(r.stderr, /Thiếu auth/, `phải báo lỗi thiếu auth\nstderr: ${r.stderr}`);
+  });
+
+  test("--schema không auth -> exit ≠0 + 'Thiếu auth' (AC2 Story 1.8)", async () => {
+    const r = await runApplier(["--schema"]);
+    assert.notEqual(r.code, 0, "--schema không auth phải exit khác 0");
+    assert.match(r.stderr, /Thiếu auth/, `--schema phải báo thiếu auth\nstderr: ${r.stderr}`);
+  });
+
+  test("--seed không auth -> exit ≠0 + 'Thiếu auth' (AC3 Story 1.8)", async () => {
+    const r = await runApplier(["--seed"]);
+    assert.notEqual(r.code, 0, "--seed không auth phải exit khác 0");
+    assert.match(r.stderr, /Thiếu auth/, `--seed phải báo thiếu auth\nstderr: ${r.stderr}`);
   });
 });

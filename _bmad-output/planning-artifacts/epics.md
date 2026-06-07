@@ -280,6 +280,26 @@ So that xác nhận kiến trúc multi-tenancy khả thi trước khi onboard nh
 **When** tổng hợp
 **Then** có báo cáo go/no-go; nếu plugin chỉ thiết kế cho 1 account → ghi phương án (nhiều instance/tách tiến trình) trước khi mở rộng
 
+### Story 1.8: Verify & run apply-baserow-schema trên Baserow live
+
+As a kỹ sư vận hành MeCare,
+I want chạy `scripts/apply-baserow-schema.mjs` thành công trên Baserow live,
+So that Epic 2+ có thể test với 9 bảng thật + data tructam trong Baserow.
+
+**Acceptance Criteria:**
+
+**Given** `.env` có credentials thật
+**When** `node scripts/apply-baserow-schema.mjs --schema`
+**Then** 9 bảng xuất hiện trong Baserow UI, exit 0
+
+**Given** schema đã tạo
+**When** `node scripts/apply-baserow-schema.mjs --seed`
+**Then** Pharmacies (1 row tructam), MessageTemplates (6 rows), FaqEntries (9 rows)
+
+**Given** full run đã thành công
+**When** chạy lại lần 2
+**Then** exit 0, không duplicate (idempotent)
+
 ---
 
 ## Epic 2: Lớp Zalo Cá Nhân an toàn (anti-ban — R1)

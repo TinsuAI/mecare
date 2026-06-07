@@ -4,7 +4,7 @@ baseline_commit: 6220a4bb56fc6f29e81e76640345d174e7eb958c
 
 # Story 1.8: Verify & run apply-baserow-schema trên Baserow live
 
-Status: review
+Status: done
 
 ## Story
 
@@ -183,11 +183,40 @@ feat(story-1.8): Apply Baserow schema + seed tructam lên live instance
 
 - `.env` — updated BASEROW_EMAIL + BASEROW_PASSWORD (not committed — credentials)
 - `README.md` — added Quick Start steps 6–7
+- `tests/contract/baserow-schema.test.js` — 3 new tests: FaqEntries row count (AC3), .env.example BASEROW_EMAIL/PASSWORD (AC5), README onboarding (AC5)
+- `tests/integration/apply-baserow-schema.test.js` — 2 new auth-guard tests: --schema no-auth (AC2), --seed no-auth (AC3)
+- `_bmad-output/planning-artifacts/epics.md` — Story 1.8 entry added
+- `docs/spike-multi-tenant-g6.md` — commit hash updated to ec31de8
 - `_bmad-output/implementation-artifacts/1-8-apply-baserow-schema-seed-live.md` — story file
-- `_bmad-output/implementation-artifacts/sprint-status.yaml` — status → review
+- `_bmad-output/implementation-artifacts/sprint-status.yaml` — status → done
+
+### Senior Developer Review (AI)
+
+**Outcome: APPROVED — 0 Critical, 1 High (fixed), 1 Medium (fixed), 1 Low (fixed)**
+
+**Issues Found & Fixed:**
+
+**[HIGH] Test files not committed, missing from File List**
+- `tests/contract/baserow-schema.test.js` and `tests/integration/apply-baserow-schema.test.js` had 5 new Story 1.8 tests (ACs 2, 3, 5) left uncommitted and undocumented in File List.
+- Fix: Added to File List; committed in review commit.
+
+**[MEDIUM] `_bmad-output/planning-artifacts/epics.md` uncommitted**
+- Story 1.8 entry added to epics but not committed.
+- Fix: Included in review commit.
+
+**[LOW] `docs/spike-multi-tenant-g6.md` commit hash stale**
+- Commit pointer still referenced `2afd0b7`, should be `ec31de8`.
+- Fix: Committed with review pass.
+
+**AC Validation:** AC1 ✅ dry-run exit 0 | AC2 ✅ --schema auth-guard tested | AC3 ✅ seed 9 FAQ rows asserted | AC4 ✅ idempotent | AC5 ✅ README + .env.example tests pass
+
+**Test Suite:** 285/285 pass (285 includes 6 new Story 1.8 tests; story noted 279 pre-review baseline).
+
+_Reviewer: gabenidolcs on 2026-06-06_
 
 ### Change Log
 
 - Added Baserow admin account and ran `apply-baserow-schema.mjs` against live `https://mecareapp.tinsu.ai`
 - 9 tables + tructam seed verified in Baserow UI (via API confirmation of created IDs)
 - README Quick Start extended with steps 6–7 for Baserow credential setup and schema apply
+- **[Review]** Committed 5 missing test additions (contract + integration), epics.md Story 1.8 entry, spike doc hash; File List updated; status → done

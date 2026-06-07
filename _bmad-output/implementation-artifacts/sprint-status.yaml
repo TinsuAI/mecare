@@ -52,7 +52,7 @@ development_status:
   1-5-spike-guardrail-y-te-openclaw-g2: done
   1-6-spike-multi-tenant-zalo-openclaw-g6: done
   1-7-fix-env-example-port-vars: done
-  1-8-apply-baserow-schema-seed-live: review
+  1-8-apply-baserow-schema-seed-live: done
   epic-1-retrospective: done
 
   # Epic 2: Lớp Zalo Cá Nhân an toàn (anti-ban — R1)

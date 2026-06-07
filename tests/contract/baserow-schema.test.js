@@ -168,7 +168,7 @@ describe("Seed — draft khung, persona Dược Sĩ Hải (KHÔNG 'Ngọc')", ()
     const faq = seedByTable.FaqEntries;
     assert.ok(faq, "thiếu seed FaqEntries");
     assert.equal(faq.tenant_slug, "tructam", "seed FAQ phải gắn tenant tructam");
-    assert.ok(faq.rows.length >= 1, "phải có ≥1 record FAQ");
+    assert.equal(faq.rows.length, 9, "FaqEntries seed phải đúng 9 rows (AC3 Story 1.8)");
     for (const r of faq.rows) {
       assert.equal(r.status, "draft", "FAQ seed phải draft");
       assert.ok(r.question && r.question.length > 0, "question phải đã điền (Story 1.4)");
@@ -255,6 +255,12 @@ describe("Task 4 — env + data-governance doc (AC4/AC5)", () => {
     assert.match(env, /^BASEROW_API_TOKEN=/m, "thiếu BASEROW_API_TOKEN");
   });
 
+  test(".env.example có BASEROW_EMAIL + BASEROW_PASSWORD (AC5 Story 1.8)", () => {
+    const env = read(".env.example");
+    assert.match(env, /^BASEROW_EMAIL=/m, ".env.example thiếu BASEROW_EMAIL");
+    assert.match(env, /^BASEROW_PASSWORD=/m, ".env.example thiếu BASEROW_PASSWORD");
+  });
+
   test("tenants/_template.env có BASEROW_API_TOKEN per-tenant", () => {
     assert.match(read("tenants/_template.env"), /^BASEROW_API_TOKEN=/m, "thiếu BASEROW_API_TOKEN per-tenant");
   });
@@ -264,5 +270,25 @@ describe("Task 4 — env + data-governance doc (AC4/AC5)", () => {
     assert.match(doc, /at-rest/i, "thiếu mục mã hóa at-rest");
     assert.match(doc, /LUKS|dm-crypt/, "thiếu cơ chế mã hóa volume (LUKS/dm-crypt)");
     assert.match(doc, /customer_ref/, "thiếu ranh giới PII-min customer_ref");
+  });
+});
+
+describe("Story 1.8 — README Quick Start onboarding (AC5)", () => {
+  const read = (p) => fs.readFileSync(repoPath(p), "utf8");
+
+  test("README có hướng dẫn set BASEROW_EMAIL + BASEROW_PASSWORD", () => {
+    const readme = read("README.md");
+    assert.match(readme, /BASEROW_EMAIL/, "README thiếu BASEROW_EMAIL trong hướng dẫn onboarding");
+    assert.match(readme, /BASEROW_PASSWORD/, "README thiếu BASEROW_PASSWORD trong hướng dẫn onboarding");
+  });
+
+  test("README Quick Start có lệnh apply-baserow-schema.mjs", () => {
+    const readme = read("README.md");
+    assert.match(readme, /apply-baserow-schema\.mjs/, "README thiếu lệnh apply-baserow-schema.mjs trong Quick Start");
+  });
+
+  test("README ghi chú script idempotent (chạy lại safe)", () => {
+    const readme = read("README.md");
+    assert.match(readme, /idempotent/, "README thiếu ghi chú idempotent (AC4 Story 1.8)");
   });
 });
