@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-06
-last_updated: 2026-06-07  # 4-2: done
+last_updated: 2026-06-07  # 4-3: done (review approved)
 project: MeCare
 # 1-4 promoted to ready-for-dev via create-story 2026-06-06
 project_key: NOKEY
@@ -75,7 +75,7 @@ development_status:
   epic-4: in-progress
   4-1-soan-tin-chu-dong-tu-template-kich-ban: done
   4-2-lap-lich-gui-dung-cadence-tung-nhom: done
-  4-3-ap-rate-limit-nhom-tran-goi-1000-tin-thang: backlog
+  4-3-ap-rate-limit-nhom-tran-goi-1000-tin-thang: done
   4-4-ton-trong-phan-hoi-quyen-tu-choi-cua-khach: backlog
   epic-4-retrospective: optional
 
