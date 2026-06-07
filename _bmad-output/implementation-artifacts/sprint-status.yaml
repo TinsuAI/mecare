@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-06
-last_updated: 2026-06-07  # 4-4: done (review approved); epic-4-retrospective: done; 5-1: done
+last_updated: 2026-06-07  # 4-4: done (review approved); epic-4-retrospective: done; 5-1: done; 5-2: ready-for-dev
 project: MeCare
 # 1-4 promoted to ready-for-dev via create-story 2026-06-06
 project_key: NOKEY
@@ -82,7 +82,7 @@ development_status:
   # Epic 5: Trả lời thắc mắc & Leo thang Dược Sĩ
   epic-5: in-progress
   5-1-tra-loi-tu-dong-faq-trong-pham-vi-kich-ban: done
-  5-2-phat-hien-trigger-leo-thang-cap-cuu: backlog
+  5-2-phat-hien-trigger-leo-thang-cap-cuu: review
   5-3-relay-ca-sang-duoc-si-that-phan-hoi-khach: backlog
   5-4-luu-luong-hoi-thoai-ca-leo-thang-vao-crm-audit-first: backlog
   epic-5-retrospective: optional

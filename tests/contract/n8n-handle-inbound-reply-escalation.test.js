@@ -167,4 +167,31 @@ describe("MC-Handle-InboundReply escalation nodes (Story 5.2)", () => {
       `expected >= 26 nodes, got ${workflow.nodes.length}`
     );
   });
+
+  test("8.63 — Kết nối: Guard: Needs Escalation false → Return Result (AC7 regression guard)", () => {
+    const nextNode = workflow.connections?.["Guard: Needs Escalation"]?.main?.[1]?.[0]?.node;
+    assert.equal(
+      nextNode,
+      "Return Result",
+      `Guard: Needs Escalation false must connect to 'Return Result', got '${nextNode}'`
+    );
+  });
+
+  test("8.64 — Kết nối: Send Emergency 115 → Create Escalation Case (AC3 parallel path)", () => {
+    const nextNode = workflow.connections?.["Send Emergency 115"]?.main?.[0]?.[0]?.node;
+    assert.equal(
+      nextNode,
+      "Create Escalation Case",
+      `Send Emergency 115 must connect to 'Create Escalation Case', got '${nextNode}'`
+    );
+  });
+
+  test("8.65 — Kết nối: Log Escalation Case Created → Return Result (AC2)", () => {
+    const nextNode = workflow.connections?.["Log Escalation Case Created"]?.main?.[0]?.[0]?.node;
+    assert.equal(
+      nextNode,
+      "Return Result",
+      `Log Escalation Case Created must connect to 'Return Result', got '${nextNode}'`
+    );
+  });
 });
