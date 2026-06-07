@@ -323,12 +323,18 @@ mecare/
 │
 ├── zalo-bridge/                    # gửi/nhận Zalo + anti-ban + PII de-anon
 │   ├── package.json                # TypeScript, wrap openzca CLI
+│   ├── warmup.sh                   # warm-up tài khoản Zalo mới (documentation helper)
 │   ├── src/
+│   │   ├── index.ts                # HTTP server entry point + route registration
 │   │   ├── send.ts                 # gửi tin (throttle, jitter, giờ HC — FR-12)
-│   │   ├── listen.ts               # openzca listen --raw --supervised (nhận)
-│   │   ├── throttle.ts             # anti-ban: trần ngày, biến thể, warm-up
-│   │   ├── session-monitor.ts      # giám sát phiên (FR-13)
-│   │   └── deanonymize.ts          # token ẩn danh → tên/SĐT thật lúc gửi
+│   │   ├── opt-in-gate.ts          # cổng opt-in: chỉ gửi khách đã friended (FR-11)
+│   │   ├── throttle.ts             # anti-ban: trần ngày, biến thể, warm-up (FR-12)
+│   │   ├── risk-monitor.ts         # sliding-window rủi ro, auto-pause, alert (FR-12)
+│   │   ├── messages-client.ts      # audit trail Baserow Messages (AR-7, NFR-4)
+│   │   ├── openzca-client.ts       # HTTP wrapper gọi openzca per-tenant
+│   │   ├── session-monitor.ts      # giám sát phiên openzca (FR-13)
+│   │   ├── listen.ts               # [FUTURE] openzca listen --raw --supervised (nhận)
+│   │   └── deanonymize.ts          # [FUTURE] token ẩn danh → tên/SĐT thật lúc gửi
 │   └── tenants/                    # phiên openzca per-tenant (cô lập)
 │
 ├── docs/
@@ -337,7 +343,6 @@ mecare/
 │   └── data-governance.md          # chính sách PII sức khỏe (§11.2)
 │
 └── scripts/
-    ├── warmup.sh                   # warm-up tài khoản Zalo mới
     └── backup.sh                   # backup Postgres + memory store
 ```
 
@@ -362,7 +367,7 @@ mecare/
 | FR-9, FR-10 (relay/lưu) | `create_escalation_case` + `n8n/MC-Relay-Watchdog` + Baserow `EscalationCases`/`Messages` |
 | FR-11, FR-12, FR-13 (Zalo an toàn) | `zalo-bridge/` toàn bộ |
 | FR-14, FR-15 (CRM/dashboard) | `baserow/views/` |
-| FR-16 (onboarding) | `tenants/` + `scripts/warmup.sh` + `docs/runbook-onboarding.md` |
+| FR-16 (onboarding) | `tenants/` + `zalo-bridge/warmup.sh` + `docs/runbook-onboarding.md` |
 
 ### Integration / Data Flow
 

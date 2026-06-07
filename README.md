@@ -57,9 +57,9 @@ mecare/
 ├── baserow/{schema,seed,views}
 ├── n8n/workflows
 ├── openclaw/{config,plugins,kichban,guardrails,prompts}
-├── zalo-bridge/src
+├── zalo-bridge/{src,warmup.sh}
 ├── docs/                   # runbook, governance
-└── scripts/                # warmup.sh / backup.sh
+└── scripts/                # backup.sh
 ```
 
 ## Tài liệu vận hành
