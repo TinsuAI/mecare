@@ -210,7 +210,6 @@ const server = http.createServer(async (req, res) => {
           fields: { pharmacy_id, ...fields },
         });
       }
-      // TODO Story 5.3: sau khi tạo case, relay sang Zalo dược sĩ thật
       const status = result.created ? 201 : 200;
       return jsonResp(res, status, { case_id: result.case_id, state: "open", created: result.created });
     } catch (err) {

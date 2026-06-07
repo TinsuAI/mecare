@@ -1,0 +1,238 @@
+{
+  "name": "MC-Relay-Watchdog",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/30 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "watchdog-cron-trigger",
+      "name": "Cron Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Inline copy of isBusinessHourGmt7 from n8n/lib/schedule-utils.js (no local import in n8n)\nfunction isBusinessHourGmt7(nowMs, startHour, endHour) {\n  const gmt7Hour = ((nowMs + 7 * 3600000) / 3600000) % 24;\n  return gmt7Hour >= startHour && gmt7Hour < endHour;\n}\n\nconst startHour = parseInt(process.env.WORKING_HOURS_START?.split(':')[0] ?? '8');\nconst endHour = parseInt(process.env.WORKING_HOURS_END?.split(':')[0] ?? '21');\nconst nowMs = Date.now();\nconst inBusinessHours = isBusinessHourGmt7(nowMs, startHour, endHour);\nreturn [{ json: { in_business_hours: inBusinessHours, now_ms: nowMs } }];"
+      },
+      "id": "watchdog-business-hours-check",
+      "name": "Guard: Is Business Hours",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.in_business_hours }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "watchdog-guard-business-hours",
+      "name": "Guard: Outside Hours",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [480, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const slaMinutes = parseInt(process.env.RELAY_SLA_MINUTES || '60');\nconst cutoff = new Date(Date.now() - slaMinutes * 60 * 1000).toISOString();\nreturn [{ json: { sla_cutoff: cutoff, sla_minutes: slaMinutes } }];"
+      },
+      "id": "watchdog-compute-sla",
+      "name": "Compute SLA Cutoff",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.ESCALATION_CASES_TABLE_ID }}/?user_field_names=true&filter__state__equal=waiting_pharmacist&filter__created_at__date__before={{ $json.sla_cutoff }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "watchdog-query-overdue-cases",
+      "name": "Query Overdue Cases",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "continueOnFail": true,
+      "position": [960, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ ($json.results || []).length > 0 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "watchdog-guard-has-overdue",
+      "name": "Guard: Has Overdue Cases",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1200, 0]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "watchdog-split-cases",
+      "name": "Split Overdue Cases",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [1440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cases = $('Query Overdue Cases').first().json.results || [];\nconst slaMinutes = $('Compute SLA Cutoff').first().json.sla_minutes;\nconst reminders = cases.map(c => ({\n  case_id: c.case_id,\n  customer_id: c.customer_id,\n  sla_minutes: slaMinutes\n}));\nreturn reminders.map(r => ({ json: r }));"
+      },
+      "id": "watchdog-expand-cases",
+      "name": "Expand Overdue Cases",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1440, 120]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://zalo-bridge:{{ $env.ZALO_BRIDGE_PORT }}/send",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "to": "={{ $env.PHARMACIST_ZALO_ID }}",
+          "message": "={{ '⏰ Nhắc: Ca ' + $json.case_id + ' chờ phương án quá ' + $json.sla_minutes + ' phút. Khách đang chờ.' }}",
+          "bypass_persona": true
+        },
+        "options": {}
+      },
+      "id": "watchdog-send-reminder",
+      "name": "Send Reminder to Pharmacist",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "continueOnFail": true,
+      "position": [1680, 120]
+    }
+  ],
+  "connections": {
+    "Cron Trigger": {
+      "main": [
+        [
+          {
+            "node": "Guard: Is Business Hours",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Is Business Hours": {
+      "main": [
+        [
+          {
+            "node": "Guard: Outside Hours",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Outside Hours": {
+      "main": [
+        [
+          {
+            "node": "Compute SLA Cutoff",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute SLA Cutoff": {
+      "main": [
+        [
+          {
+            "node": "Query Overdue Cases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Overdue Cases": {
+      "main": [
+        [
+          {
+            "node": "Guard: Has Overdue Cases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Has Overdue Cases": {
+      "main": [
+        [
+          {
+            "node": "Expand Overdue Cases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Expand Overdue Cases": {
+      "main": [
+        [
+          {
+            "node": "Send Reminder to Pharmacist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "id": "mc-relay-watchdog",
+  "tags": []
+}

@@ -737,6 +737,399 @@
         3600,
         360
       ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $('Webhook Trigger').first().json.body.sender_zalo_id }}",
+              "rightValue": "={{ $env.PHARMACIST_ZALO_ID }}",
+              "operator": {
+                "type": "string",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-is-pharmacist-sender",
+      "name": "Guard: Is Pharmacist Sender",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        360,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const msg = $('Webhook Trigger').first().json.body.message_content || '';\nconst match = msg.match(/ESC-[A-Za-z0-9_-]+/);\nconst case_id = match ? match[0] : null;\nreturn [{ json: { case_id, pharmacist_message: msg, sender_zalo_id: $('Webhook Trigger').first().json.body.sender_zalo_id } }];"
+      },
+      "id": "parse-pharmacist-reply",
+      "name": "Parse Pharmacist Reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        600,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ !!$json.case_id }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-case-id-present",
+      "name": "Guard: Case ID Present",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        840,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://zalo-bridge:{{ $env.ZALO_BRIDGE_PORT }}/send",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "to": "={{ $env.PHARMACIST_ZALO_ID }}",
+          "message": "Không tìm thấy mã ca trong tin của bạn. Vui lòng bao gồm mã ca (VD: ESC-...) trong tin phản hồi.",
+          "bypass_persona": true
+        },
+        "options": {}
+      },
+      "id": "notify-pharmacist-no-case-id",
+      "name": "Notify Pharmacist: No Case ID",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "continueOnFail": true,
+      "position": [
+        1080,
+        -520
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.ESCALATION_CASES_TABLE_ID }}/?user_field_names=true&filter__case_id__equal={{ $('Parse Pharmacist Reply').first().json.case_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "lookup-escalation-case",
+      "name": "Lookup Escalation Case",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "continueOnFail": true,
+      "position": [
+        1080,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = $json.results || [];\nif (!results.length) return [{ json: { case_found: false, row_id: null, state: null, customer_id: null, case_id: null } }];\nconst row = results[0];\nreturn [{ json: { case_found: true, row_id: row.id, state: row.state, customer_id: row.customer_id, case_id: row.case_id } }];"
+      },
+      "id": "extract-case-data",
+      "name": "Extract Case Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.case_found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            },
+            {
+              "leftValue": "={{ $json.state }}",
+              "rightValue": "resolved",
+              "operator": {
+                "type": "string",
+                "operation": "notEqual"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-case-active",
+      "name": "Guard: Case Active",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://zalo-bridge:{{ $env.ZALO_BRIDGE_PORT }}/send",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "to": "={{ $env.PHARMACIST_ZALO_ID }}",
+          "message": "={{ 'Mã ca ' + $('Parse Pharmacist Reply').first().json.case_id + ' không tìm thấy hoặc đã xử lý.' }}",
+          "bypass_persona": true
+        },
+        "options": {}
+      },
+      "id": "notify-pharmacist-already-resolved",
+      "name": "Notify Pharmacist: Already Resolved",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "continueOnFail": true,
+      "position": [
+        1800,
+        -520
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const pharmacistMsg = $('Parse Pharmacist Reply').first().json.pharmacist_message;\nconst caseData = $json;\nconst formattedMessage = 'Dạ anh/chị, dược sĩ tư vấn như sau:\\n' + pharmacistMsg;\nconst resolvedAt = new Date().toISOString();\nreturn [{ json: { formatted_message: formattedMessage, pharmacist_message_verbatim: pharmacistMsg, customer_id: caseData.customer_id, row_id: caseData.row_id, resolved_at: resolvedAt } }];"
+      },
+      "id": "format-relay-to-customer",
+      "name": "Format Relay to Customer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1800,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://zalo-bridge:{{ $env.ZALO_BRIDGE_PORT }}/send",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "customer_id": "={{ $json.customer_id }}",
+          "message": "={{ $json.formatted_message }}",
+          "bypass_persona": false
+        },
+        "options": {}
+      },
+      "id": "send-pharmacist-answer-to-customer",
+      "name": "Send Pharmacist Answer to Customer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "continueOnFail": true,
+      "position": [
+        2040,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.ESCALATION_CASES_TABLE_ID }}/{{ $('Format Relay to Customer').first().json.row_id }}/?user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pharmacist_reply",
+              "value": "={{ $('Format Relay to Customer').first().json.pharmacist_message_verbatim }}"
+            },
+            {
+              "name": "state",
+              "value": "resolved"
+            },
+            {
+              "name": "resolved_at",
+              "value": "={{ $('Format Relay to Customer').first().json.resolved_at }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "update-case-resolved",
+      "name": "Update Case: Resolved",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "continueOnFail": true,
+      "position": [
+        2280,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://zalo-bridge:{{ $env.ZALO_BRIDGE_PORT }}/send",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "customer_id": "={{ $('Classify Response').first().json.customer_id }}",
+          "message": "Dạ để em hỏi dược sĩ rồi báo lại anh/chị ngay ạ. Trong lúc chờ, anh/chị lưu ý: tạm chưa tự chỉnh liều, nếu có dấu hiệu nặng hơn vui lòng gọi 115 ngay.",
+          "bypass_persona": false
+        },
+        "options": {}
+      },
+      "id": "send-waiting-message",
+      "name": "Send Waiting Message to Customer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "continueOnFail": true,
+      "position": [
+        3840,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://zalo-bridge:{{ $env.ZALO_BRIDGE_PORT }}/send",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "to": "={{ $env.PHARMACIST_ZALO_ID }}",
+          "message": "={{ '[MÃ CA: ' + $('Log Escalation Case Created').first().json.case_id + ']\\n📋 Khách: ' + $('Classify Response').first().json.customer_id + ' (Nhóm ' + $('Classify Response').first().json.care_group + ')\\n⚠️ Trigger: ' + $('Detect Escalation Trigger').first().json.trigger_excerpt + '\\n📝 Nội dung tin: ' + $('Classify Response').first().json.message_content + '\\n\\nTrả lời bằng cách bao gồm mã ca trong tin nhắn.' }}",
+          "bypass_persona": true
+        },
+        "options": {}
+      },
+      "id": "relay-to-pharmacist-zalo",
+      "name": "Relay to Pharmacist Zalo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "continueOnFail": true,
+      "position": [
+        4080,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.ESCALATION_CASES_TABLE_ID }}/?user_field_names=true&filter__case_id__equal={{ $('Log Escalation Case Created').first().json.case_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "lookup-case-row-id",
+      "name": "Lookup Case Row ID",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "continueOnFail": true,
+      "position": [
+        4320,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = $json.results || [];\nconst row_id = results.length ? results[0].id : null;\nreturn [{ json: { row_id, case_id: $('Log Escalation Case Created').first().json.case_id } }];"
+      },
+      "id": "extract-escalation-row",
+      "name": "Extract Escalation Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4560,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.ESCALATION_CASES_TABLE_ID }}/{{ $json.row_id }}/?user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "state",
+              "value": "waiting_pharmacist"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "update-case-waiting-pharmacist",
+      "name": "Update Case: Waiting Pharmacist",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "continueOnFail": true,
+      "position": [
+        4800,
+        360
+      ]
     }
   ],
   "connections": {
@@ -755,7 +1148,7 @@
       "main": [
         [
           {
-            "node": "Classify Response",
+            "node": "Guard: Is Pharmacist Sender",
             "type": "main",
             "index": 0
           }
@@ -1061,6 +1454,170 @@
       ]
     },
     "Log Escalation Case Created": {
+      "main": [
+        [
+          {
+            "node": "Send Waiting Message to Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Is Pharmacist Sender": {
+      "main": [
+        [
+          {
+            "node": "Parse Pharmacist Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Classify Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Pharmacist Reply": {
+      "main": [
+        [
+          {
+            "node": "Guard: Case ID Present",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Case ID Present": {
+      "main": [
+        [
+          {
+            "node": "Lookup Escalation Case",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Pharmacist: No Case ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup Escalation Case": {
+      "main": [
+        [
+          {
+            "node": "Extract Case Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Case Data": {
+      "main": [
+        [
+          {
+            "node": "Guard: Case Active",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Case Active": {
+      "main": [
+        [
+          {
+            "node": "Format Relay to Customer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Pharmacist: Already Resolved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Relay to Customer": {
+      "main": [
+        [
+          {
+            "node": "Send Pharmacist Answer to Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Pharmacist Answer to Customer": {
+      "main": [
+        [
+          {
+            "node": "Update Case: Resolved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Waiting Message to Customer": {
+      "main": [
+        [
+          {
+            "node": "Relay to Pharmacist Zalo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Relay to Pharmacist Zalo": {
+      "main": [
+        [
+          {
+            "node": "Lookup Case Row ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup Case Row ID": {
+      "main": [
+        [
+          {
+            "node": "Extract Escalation Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Escalation Row": {
+      "main": [
+        [
+          {
+            "node": "Update Case: Waiting Pharmacist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Case: Waiting Pharmacist": {
       "main": [
         [
           {
