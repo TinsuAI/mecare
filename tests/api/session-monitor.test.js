@@ -137,6 +137,14 @@ describe("Story 2.5 AC1: health-check failure", () => {
     const stateRes = await get(BRIDGE_PORT, "/session-state");
     assert.equal(stateRes.status, 200);
     assert.equal(stateRes.json?.state, "lost", "health-check fail should put session in lost state");
+    assert.ok(
+      typeof stateRes.json?.reason === "string" && stateRes.json.reason.length > 0,
+      "session state reason must be non-empty when lost via health_fail"
+    );
+    assert.ok(
+      typeof stateRes.json?.lost_since_ms === "number",
+      "lost_since_ms must be a numeric timestamp when session is lost"
+    );
 
     const prevSendCount = eventLog.filter((e) => e.source === "openzca" && e.url === "/send").length;
 
@@ -162,6 +170,108 @@ describe("Story 2.5 AC1: health-check failure", () => {
     assert.equal(alertEvents[0].body?.event, "session.lost");
     assert.equal(alertEvents[0].body?.service, "zalo-bridge");
     assert.ok(typeof alertEvents[0].body?.reason === "string", "alert must have reason field");
+    assert.ok(
+      typeof alertEvents[0].body?.timestamp_ms === "number",
+      "alert must have numeric timestamp_ms field"
+    );
+  });
+});
+
+// ─── AC1-c: health recovery does NOT auto-resume lost state ────────────────
+const BRIDGE_PORT_HC = 31338;
+const MOCK_BASEROW_PORT_HC = 31339;
+const MOCK_OPENZCA_PORT_HC = 31340;
+
+describe("Story 2.5 AC1-c: health polling 200 does NOT auto-recover lost state", () => {
+  let bridge;
+  let mockBaserow;
+  let mockOpenzca;
+  let healthzStatus = 503;
+
+  before(async () => {
+    mockBaserow = http.createServer(async (req, res) => {
+      res.writeHead(200, { "content-type": "application/json" });
+      if (req.method === "GET") {
+        res.end(JSON.stringify({ results: [{ friend_status: "friended", phone: "0901111111" }] }));
+      } else {
+        res.end(JSON.stringify({ id: 202 }));
+      }
+    });
+    await new Promise((resolve) => mockBaserow.listen(MOCK_BASEROW_PORT_HC, "127.0.0.1", resolve));
+
+    mockOpenzca = http.createServer(async (req, res) => {
+      if (req.url === "/healthz") {
+        res.writeHead(healthzStatus, { "content-type": "application/json" });
+        res.end(JSON.stringify({ ok: healthzStatus < 300 }));
+      } else if (req.url === "/send") {
+        res.writeHead(200, { "content-type": "application/json" });
+        res.end(JSON.stringify({ ok: true }));
+      } else if (req.url === "/alert") {
+        res.writeHead(200, { "content-type": "application/json" });
+        res.end(JSON.stringify({ ok: true }));
+      } else {
+        res.writeHead(404);
+        res.end("not found");
+      }
+    });
+    await new Promise((resolve) => mockOpenzca.listen(MOCK_OPENZCA_PORT_HC, "127.0.0.1", resolve));
+
+    bridge = await startServer({
+      entry: "zalo-bridge/src/index.ts",
+      port: BRIDGE_PORT_HC,
+      env: {
+        ZALO_BRIDGE_PORT: String(BRIDGE_PORT_HC),
+        BASEROW_URL: `http://127.0.0.1:${MOCK_BASEROW_PORT_HC}`,
+        BASEROW_TOKEN: "test",
+        CUSTOMERS_TABLE_ID: "1",
+        MESSAGES_TABLE_ID: "99",
+        OPENZCA_URL: `http://127.0.0.1:${MOCK_OPENZCA_PORT_HC}`,
+        BUSINESS_HOUR_START: "0",
+        BUSINESS_HOUR_END: "24",
+        JITTER_MIN_MS: "1",
+        JITTER_MAX_MS: "5",
+        DAILY_SEND_CAP: "50",
+        ALERT_WEBHOOK_URL: `http://127.0.0.1:${MOCK_OPENZCA_PORT_HC}/alert`,
+        RISK_ERROR_COUNT_THRESHOLD: "99",
+        SESSION_HEALTH_INTERVAL_MS: "100",
+      },
+    });
+
+    await sleep(250); // ensure at least one failed health-check cycle
+  });
+
+  after(async () => {
+    await bridge?.stop();
+    await new Promise((resolve) => mockBaserow?.close(resolve));
+    await new Promise((resolve) => mockOpenzca?.close(resolve));
+  });
+
+  test("7.8: AC1-c — health polling returning 200 does NOT auto-recover lost state", async () => {
+    const stateBeforeRes = await get(BRIDGE_PORT_HC, "/session-state");
+    assert.equal(stateBeforeRes.json?.state, "lost", "precondition: session must be lost after health_fail");
+
+    healthzStatus = 200; // health now passes
+    await sleep(250); // wait for another polling cycle with status 200
+
+    const stateAfterRes = await get(BRIDGE_PORT_HC, "/session-state");
+    assert.equal(
+      stateAfterRes.json?.state,
+      "lost",
+      "health polling returning 200 must NOT auto-recover — only POST /session-reset can"
+    );
+  });
+
+  test("7.9: AC1-c — POST /session-reset after health_fail recovers fully (reason+lost_since_ms cleared)", async () => {
+    const resetRes = await post(BRIDGE_PORT_HC, "/session-reset", {});
+    assert.equal(resetRes.status, 200);
+    assert.ok(resetRes.json?.reset === true);
+    assert.equal(resetRes.json?.state, "healthy");
+
+    const stateRes = await get(BRIDGE_PORT_HC, "/session-state");
+    assert.equal(stateRes.json?.state, "healthy");
+    assert.equal(stateRes.json?.consecutive_errors, 0);
+    assert.strictEqual(stateRes.json?.reason, "", "reason must be cleared after reset");
+    assert.strictEqual(stateRes.json?.lost_since_ms, null, "lost_since_ms must be null after reset");
   });
 });
 
@@ -237,6 +347,15 @@ describe("Story 2.5 AC2+AC3+regression: consecutive send failures", () => {
     await new Promise((resolve) => mockOpenzca?.close(resolve));
   });
 
+  test("7.0: initial state — GET /session-state returns healthy shape before any failures", async () => {
+    const stateRes = await get(BRIDGE_PORT, "/session-state");
+    assert.equal(stateRes.status, 200);
+    assert.equal(stateRes.json?.state, "healthy");
+    assert.equal(stateRes.json?.consecutive_errors, 0);
+    assert.strictEqual(stateRes.json?.reason, "", "reason must be empty string when healthy");
+    assert.strictEqual(stateRes.json?.lost_since_ms, null, "lost_since_ms must be null when healthy");
+  });
+
   test("7.3: AC2-a — ≥3 consecutive send failures → state=lost; 4th send short-circuits", async () => {
     eventLog = [];
     seqCounter = 0;
@@ -253,6 +372,14 @@ describe("Story 2.5 AC2+AC3+regression: consecutive send failures", () => {
     const stateRes = await get(BRIDGE_PORT, "/session-state");
     assert.equal(stateRes.json?.state, "lost", "3 consecutive failures should mark session as lost");
     assert.equal(stateRes.json?.consecutive_errors, 3);
+    assert.ok(
+      typeof stateRes.json?.reason === "string" && stateRes.json.reason.length > 0,
+      "session state reason must be non-empty when lost via consecutive failures"
+    );
+    assert.ok(
+      typeof stateRes.json?.lost_since_ms === "number",
+      "lost_since_ms must be a numeric timestamp when session is lost"
+    );
 
     const prevSendCount = eventLog.filter((e) => e.source === "openzca" && e.url === "/send").length;
 

@@ -153,6 +153,7 @@ claude-sonnet-4-6
 - `sendAlert` → `emitAlert` rename in risk-monitor.ts; existing send-audit.test.js AC2 assertions updated to check `reason` field instead of removed `pharmacy_id`/`message_id` fields in alert payload.
 - SESSION_HEALTH_INTERVAL_MS=3600000 added to send-audit bridge env to prevent health polling flakiness in existing tests.
 - 401/401 tests pass (394 pre-existing + 7 new session-monitor tests).
+- QA gap-fill (qa-generate-e2e-tests): 3 gaps found and auto-applied — (1) `/session-state` `reason`+`lost_since_ms` fields unverified (added assertions to 7.1, 7.3); (2) alert `timestamp_ms` field not checked (added to 7.2); (3) initial healthy state shape not verified (new test 7.0); (4) health polling 200 after `lost` must NOT auto-recover — invariant unverified (new tests 7.8, 7.9 in new describe block, ports 31338–31340). 404/404 pass post-gap-fill.
 
 ### File List
 
