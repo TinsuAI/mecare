@@ -222,6 +222,8 @@ Khách ──Zalo── [openzalo channel] ─┐
 - **link_row fields:** Baserow trả array `[{id, value}]` — dùng `$json["field_name"][0]["id"]` để lấy row ID.
 - **Batch resilience:** `continueOnFail: true` bắt buộc trên `executeWorkflow` và `httpRequest` nodes trong batch loops. Không có flag → một network error treo cả batch.
 - **Local module:** n8n Code node không import local file. Logic từ `n8n/lib/` phải copy-paste inline vào Code node. File lib tồn tại riêng để unit test.
+- **Baserow date filter DATE-only:** `filter__field__date__before/after/equal` compare YYYY-MM-DD only — không phải full timestamp. Sub-day temporal filtering (watchdog SLA, cron freshness) PHẢI dùng JavaScript `Date.getTime()` comparison sau khi fetch rows. Dùng Baserow date filter → same-day records không bao giờ match.
+- **create_escalation_case row_id gap:** OpenClaw endpoint trả về `case_id` (ESC format) nhưng KHÔNG trả về Baserow integer `id`. Bất kỳ PATCH nào trên EscalationCase row cần GET list (filter case_id) → extract `results[0].id` → dùng cho PATCH URL.
 
 **OpenClaw / agent:**
 - Tool name: snake_case động từ — `create_escalation_case`, `lookup_customer`, `send_care_message`.
@@ -299,7 +301,7 @@ mecare/
 │   │   ├── 09-faq-entries.json     # FaqEntries (FAQ reactive)
 │   │   └── 10-customer-group-changes.json  # CustomerGroupChanges (audit log đổi nhóm — Story 3.2)
 │   ├── seed/                       # data mẫu Trúc Tâm
-│   └── views/                      # form + grid views (Story 3.1/3.2: counter-form, phone-lookup, customers-by-group, group-changes-log)
+│   └── views/                      # form + grid views; 02-customers-by-group, 02-customers-counter-form, 02-customers-phone-lookup, 05-messages-history, 06-escalation-cases-list, 10-customer-group-changes-log
 │
 ├── n8n/                            # SCHEDULER + relay watchdog + quota
 │   ├── lib/                        # pure JS logic (unit-tested; copy-paste inline vào Code nodes)
@@ -310,8 +312,9 @@ mecare/
 │       ├── MC-Schedule-DueReminders.json        # cron → query due → opt-out/group6 guard → quota → gửi (FR-4)
 │       ├── MC-Quota-Enforce.json               # trần gói tháng (FR-5); Group 5 bypass
 │       ├── MC-Zalo-Send.json                   # gọi zalo-bridge gửi tin; update Messages.status
-│       ├── MC-Handle-InboundReply.json         # webhook: classify → opt-out/done_signal/Group6 unlock (FR-6)
-│       ├── MC-Relay-Watchdog.json              # timeout ca leo thang (FR-9) — Epic 5 scope
+│       ├── MC-Handle-InboundReply.json         # webhook: classify → FAQ(FR-7) → trigger(FR-8) → relay(FR-9) → opt-out/done_signal/Group6 unlock (FR-6); 51 nodes after Epic 5
+│       ├── MC-Relay-Watchdog.json              # cron: SLA timeout ca leo thang (FR-9); JS timestamp comparison (not Baserow date filter)
+│       ├── MC-Sync-FaqEntries.json             # webhook: Baserow FaqEntries change → reindex OpenClaw RAG (FR-7)
 │       └── MC-Alert-Ops.json                  # alert Tinsu (session/quota/treo) — future scope
 │
 ├── openclaw/                       # AGENT + memory + channel Zalo
@@ -321,8 +324,9 @@ mecare/
 │   │   └── memory.yml              # SQLite + sqlite-vec, self-host
 │   ├── plugins/
 │   │   ├── openzalo/               # channel plugin (cần openzca PATH)
+│   │   ├── faq-lookup.json         # tool: RAG FAQ lookup + TPCN suffix (FR-7)
 │   │   └── tools/                  # custom tools agent
-│   │       ├── create_escalation_case
+│   │       ├── create_escalation_case  # → Story 1.3 allocateNewCaseId; returns case_id NOT Baserow row_id
 │   │       ├── lookup_customer
 │   │       └── send_care_message
 │   ├── kichban/                    # cache RAG phái sinh từ Baserow (1 file/nhóm)
@@ -333,6 +337,8 @@ mecare/
 │   │   ├── nhom-5-phan-anh.md
 │   │   └── nhom-6-khong-info.md
 │   ├── guardrails/                 # prompt guardrail + validate y tế (R2)
+│   │   ├── faq-guardrail.yml       # FAQ output guardrail: scan answer (not input) for diagnosis/dosage change
+│   │   └── trigger-guardrail.yml   # 8 trigger types: adverse_reaction, out_of_range_vitals, otc_red_flag, otc_no_improvement, medication_change, drug_interaction, complaint_serious, ai_uncertainty
 │   └── prompts/                    # persona "Dược Sĩ Hải" per-tenant
 │
 ├── zalo-bridge/                    # gửi/nhận Zalo + anti-ban + PII de-anon
