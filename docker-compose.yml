@@ -44,6 +44,8 @@ services:
       - baserow_data:/baserow/data
     ports:
       - "${BASEROW_HTTP_PORT:-8080}:80"
+    mem_limit: 2g
+    memswap_limit: 2g
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost/api/_health/ || exit 1"]
       interval: 15s
@@ -121,10 +123,14 @@ services:
       context: ./zalo-bridge
     restart: unless-stopped
     environment:
+      # Cổng NỘI BỘ container — app lắng nghe; KHÔNG đổi (healthcheck hardcode :3000)
       ZALO_BRIDGE_PORT: ${ZALO_BRIDGE_PORT:-3000}
     volumes:
       # Phiên Zalo cô lập per-tenant (NFR-6) — không trộn state giữa tenant
       - ./zalo-bridge/tenants:/app/tenants
+    ports:
+      # ZALO_BRIDGE_HOST_PORT: cổng HOST (Cloudflare tunnel trỏ vào đây) — an toàn đổi
+      - "${ZALO_BRIDGE_HOST_PORT:-8003}:3000"
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/healthz || exit 1"]
       interval: 10s

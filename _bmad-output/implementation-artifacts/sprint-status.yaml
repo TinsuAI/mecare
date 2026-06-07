@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-06
-last_updated: 2026-06-06
+last_updated: 2026-06-06  # epic-1-retrospective: optional → done
 project: MeCare
 # 1-4 promoted to ready-for-dev via create-story 2026-06-06
 project_key: NOKEY
@@ -51,7 +51,8 @@ development_status:
   1-4-sua-duyet-kich-ban-duoc-si-hai-g1: done
   1-5-spike-guardrail-y-te-openclaw-g2: done
   1-6-spike-multi-tenant-zalo-openclaw-g6: done
-  epic-1-retrospective: optional
+  1-7-fix-env-example-port-vars: done
+  epic-1-retrospective: done
 
   # Epic 2: Lớp Zalo Cá Nhân an toàn (anti-ban — R1)
   epic-2: backlog

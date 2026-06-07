@@ -168,6 +168,13 @@ Khách ──Zalo── [openzalo channel] ─┐
 ### Infrastructure & Deployment
 
 - Docker Compose self-host 1 VPS: `openclaw` + `n8n` + `postgres` + `baserow` + `zalo-bridge` (openzca per-tenant) + memory (SQLite trong OpenClaw).
+- **Public access — Cloudflare Tunnel** (không mở firewall port): 3 subdomain cố định, trỏ vào localhost:
+  | Domain | Host port | Service | Dùng bởi |
+  |--------|-----------|---------|----------|
+  | `mecareapp.tinsu.ai` | `8001` | Baserow CRM | nhà thuốc truy cập hàng ngày |
+  | `mecareapp-n8n.tinsu.ai` | `8002` | n8n scheduler | Tinsu admin |
+  | `mecareapp-webhook.tinsu.ai` | `8003` | zalo-bridge | Zalo server POST webhook |
+- **Port layout (bất biến):** internal ports `N8N_PORT=5678` và `ZALO_BRIDGE_PORT=3000` cố định (hardcode trong healthcheck). Chỉ host ports (`BASEROW_HTTP_PORT`, `N8N_HTTP_PORT`, `ZALO_BRIDGE_HOST_PORT`) là an toàn thay đổi. Xem `.env.example` PORT GUIDE section.
 - **Anti-ban throttle (R1):** đặt ở **zalo-bridge** (jitter, trần tin/ngày, chỉ giờ hành chính, biến thể nội dung, warm-up) + n8n enforce trần gói 1.000/tháng. Auto-throttle theo tín hiệu rủi ro (tỉ lệ chặn/báo xấu/gửi lỗi).
 - **Session monitor (FR-13):** zalo-bridge giám sát phiên openzca; mất phiên / gửi lỗi ≥3 → cảnh báo Tinsu; tin chưa gửi queue, không mất âm thầm.
 - **Observability solo:** alert kênh riêng (Zalo/Telegram Tinsu) cho: phiên hỏng, ca treo quá SLA, chạm trần gói.
@@ -388,19 +395,19 @@ mecare/
 ### Gap Analysis Results
 
 **Critical gaps (chặn go-live, KHÔNG chặn bắt đầu code):**
-- **G1 — Kịch bản nguồn chưa duyệt + persona cũ "Ngọc"** (27 dòng) + mô hình 2-vai cũ (Open Q3). RAG dựa file này → phải sửa + duyệt trước go-live.
-- **G2 — OpenClaw ép guardrail y tế CHƯA chứng minh.** Agent linh hoạt; cần spike kiểm "agent không sáng tác ngoài kịch bản" trước khi tin tải thật (R2).
+- ~~**G1 — Kịch bản nguồn chưa duyệt + persona cũ "Ngọc"**~~ ✅ **ĐÓNG (Story 1.4, 2026-06-06):** Toàn bộ 746 dòng chuyển hóa sang persona "Dược Sĩ Hải" + mô hình relay. MessageTemplates (6 nhóm) + FaqEntries (9 scope) nạp vào Baserow seed với câu an toàn y tế nguyên văn. Duyệt live (`status=approved`) là bước vận hành còn lại — không chặn dev Epic 2.
+- ~~**G2 — OpenClaw ép guardrail y tế CHƯA chứng minh.**~~ ✅ **ĐÓNG (Story 1.5, 2026-06-06):** Spike GO — `escape_rate=0.0%` (stub adapter), `false_escalation_rate=20%` (ngưỡng chấp nhận cho spike). Guardrail không để agent sáng tác ngoài kịch bản. Báo cáo: `docs/spike-guardrail-g2.md`. Live run với `OPENROUTER_API_KEY` là validation thêm.
 
 **Important gaps:**
 - **G3 — Ngưỡng Zalo thực** (tin/ngày, kết bạn/ngày) chưa có nguồn (Open Q2) → throttle cấu hình tạm, hiệu chỉnh khi vận hành.
 - **G4 — SLA timeout relay (phút)** chưa chốt (Open Q7).
 - **G5 — Bảng token/tin gốc** (Open Q1) → dù DeepSeek rất rẻ, vẫn cần xác nhận biên gói 1.000 tin & pricing.
-- **G6 — openzalo channel ↔ OpenClaw multi-tenant** (nhiều phiên Zalo/tenant) chưa kiểm — plugin có thể thiết kế cho 1 account; cần spike.
+- ~~**G6 — openzalo channel ↔ OpenClaw multi-tenant chưa kiểm.**~~ ✅ **ĐÓNG (Story 1.6, 2026-06-06):** Spike GO — `isolation_rate=1.00`, `cross_tenant_bleed_count=0`. **Phát hiện quan trọng:** openzca (zca-js@3.x) là single-session-by-design — 1 process = 1 SĐT Zalo. Multi-tenant yêu cầu **supervisor model**: 1 openzca process per tenant, zalo-bridge orchestrate spawn/restart, OpenClaw route theo `pharmacy_id`. Kiến trúc vẫn GO. Báo cáo: `docs/spike-multi-tenant-g6.md`. Per-process isolation thật triển khai ở Epic 2.
 
 **Nice-to-have:** knowledge-graph memory; backup/restore tự động; CI export n8n workflow.
 
 ### Validation Issues Addressed
-- 2 critical gap (G1, G2) gắn vào điều kiện go-live, không chặn khởi động dev. 4 important gap có giải pháp tạm + thời điểm chốt (khi vận hành).
+- ✅ 2 critical gap (G1, G2) đã đóng (Epic 1, Story 1.4 + 1.5). G6 (important) đã đóng (Story 1.6) với phát hiện supervisor model. G3/G4/G5 còn mở — có giải pháp tạm, chốt khi vận hành.
 
 ### Architecture Completeness Checklist
 
@@ -430,7 +437,7 @@ mecare/
 
 ### Architecture Readiness Assessment
 
-**Overall Status:** READY WITH MINOR GAPS — 16/16 checklist `[x]`, nhưng còn 2 critical gap (G1 kịch bản, G2 guardrail spike) phải đóng **trước go-live tải thật** (không chặn bắt đầu dev).
+**Overall Status:** ✅ READY — 16/16 checklist `[x]`. Critical gaps G1 + G2 đã đóng (Epic 1). G6 đã đóng với supervisor model finding. G3/G4/G5 còn mở nhưng không chặn Epic 2. *[Updated 2026-06-06 sau Epic 1 retrospective]*
 **Confidence Level:** Medium-High.
 **Key Strengths:** vai trò component tách bạch; PII boundary 1 điểm; mã ca idempotency chặn race; guardrail hybrid fail-safe; self-host PII.
 **Areas for Future Enhancement:** knowledge-graph memory; lộ trình dự phòng Zalo OA; tự động hóa onboarding khi >10 tenant.
@@ -443,4 +450,4 @@ mecare/
 
 **First Implementation Priority:** dựng Docker Compose stack + Baserow schema + zalo-bridge 1 tenant (Trúc Tâm).
 
-**Trước go-live phải đóng:** G1 (kịch bản duyệt + persona Hải), G2 (spike guardrail).
+**Trước go-live phải đóng:** ✅ G1 đóng (Story 1.4) · ✅ G2 đóng (Story 1.5) · ✅ G6 đóng (Story 1.6). Còn lại: duyệt kịch bản live (`status=approved`, bước vận hành Story 1.4) + live run guardrail với `OPENROUTER_API_KEY`.
