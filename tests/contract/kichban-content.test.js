@@ -145,3 +145,53 @@ describe("FaqEntries — mọi hàng draft + version + updated_by (AC1)", () => 
     }
   });
 });
+
+// ─── QA gap fills (Story 1.9) ────────────────────────────────────────────────
+
+describe("MessageTemplates — Story 1.9 specific contracts (AC2, AC3, AC4)", () => {
+  test("updated_by = 'story-1.9' cho mọi row (AC2)", () => {
+    for (const r of MT.rows) {
+      assert.equal(r.updated_by, "story-1.9", `scenario_id ${r.scenario_id}: updated_by phải là "story-1.9"`);
+    }
+  });
+
+  test("seed key = ['scenario_id'] — idempotency key theo AC3", () => {
+    assert.deepEqual(MT.key, ["scenario_id"], "seed key phải là ['scenario_id'] (AC3)");
+  });
+
+  test("scenario_id format hợp lệ: '<nhóm>.<số>' (AC2)", () => {
+    for (const r of MT.rows) {
+      assert.match(r.scenario_id, /^\d+\.\d+$/, `scenario_id "${r.scenario_id}" không đúng format X.Y`);
+    }
+  });
+
+  test("AC4 — scenario 1.10 là 1 row duy nhất với placeholder [cao huyết áp/tiểu đường]", () => {
+    const rows110 = MT.rows.filter(r => r.scenario_id === "1.10");
+    assert.equal(rows110.length, 1, "phải đúng 1 row scenario_id='1.10' (không tách 2 rows)");
+    assert.match(rows110[0].body_template, /\[cao huyết áp\/tiểu đường\]/,
+      "body_template 1.10 phải chứa placeholder [cao huyết áp/tiểu đường] (AC4)");
+  });
+
+  test("phân bổ rows theo nhóm đúng đặc tả: 11-5-5-6-6-5 (story spec)", () => {
+    const groupCounts = Object.fromEntries(
+      [1, 2, 3, 4, 5, 6].map(g => [g, MT.rows.filter(r => r.care_group === g).length])
+    );
+    assert.deepEqual(groupCounts, { 1: 11, 2: 5, 3: 5, 4: 6, 5: 6, 6: 5 });
+  });
+
+  test("tất cả scenario_id kỳ vọng có mặt đầy đủ (completeness)", () => {
+    const EXPECTED = [
+      "1.1","1.2","1.3","1.4","1.5","1.6","1.7","1.8","1.9","1.10","1.11",
+      "2.1","2.2","2.3","2.4","2.5",
+      "3.1","3.2","3.3","3.4","3.5",
+      "4.1","4.2","4.3","4.4","4.5","4.6",
+      "5.1","5.2","5.3","5.4","5.5","5.6",
+      "6.1","6.2","6.3","6.4","6.5",
+    ];
+    const actual = new Set(MT.rows.map(r => r.scenario_id));
+    for (const id of EXPECTED) {
+      assert.ok(actual.has(id), `thiếu scenario_id "${id}"`);
+    }
+    assert.equal(actual.size, EXPECTED.length, "có scenario_id ngoài danh sách kỳ vọng");
+  });
+});

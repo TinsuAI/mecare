@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-06
-last_updated: 2026-06-06  # epic-1-retrospective: optional → done
+last_updated: 2026-06-07  # story-1.9: review → done; epic-1: in-progress → done
 project: MeCare
 # 1-4 promoted to ready-for-dev via create-story 2026-06-06
 project_key: NOKEY
@@ -44,7 +44,7 @@ story_location: "{project-root}/_bmad-output/implementation-artifacts"
 
 development_status:
   # Epic 1: Nền tảng & Khử rủi ro (Foundation)
-  epic-1: in-progress
+  epic-1: done
   1-1-scaffold-repo-docker-compose-stack-self-host: done
   1-2-khoi-tao-baserow-schema-nguon-su-that: done
   1-3-sinh-ma-ca-chuan-lam-idempotency-key: done
@@ -53,7 +53,7 @@ development_status:
   1-6-spike-multi-tenant-zalo-openclaw-g6: done
   1-7-fix-env-example-port-vars: done
   1-8-apply-baserow-schema-seed-live: done
-  1-9-seed-du-38-kich-ban-mau: review
+  1-9-seed-du-38-kich-ban-mau: done
   epic-1-retrospective: done
 
   # Epic 2: Lớp Zalo Cá Nhân an toàn (anti-ban — R1)

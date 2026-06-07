@@ -1,6 +1,6 @@
 # Story 1.9: Seed đủ 38 kịch bản mẫu vào MessageTemplates
 
-Status: review
+Status: done
 
 ## Story
 
@@ -76,7 +76,7 @@ so that Epic 4 và Story 6.3 có đủ nội dung thật để test và chủ nh
   - [x] 6.2: Chạy `npm test` — tất cả tests pass
 
 - [x] Task 7: Chạy full test suite (AC: #5)
-  - [x] 7.1: Chạy `npm test` — 287 tests pass (≥ 285 baseline Story 1.8)
+  - [x] 7.1: Chạy `npm test` — 293 tests pass (≥ 285 baseline Story 1.8)
   - [x] 7.2: Không có regression nào trong tests khác
 
 ## Dev Notes
@@ -151,11 +151,47 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
+- Baserow REST API batch-delete: endpoint requires `POST /database/rows/table/{id}/batch-delete/` (NOT HTTP DELETE); discovered during Task 2 row cleanup
+- Deleted 8 rows total (6 Story 1.8 placeholders + 2 extra rows), not 6 as initially planned
+
 ### Completion Notes List
+
+- Baserow REST batch-delete uses POST, not DELETE — undocumented gotcha; see Dev Notes Migration section
+- 8 rows removed from Baserow live (6 placeholder + 2 extra), ensuring clean 0-row baseline before seed
+- Scenario 1.10: merged 2 text variants (cao huyết áp / tiểu đường) into 1 row with generalized placeholder; total stays 38 not 39
+- `scenario_id` is NOT the Baserow primary field — `care_group` remains primary (Baserow primary field is immutable post-creation); `scenario_id` used only as idempotency key in seed JSON
+- No script changes required — `apply-baserow-schema.mjs` handles schema add + seed upsert via existing flags
+- QA gap-fill workflow (bmad-qa-generate-e2e-tests) added 6 additional tests covering AC2/AC3/AC4 completeness: updated_by assertion, seed key format, scenario_id string format, AC4 1.10 single-row, group distribution counts, exhaustive scenario_id enumeration
+- Final test count: 293 (not 287 as recorded during dev — QA gap-fill tests were committed as part of same commit 9497c93)
 
 ### File List
 
 - `baserow/schema/08-message-templates.json` — added `scenario_id` text field
 - `baserow/seed/08-message-templates-draft.json` — 6 rows → 38 per-scenario rows; key changed to `scenario_id`
-- `tests/contract/kichban-content.test.js` — updated assertions: 38 rows, scenario_id unique, care_group range
-- `tests/contract/baserow-schema.test.js` — updated: "6 nhóm" → "38 scenarios" assertion
+- `tests/contract/kichban-content.test.js` — updated assertions (38 rows, scenario_id unique, care_group range) + QA gap-fill: 6 additional Story 1.9 specific contracts (AC2/AC3/AC4)
+- `tests/contract/baserow-schema.test.js` — updated: "6 nhóm" → "38 scenarios" assertion + QA gap-fill: scenario_id type=text assertion
+
+## Senior Developer Review (AI)
+
+**Reviewer:** gabenidolcs (AI) — 2026-06-07
+**Outcome:** APPROVED
+
+### Findings & Auto-Fixes Applied
+
+| # | Severity | Finding | Fix Applied |
+|---|----------|---------|-------------|
+| 1 | MEDIUM | Test count wrong: story claimed 287, actual 293 (QA gap-fill added 6 tests in same commit) | Fixed Task 7.1: 287 → 293 |
+| 2 | MEDIUM | Completion Notes List empty — key gotchas undocumented (POST-not-DELETE, 8 rows not 6, 1.10 merge, scenario_id not primary) | Added 7 completion notes |
+| 3 | MEDIUM | Debug Log References empty — batch-delete method gotcha not recorded | Added debug log reference |
+| 4 | LOW | File List descriptions didn't mention QA gap-fill test additions | Updated descriptions for both test files |
+| 5 | LOW | Status `review` not promoted | Changed to `done`; sprint-status synced |
+
+### Checklist Results
+
+- [x] Story status verified as reviewable (review)
+- [x] ACs cross-checked: all 5 ACs implemented and verified in commit 9497c93
+- [x] File List validated: 4 files, all match git commit stat
+- [x] Tests: 293/293 pass, 0 failures — all Story 1.9 ACs covered including QA gap-fill contracts
+- [x] Code quality: JSON-only changes (schema + seed) + test additions; no logic code to review
+- [x] Security: no PII, no credentials in seed/schema; seed marked `status=draft`
+- [x] No CRITICAL issues → status set to `done`

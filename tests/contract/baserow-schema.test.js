@@ -77,13 +77,16 @@ describe("AC1 — bộ 9 bảng lõi + naming", () => {
 describe("AC2 — bảng kịch bản đủ field duyệt", () => {
   const APPROVAL = ["status", "version", "updated_by", "approved_at", "approved_by"];
 
-  test("MessageTemplates: care_group + body_template + field duyệt", () => {
+  test("MessageTemplates: scenario_id + care_group + body_template + field duyệt (Story 1.9)", () => {
     const f = fieldNames(byTable.MessageTemplates);
-    for (const need of ["care_group", "body_template", ...APPROVAL]) {
+    for (const need of ["scenario_id", "care_group", "body_template", ...APPROVAL]) {
       assert.ok(f.includes(need), `MessageTemplates thiếu ${need}`);
     }
     const status = byTable.MessageTemplates.fields.find((x) => x.name === "status");
     assert.deepEqual(status.options, ["draft", "approved"], "status enum sai");
+    // scenario_id phải là text field (dùng làm idempotency key)
+    const sid = byTable.MessageTemplates.fields.find(x => x.name === "scenario_id");
+    assert.equal(sid.type, "text", "scenario_id phải là text field");
   });
 
   test("FaqEntries: scope + question + answer + mandatory_suffix + field duyệt", () => {
