@@ -7,7 +7,7 @@
 
 - **Run mode:** `stub` (KHÔNG gọi cloud — deterministic CI)
 - **Model:** stub adapter (no cloud)
-- **Commit:** 5e316a1
+- **Commit:** 7b9f74f
 
 ## Kết quả tổng hợp
 
