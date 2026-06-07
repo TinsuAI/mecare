@@ -61,7 +61,7 @@ development_status:
   2-1-cong-opt-in-chi-nhan-khach-da-ket-ban: done
   2-2-nhip-gui-giong-nguoi-warm-up-tai-zalo-bridge: done
   2-3-auto-throttle-theo-tin-hieu-rui-ro: done
-  2-4-audit-first-retry-queue-khi-gui: backlog
+  2-4-audit-first-retry-queue-khi-gui: done
   2-5-giam-sat-phien-canh-bao-automation-hong: backlog
   epic-2-retrospective: optional
 

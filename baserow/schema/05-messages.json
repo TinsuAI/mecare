@@ -3,13 +3,15 @@
   "description": "Mọi tin (audit-first FR-10). Ra-cloud-bound dùng customer_ref ẩn danh — KHÔNG phone/full_name (PII-min NFR-5).",
   "primary": "customer_ref",
   "fields": [
-    { "name": "pharmacy_id", "type": "link_row", "link_table": "Pharmacies" },
+    { "name": "pharmacy_id", "type": "text" },
     { "name": "customer_ref", "type": "text", "note": "token ẩn danh, KHÔNG PII" },
+    { "name": "message_id", "type": "text", "note": "UUID idempotency key — sinh tại zalo-bridge trước khi ghi" },
     { "name": "case_id", "type": "text", "note": "tham chiếu mã ca (sinh ở Story 1.3)" },
     { "name": "care_group", "type": "number", "decimals": 0 },
     { "name": "type", "type": "single_select", "options": ["proactive", "reply", "escalation", "pharmacist_reply"] },
     { "name": "content", "type": "long_text" },
     { "name": "error", "type": "long_text" },
-    { "name": "ts", "type": "date", "include_time": true, "note": "ISO-8601 UTC" }
+    { "name": "ts", "type": "date", "include_time": true, "note": "ISO-8601 UTC" },
+    { "name": "status", "type": "single_select", "options": ["pending", "sent", "failed", "queued"] }
   ]
 }

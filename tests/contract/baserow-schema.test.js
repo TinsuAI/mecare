@@ -111,6 +111,9 @@ describe("AC3 — Customers 3 field nghiệp vụ", () => {
 
 describe("AC4 — phân vùng tenant pharmacy_id", () => {
   test("mọi bảng nghiệp vụ (trừ Pharmacies) có pharmacy_id link_row -> Pharmacies", () => {
+    // Messages.pharmacy_id is temporarily text (Story 2.4): zalo-bridge only has string ID,
+    // not Baserow row ID; upgrade to link_row deferred to Story 3+ when Pharmacies is seeded.
+    const TEMP_TEXT_TABLES = new Set(["Messages"]);
     for (const { def } of schemas) {
       if (def.table === "Pharmacies") {
         assert.ok(!fieldNames(def).includes("pharmacy_id"), "Pharmacies KHÔNG có pharmacy_id");
@@ -118,8 +121,12 @@ describe("AC4 — phân vùng tenant pharmacy_id", () => {
       }
       const fk = def.fields.find((f) => f.name === "pharmacy_id");
       assert.ok(fk, `${def.table} thiếu pharmacy_id`);
-      assert.equal(fk.type, "link_row");
-      assert.equal(fk.link_table, "Pharmacies");
+      if (TEMP_TEXT_TABLES.has(def.table)) {
+        assert.equal(fk.type, "text");
+      } else {
+        assert.equal(fk.type, "link_row");
+        assert.equal(fk.link_table, "Pharmacies");
+      }
     }
   });
 });

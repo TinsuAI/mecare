@@ -1,7 +1,7 @@
-// Story 2.2: /send handler — validates payload, runs opt-in gate, throttle, stubs openzca.
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { randomUUID } from "node:crypto";
 import { checkOptIn } from "./opt-in-gate.ts";
-import { getRiskState } from "./risk-monitor.ts";
+import { getRiskState, recordSignal } from "./risk-monitor.ts";
 import {
   isBusinessHour,
   checkDailyCap,
@@ -9,6 +9,8 @@ import {
   jitterMs,
   applyVariant,
 } from "./throttle.ts";
+import { createMessageRecord, updateMessageStatus, queueDeadLetter } from "./messages-client.ts";
+import { sendViaOpenzca } from "./openzca-client.ts";
 
 const REQUIRED_FIELDS = ["pharmacy_id", "customer_phone", "content"] as const;
 
@@ -65,18 +67,74 @@ export async function handleSend(
     // Increment before await to prevent race: two concurrent requests both passing cap check.
     incrementDailyCount(pharmacy_id);
 
+    const message_id = randomUUID();
     const seed = Date.now() % 1000;
-    // variantContent replaces content for openzca call in Story 2.4.
     const variantContent = applyVariant(content, seed);
-    const delay = jitterMs();
-    await new Promise<void>((r) => setTimeout(r, delay));
 
-    console.log(
-      `[send] QUEUED pharmacy_id=${pharmacy_id} customer_phone=${customer_phone} variant=${seed % 3} jitter=${delay}ms content_len=${variantContent.length}`
-    );
-    // Story 2.4: import { recordSignal } from "./risk-monitor.ts"; call recordSignal("send_error") khi openzca trả lỗi thật
+    const auditRowId = await createMessageRecord({
+      message_id,
+      pharmacy_id,
+      customer_phone,
+      content: variantContent,
+    });
+
+    const MAX_RETRIES = 3;
+    let attempt = 0;
+    let lastError = "";
+    let sendOk = false;
+
+    while (attempt < MAX_RETRIES && !sendOk) {
+      const delay = jitterMs();
+      await new Promise<void>((r) => setTimeout(r, delay));
+      const result = await sendViaOpenzca(pharmacy_id, customer_phone, variantContent);
+      if (result.ok) {
+        sendOk = true;
+      } else {
+        lastError = result.error;
+        recordSignal("send_error");
+        attempt++;
+        console.error(
+          `[send] ATTEMPT_FAILED attempt=${attempt} pharmacy_id=${pharmacy_id} message_id=${message_id} error=${lastError}`
+        );
+      }
+    }
+
+    if (sendOk) {
+      if (auditRowId !== null) {
+        await updateMessageStatus(auditRowId, "sent").catch(console.error);
+      }
+      console.log(`[send] SENT pharmacy_id=${pharmacy_id} message_id=${message_id}`);
+      res.writeHead(202, { "content-type": "application/json" });
+      res.end(JSON.stringify({ sent: true, message_id }));
+      return;
+    }
+
+    await queueDeadLetter(auditRowId, {
+      message_id,
+      pharmacy_id,
+      customer_phone,
+      content: variantContent,
+      error_text: lastError,
+    }).catch(console.error);
+
+    const alertUrl = process.env.ALERT_WEBHOOK_URL ?? "";
+    if (alertUrl) {
+      fetch(alertUrl, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          event: "session.lost",
+          pharmacy_id,
+          message_id,
+          service: "zalo-bridge",
+          timestamp_ms: Date.now(),
+        }),
+        signal: AbortSignal.timeout(5000),
+      }).catch(console.error);
+    }
+
     res.writeHead(202, { "content-type": "application/json" });
-    res.end(JSON.stringify({ queued: true }));
+    res.end(JSON.stringify({ queued: true, message_id }));
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error(`[send] INTERNAL_ERROR ${msg}`);
