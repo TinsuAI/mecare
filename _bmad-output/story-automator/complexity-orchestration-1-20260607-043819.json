@@ -1,0 +1,1 @@
+{"stories":[{"storyId":"1.8","title":"Verify & run apply-baserow-schema trên Baserow live","complexity":{"level":"Low","score":2,"reasons":["Complex error handling","Elevated AC count (10)"]}}]}
