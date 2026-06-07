@@ -31,6 +31,7 @@
   "guardrail": "faq-guardrail",
   "rag": {
     "engine": "sqlite-vec",
+    "engine_note": "Production target (Epic 2+). Story 5.1 stub uses keyword-overlap via guardrail-spike.mjs; embedding_dimensions applies to full sqlite-vec runtime only.",
     "table": "FaqEntries",
     "filter": { "status": "approved" },
     "similarity_threshold": 0.75,

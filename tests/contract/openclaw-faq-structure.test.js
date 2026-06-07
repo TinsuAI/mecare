@@ -118,4 +118,18 @@ describe("FaqEntries seed data đủ cho e2e test (Story 5.1, AC2, AC4)", () => 
     );
     assert.ok(tpcnRows.length >= 2, `expected >= 2 approved TPCN rows with mandatory_suffix in approved seed, got ${tpcnRows.length}`);
   });
+
+  test("10.16 — server.js no_diagnosis_rule áp dụng cho entry.answer, không phải message_content (NFR-2 AC3)", () => {
+    const src = fs.readFileSync(repoPath("openclaw/server.js"), "utf8");
+    // Must check the retrieved answer, not the incoming message
+    assert.ok(
+      src.includes("detectDiagnosis(entry.answer") || src.includes("detectDiagnosis(entry.answer"),
+      "no_diagnosis_rule must check entry.answer (output), not message_content (input)"
+    );
+    // Must NOT apply diagnosis check to message_content (would cause false positives on symptom descriptions)
+    assert.ok(
+      !src.includes("detectDiagnosis(message_content)"),
+      "no_diagnosis_rule must not be applied to message_content — symptom descriptions in questions cause false positives"
+    );
+  });
 });

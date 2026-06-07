@@ -139,8 +139,8 @@ claude-sonnet-4-6
 
 ### Completion Notes List
 
-- All 5 tasks complete; 635 tests pass (1 pre-existing opt-in-gate failure unrelated to Story 5.1)
-- New tests: 17 Story 5.1 tests in n8n-handle-inbound-reply-structure.test.js (8.23-8.39) + 11 in n8n-sync-faq-entries-structure.test.js (9.1-9.11) + 15 in openclaw-faq-structure.test.js (10.1-10.15)
+- All 5 tasks complete; 641 tests total, 640 pass (1 pre-existing opt-in-gate failure unrelated to Story 5.1)
+- New tests: 17 Story 5.1 tests in n8n-handle-inbound-reply-structure.test.js (8.23-8.39) + 5 gap-fill connection tests (8.40-8.44) + 11 in n8n-sync-faq-entries-structure.test.js (9.1-9.11) + 15 in openclaw-faq-structure.test.js (10.1-10.15)
 - AC9 regression guard: zero new code for opted-out path (existing Epic 4 guards block before FAQ branch)
 
 ### File List
@@ -149,7 +149,7 @@ claude-sonnet-4-6
 - `openclaw/plugins/faq-lookup.json` (created)
 - `openclaw/guardrails/faq-guardrail.yml` (created)
 - `openclaw/server.js` (modified — added /tools/faq_lookup + /tools/reindex_faq endpoints)
-- `n8n/workflows/MC-Handle-InboundReply.json` (modified — added 8 nodes: Guard: Is Free Form, Guard: Is Complaint Active, Log Escalation Trigger, Call OpenClaw FAQ, Guard: Can Answer, Format FAQ Reply, Audit: Write Messages Pending, Execute MC-Zalo-Send, Update Messages Status)
+- `n8n/workflows/MC-Handle-InboundReply.json` (modified — added 9 nodes: Guard: Is Free Form, Guard: Is Complaint Active, Log Escalation Trigger, Call OpenClaw FAQ, Guard: Can Answer, Format FAQ Reply, Audit: Write Messages Pending, Execute MC-Zalo-Send, Update Messages Status)
 - `n8n/workflows/MC-Sync-FaqEntries.json` (created)
 - `baserow/seed/09-faq-entries-draft.json` (modified — added tpcn-lieu-dung + dung-cu scopes as draft)
 - `baserow/seed/09-faq-entries-approved.json` (created — 4 approved records for RAG e2e)
@@ -157,3 +157,40 @@ claude-sonnet-4-6
 - `tests/contract/n8n-sync-faq-entries-structure.test.js` (created)
 - `tests/contract/openclaw-faq-structure.test.js` (created)
 - `tests/contract/baserow-schema.test.js` (modified — row count ≥9 instead of ==9)
+
+## Senior Developer Review (AI)
+
+**Reviewer:** gabenidolcs — 2026-06-07
+**Outcome:** APPROVED (after auto-fixes)
+
+### Checklist
+- [x] Story file loaded from `_bmad-output/implementation-artifacts/5-1-tra-loi-tu-dong-faq-trong-pham-vi-kich-ban.md`
+- [x] Story Status verified as reviewable (was: done)
+- [x] Epic 5 / Story 1 IDs resolved
+- [x] All 10 ACs cross-checked against implementation
+- [x] File List reviewed and validated (15 files)
+- [x] Tests mapped to ACs — 43 story-specific tests + gaps identified and filled
+- [x] Code quality review performed on openclaw/server.js, n8n workflows, guardrail files
+- [x] Security review performed (no injections; multi-tenant isolation documented)
+- [x] Sprint status synced
+
+### Findings and Fixes Applied
+
+| # | Severity | Finding | Fix Applied |
+|---|----------|---------|------------|
+| 1 | HIGH | `server.js` no_diagnosis_rule checked `message_content` (input), not `entry.answer` (output). AC3 spec says reject **answers** with diagnosis content. "em bị / anh bị" phrasing in symptom questions would cause false positive rejections. | Moved `detectDiagnosis`/`detectDoseChange` check to after entry retrieval, now validates `entry.answer`. Added test 10.16 to lock this. |
+| 2 | MEDIUM | File List comment said "added 8 nodes" but listed 9 names; actual workflow has 20 nodes (11+9). | Fixed comment to "9 nodes". |
+| 3 | MEDIUM | Completion Notes said "635 tests pass" — stale after QA gap-fill commit added 5 tests (8.40-8.44). | Updated to "641 total, 640 pass". |
+| 4 | LOW | `faq-lookup.json` `rag.engine: sqlite-vec` with no caveat — runtime uses keyword-overlap stub until Epic 2+. | Added `engine_note` field clarifying production vs stub. |
+| 5 | LOW | Test 8.39 comment said "11 cũ + 8 mới" (passes at >= 19) but actual count is 20. | Fixed assertion to `>= 20` with correct comment "11+9". |
+
+### Final Test Results
+642 tests total — 641 pass, 1 pre-existing failure (opt-in-gate.test.js:241 runtime server dependency).
+
+## Change Log
+
+| Date | Author | Change |
+|------|--------|--------|
+| 2026-06-07 | claude-sonnet-4-6 | Initial implementation — all 5 tasks, 10 ACs |
+| 2026-06-07 | claude-sonnet-4-6 | QA gap-fill — 5 connection tests 8.40-8.44 |
+| 2026-06-07 | gabenidolcs (AI review) | Fixed guardrail target (answer not message); doc corrections; test 10.16 added |

@@ -116,11 +116,6 @@ const server = http.createServer(async (req, res) => {
     // Use in-memory index or fallback to seed file in dev.
     let entries = ragIndex.get(String(pharmacy_id)) ?? await loadSeedFallback();
 
-    // Guardrail no_diagnosis_rule: if message itself triggers, can_answer=false.
-    if (detectDiagnosis(message_content) || detectDoseChange(message_content)) {
-      return jsonResp(res, 200, { can_answer: false, answer: "", is_tpcn: false, mandatory_suffix: null, scope: "out_of_scope" });
-    }
-
     // Keyword similarity matching (stub for sqlite-vec).
     const THRESHOLD = 0.75;
     const scored = entries
@@ -134,6 +129,12 @@ const server = http.createServer(async (req, res) => {
     }
 
     const entry = top.entry;
+
+    // Guardrail no_diagnosis_rule (NFR-2): reject if the retrieved ANSWER contains
+    // diagnosis assertions or dose-change instructions — check output, not input.
+    if (detectDiagnosis(entry.answer ?? "") || detectDoseChange(entry.answer ?? "")) {
+      return jsonResp(res, 200, { can_answer: false, answer: "", is_tpcn: false, mandatory_suffix: null, scope: "out_of_scope" });
+    }
     const isTpcn = String(entry.scope ?? "").toLowerCase().includes("tpcn");
     const mandatorySuffix = (isTpcn && entry.mandatory_suffix) ? entry.mandatory_suffix : null;
 

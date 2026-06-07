@@ -349,10 +349,10 @@ describe("MC-Handle-InboundReply workflow structure", () => {
     );
   });
 
-  test("8.39 — workflow có >= 19 nodes (11 cũ + 8 mới Story 5.1)", () => {
+  test("8.39 — workflow có >= 20 nodes (11 cũ + 9 mới Story 5.1)", () => {
     assert.ok(
-      workflow.nodes.length >= 19,
-      `expected >= 19 nodes (11 Epic4 + 8 Story5.1), got ${workflow.nodes.length}`
+      workflow.nodes.length >= 20,
+      `expected >= 20 nodes (11 Epic4 + 9 Story5.1), got ${workflow.nodes.length}`
     );
   });
 
