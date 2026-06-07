@@ -18,17 +18,18 @@ function loadJson(dir) {
 const schemas = loadJson(SCHEMA_DIR);
 const byTable = Object.fromEntries(schemas.map((s) => [s.def.table, s.def]));
 
-// AR-3: 9 bảng lõi (Purchases = biến thể Medications/Purchases hợp lệ).
+// AR-3: 9 bảng lõi (Purchases = biến thể Medications/Purchases hợp lệ) + Story 3.2 CustomerGroupChanges.
 const REQUIRED_TABLES = [
   "Pharmacies", "Customers", "Purchases", "CareSchedule", "Messages",
   "EscalationCases", "QuotaCounter", "MessageTemplates", "FaqEntries",
+  "CustomerGroupChanges",
 ];
 
 const fieldNames = (def) => def.fields.map((f) => f.name);
 
 describe("AC1 — bộ 9 bảng lõi + naming", () => {
-  test("đủ 9 bảng theo AR-3", () => {
-    assert.equal(schemas.length, 9, `có ${schemas.length} file schema`);
+  test("đủ 10 bảng theo AR-3 + Story 3.2", () => {
+    assert.equal(schemas.length, 10, `có ${schemas.length} file schema`);
     for (const t of REQUIRED_TABLES) {
       assert.ok(byTable[t], `thiếu bảng ${t}`);
     }
@@ -106,6 +107,54 @@ describe("AC3 — Customers 3 field nghiệp vụ", () => {
     assert.equal(get("care_group")?.type, "number", "care_group phải number");
     assert.equal(get("is_complaint_active")?.type, "boolean", "is_complaint_active phải boolean");
     assert.ok(get("friend_status"), "thiếu friend_status");
+  });
+});
+
+describe("Story 3.2 — CustomerGroupChanges audit log schema", () => {
+  test("CustomerGroupChanges có đủ fields: changed_at, customer_id, pharmacy_id, from_group, to_group", () => {
+    const cgc = byTable.CustomerGroupChanges;
+    assert.ok(cgc, "thiếu bảng CustomerGroupChanges");
+    const names = cgc.fields.map((f) => f.name);
+    for (const need of ["changed_at", "customer_id", "pharmacy_id", "from_group", "to_group"]) {
+      assert.ok(names.includes(need), `CustomerGroupChanges thiếu field ${need}`);
+    }
+  });
+
+  test("primary changed_at là type date (append-only event log)", () => {
+    const cgc = byTable.CustomerGroupChanges;
+    const primary = cgc.fields.find((f) => f.name === cgc.primary);
+    assert.ok(primary, "primary field không tìm thấy");
+    assert.equal(primary.type, "date", "primary changed_at phải type date");
+    assert.equal(primary.include_time, true, "changed_at phải include_time: true");
+  });
+
+  test("from_group và to_group là number (1..6 validate ở app layer)", () => {
+    const cgc = byTable.CustomerGroupChanges;
+    const fg = cgc.fields.find((f) => f.name === "from_group");
+    const tg = cgc.fields.find((f) => f.name === "to_group");
+    assert.equal(fg.type, "number", "from_group phải number");
+    assert.equal(tg.type, "number", "to_group phải number");
+  });
+
+  test("changed_by field tồn tại và là type text (AC3 — tên nhân viên, tùy chọn)", () => {
+    const cgc = byTable.CustomerGroupChanges;
+    const cb = cgc.fields.find((f) => f.name === "changed_by");
+    assert.ok(cb, "CustomerGroupChanges thiếu field changed_by");
+    assert.equal(cb.type, "text", "changed_by phải type text");
+  });
+
+  test("from_group và to_group có decimals: 0 (integer — không số thập phân)", () => {
+    const cgc = byTable.CustomerGroupChanges;
+    const fg = cgc.fields.find((f) => f.name === "from_group");
+    const tg = cgc.fields.find((f) => f.name === "to_group");
+    assert.equal(fg.decimals, 0, "from_group phải decimals: 0");
+    assert.equal(tg.decimals, 0, "to_group phải decimals: 0");
+  });
+
+  test("schema description ghi rõ append-only contract (không xóa hàng cũ)", () => {
+    const cgc = byTable.CustomerGroupChanges;
+    assert.ok(cgc.description, "CustomerGroupChanges thiếu description");
+    assert.match(cgc.description, /[Aa]ppend-only|Append-only/, "description phải nêu append-only");
   });
 });
 

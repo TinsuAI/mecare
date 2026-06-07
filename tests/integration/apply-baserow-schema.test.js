@@ -32,11 +32,11 @@ function runApplier(extraArgs, { withAuth = false } = {}) {
 }
 
 describe("applier --dry-run (happy path, offline)", () => {
-  test("exit 0 + báo đủ 9 bảng + Dry-run OK", async () => {
+  test("exit 0 + báo đủ 10 bảng + Dry-run OK", async () => {
     const r = await runApplier(["--dry-run"]);
     assert.equal(r.code, 0, `dry-run phải exit 0\nstderr: ${r.stderr}`);
     assert.match(r.stdout, /Dry-run OK/, "thiếu xác nhận Dry-run OK");
-    assert.match(r.stdout, /9 bảng/, "phải báo 9 bảng schema");
+    assert.match(r.stdout, /10 bảng/, "phải báo 10 bảng schema");
   });
 
   test("dry-run KHÔNG gọi API (chạy được khi không có auth env)", async () => {
@@ -63,5 +63,32 @@ describe("applier auth-guard (error cases, offline)", () => {
     const r = await runApplier(["--seed"]);
     assert.notEqual(r.code, 0, "--seed không auth phải exit khác 0");
     assert.match(r.stderr, /Thiếu auth/, `--seed phải báo thiếu auth\nstderr: ${r.stderr}`);
+  });
+});
+
+describe("applier --views --dry-run (Story 3.1/3.2, Task 5)", () => {
+  test("exit 0 + báo 4 view file", async () => {
+    const r = await runApplier(["--views", "--dry-run"]);
+    assert.equal(r.code, 0, `--views --dry-run phải exit 0\nstderr: ${r.stderr}`);
+    assert.match(r.stdout, /4 file/, "phải báo 4 file view");
+  });
+
+  test("stdout liệt kê cả 2 view: counter-entry-form và phone-lookup", async () => {
+    const r = await runApplier(["--views", "--dry-run"]);
+    assert.match(r.stdout, /counter-entry-form/, "thiếu counter-entry-form trong output");
+    assert.match(r.stdout, /phone-lookup/, "thiếu phone-lookup trong output");
+    assert.match(r.stdout, /customers-by-group/, "thiếu customers-by-group trong output");
+    assert.match(r.stdout, /group-changes-log/, "thiếu group-changes-log trong output");
+  });
+
+  test("dry-run không gọi API (chạy được khi không có auth env)", async () => {
+    const r = await runApplier(["--views", "--dry-run"]);
+    assert.equal(r.code, 0);
+  });
+
+  test("--views không auth + không --dry-run -> exit ≠0 + 'Thiếu auth'", async () => {
+    const r = await runApplier(["--views"]);
+    assert.notEqual(r.code, 0, "--views không auth phải exit khác 0");
+    assert.match(r.stderr, /Thiếu auth/, `--views phải báo thiếu auth\nstderr: ${r.stderr}`);
   });
 });

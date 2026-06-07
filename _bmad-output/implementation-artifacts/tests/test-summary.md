@@ -1,35 +1,52 @@
-# Test Automation Summary — Story 1.9
+# Tóm tắt kiểm thử tự động — Story 3.1
 
-## Generated Tests
+## Tests đã tạo
 
-### Contract Tests (6 new tests across 2 files)
+### Contract Tests
+- [x] `tests/contract/baserow-views.test.js` — Kiểm tra cấu trúc view JSON (offline)
 
-- [x] `tests/contract/kichban-content.test.js` — 5 new tests in `"MessageTemplates — Story 1.9 specific contracts (AC2, AC3, AC4)"`
-  - `updated_by === "story-1.9"` exact value (AC2)
-  - `seed key === ["scenario_id"]` — idempotency key contract (AC3)
-  - `scenario_id` format matches `\d+\.\d+` pattern (AC2)
-  - Scenario 1.10 = exactly 1 row + `[cao huyết áp/tiểu đường]` placeholder (AC4)
-  - Group distribution: `{1:11, 2:5, 3:5, 4:6, 5:6, 6:5}` (story spec)
-  - All 38 expected scenario_ids present (1.1–1.11, 2.1–2.5, 3.1–3.5, 4.1–4.6, 5.1–5.6, 6.1–6.5)
+### Integration Tests
+- [x] `tests/integration/apply-baserow-schema.test.js` — Bổ sung describe block `--views` (Story 3.1, Task 5)
 
-- [x] `tests/contract/baserow-schema.test.js` — 1 updated test in AC2
-  - `MessageTemplates` schema asserts `scenario_id` field present + type `text` (Story 1.9 schema change)
+## Coverage Story 3.1
 
-## Coverage
+| AC | Mô tả | Tests |
+|----|-------|-------|
+| AC1 | Counter form tạo hồ sơ ≤20s | counter-entry-form: type, fields, order, required |
+| AC2 | Phone-lookup grid ≤3s | phone-lookup: sortings, visible fields, tenant isolation |
+| AC3 | pharmacy_id pre-fill + friend_status=pending | default_value=pending, pharmacy_id hidden |
+| Task 5 | `--views --dry-run` CI gate | exit 0, báo 2 file, tên cả 2 view, auth-guard |
 
-| Gap | AC | Test file | Status |
-|-----|----|-----------|--------|
-| updated_by exact "story-1.9" | AC2 | kichban-content.test.js | added |
-| Seed key = ["scenario_id"] | AC3 | kichban-content.test.js | added |
-| scenario_id format X.Y | AC2 | kichban-content.test.js | added |
-| Scenario 1.10 = 1 row + placeholder | AC4 | kichban-content.test.js | added |
-| Group distribution 11-5-5-6-6-5 | spec | kichban-content.test.js | added |
-| All 38 scenario_ids present | AC1 | kichban-content.test.js | added |
-| scenario_id field in schema JSON | AC2 | baserow-schema.test.js | added |
+## Chi tiết
 
-## Results
+### `tests/contract/baserow-views.test.js` (11 tests)
 
-- Baseline (Story 1.8): 285 tests
-- After Story 1.9 dev: 287 tests
-- After QA gap fill: 293 tests (+6)
-- Pass: 293/293 — 0 failures, 0 regressions
+**AC1/AC3 — counter-entry-form:**
+- [x] type=form, table=Customers, name=counter-entry-form
+- [x] submit_button_label và title tồn tại
+- [x] 5 field hiển thị đúng thứ tự: full_name, phone, care_group, friend_status, notes
+- [x] full_name, phone, care_group, friend_status required=true
+- [x] friend_status default_value=pending (AC3)
+- [x] pharmacy_id, is_complaint_active, created_at, updated_at hidden=true
+
+**AC2 — phone-lookup grid:**
+- [x] type=grid, table=Customers, name=phone-lookup
+- [x] sortings: phone ASC trước, full_name ASC sau
+- [x] 6 field visible: full_name, phone, care_group, friend_status, notes, pharmacy_id
+- [x] is_complaint_active, created_at, updated_at hidden
+- [x] description đề cập tenant isolation qua pharmacy_id
+
+### `tests/integration/apply-baserow-schema.test.js` — block mới (4 tests)
+
+- [x] `--views --dry-run` exit 0 + báo 2 file
+- [x] stdout liệt kê counter-entry-form và phone-lookup
+- [x] dry-run không cần auth env
+- [x] `--views` không auth → exit ≠0 + "Thiếu auth"
+
+## Kết quả chạy
+
+```
+tests 419 | suites 119 | pass 419 | fail 0
+```
+
+Toàn bộ 419 tests pass — không có regression.

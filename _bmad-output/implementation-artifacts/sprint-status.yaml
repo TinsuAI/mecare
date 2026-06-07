@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-06
-last_updated: 2026-06-07  # story-3.1: done (all 6 tasks complete, dry-run OK)
+last_updated: 2026-06-07  # story-3.2: done (review approved)
 project: MeCare
 # 1-4 promoted to ready-for-dev via create-story 2026-06-06
 project_key: NOKEY
@@ -68,7 +68,7 @@ development_status:
   # Epic 3: Thu thập & phân nhóm khách tại quầy
   epic-3: in-progress
   3-1-tao-ho-so-khach-tai-quay-20s: done
-  3-2-phan-khach-vao-dung-1-6-nhom-cham-soc-log-doi-nhom: backlog
+  3-2-phan-khach-vao-dung-1-6-nhom-cham-soc-log-doi-nhom: done
   epic-3-retrospective: optional
 
   # Epic 4: Chăm sóc chủ động theo nhóm

@@ -1,0 +1,13 @@
+{
+  "table": "CustomerGroupChanges",
+  "description": "Audit log đổi nhóm chăm sóc. Mỗi hàng = 1 lần đổi nhóm. Append-only. Không xóa hàng cũ.",
+  "primary": "changed_at",
+  "fields": [
+    { "name": "changed_at", "type": "date", "include_time": true },
+    { "name": "pharmacy_id", "type": "link_row", "link_table": "Pharmacies" },
+    { "name": "customer_id", "type": "link_row", "link_table": "Customers" },
+    { "name": "from_group", "type": "number", "decimals": 0 },
+    { "name": "to_group", "type": "number", "decimals": 0 },
+    { "name": "changed_by", "type": "text" }
+  ]
+}

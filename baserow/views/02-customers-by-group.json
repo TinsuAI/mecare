@@ -1,0 +1,21 @@
+{
+  "type": "grid",
+  "table": "Customers",
+  "name": "customers-by-group",
+  "description": "Danh sách khách theo nhóm chăm sóc. Inline-edit care_group để đổi nhóm. Dùng kèm CustomerGroupChanges để log thay đổi.",
+  "sortings": [
+    { "field": "care_group", "order": "ASC" },
+    { "field": "full_name",  "order": "ASC" }
+  ],
+  "fields": [
+    { "name": "full_name",           "hidden": false },
+    { "name": "phone",               "hidden": false },
+    { "name": "care_group",          "hidden": false },
+    { "name": "is_complaint_active", "hidden": false },
+    { "name": "friend_status",       "hidden": false },
+    { "name": "notes",               "hidden": false },
+    { "name": "pharmacy_id",         "hidden": false },
+    { "name": "created_at",          "hidden": true  },
+    { "name": "updated_at",          "hidden": true  }
+  ]
+}

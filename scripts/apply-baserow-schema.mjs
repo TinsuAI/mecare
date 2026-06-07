@@ -320,6 +320,7 @@ async function applyView(dbId, viewDef, tableIdByName) {
         if (fd.required    !== undefined) opt.required    = fd.required;
         if (fd.label       !== undefined) opt.name        = fd.label;
         if (fd.description !== undefined) opt.description = fd.description;
+        if (fd.default_value !== undefined) log(`  ⚠ field "${fd.name}": default_value trong view JSON không áp qua field-options API — set tại schema field definition thay thế.`);
         fieldOptions[fid] = opt;
       }
       await api("PATCH", `/api/database/views/${view.id}/field-options/`, { field_options: fieldOptions });

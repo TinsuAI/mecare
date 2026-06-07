@@ -1,0 +1,17 @@
+{
+  "type": "grid",
+  "table": "CustomerGroupChanges",
+  "name": "group-changes-log",
+  "description": "Audit trail đổi nhóm — xem lịch sử phân nhóm theo thời gian.",
+  "sortings": [
+    { "field": "changed_at", "order": "DESC" }
+  ],
+  "fields": [
+    { "name": "changed_at",  "hidden": false },
+    { "name": "customer_id", "hidden": false },
+    { "name": "pharmacy_id", "hidden": false },
+    { "name": "from_group",  "hidden": false },
+    { "name": "to_group",    "hidden": false },
+    { "name": "changed_by",  "hidden": false }
+  ]
+}

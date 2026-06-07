@@ -4,10 +4,10 @@ epic: "epics3-5"
 epicName: "MeCare - Epics 3-5"
 storyRange: ["3.1", "3.2", "4.1", "4.2", "4.3", "4.4", "5.1", "5.2", "5.3", "5.4"]
 status: IN_PROGRESS
-currentStory: 3.1
+currentStory: 3.2
 currentStep: step-03-execute
 stepsCompleted: []
-lastUpdated: 2026-06-07T10:48:47Z
+lastUpdated: 2026-06-07T11:15:01Z
 createdAt: "2026-06-07T10:48:24Z"
 
 # Configuration
@@ -54,8 +54,8 @@ completedSessions: []
 
 | Story | create-story | dev-story | automate | code-review | git-commit | Status |
 |-------|--------------|-----------|----------|-------------|------------|--------|
-| 3.1 | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | in-progress |
-| 3.2 | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | pending |
+| 3.1 | ✅ | ✅ | ✅ | ✅ | ✅ | done |
+| 3.2 | ✅ | ✅ | ✅ | ⏳ | ⏳ | in-progress |
 | 4.1 | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | pending |
 | 4.2 | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | pending |
 | 4.3 | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | pending |
@@ -93,3 +93,9 @@ completedSessions: []
 - **[2026-06-07T10:48:53Z]** NEW ORCHESTRATION: Epics 3-5, 10 stories. Starting Story 3.1.
 - **[2026-06-07T10:49:01Z]** Starting Story 3.1: Tạo hồ sơ khách tại quầy
 - **[2026-06-07T10:57:31Z]** Story 3.1 create-story DONE.
+- **[2026-06-07T11:03:57Z]** Story 3.1 dev DONE. Committed feat(story-3.1). Sprint: done.
+- **[2026-06-07T11:08:18Z]** Story 3.1 automate DONE.
+- **[2026-06-07T11:15:01Z]** Story 3.1 COMPLETE. Starting Story 3.2.
+- **[2026-06-07T11:25:24Z]** Story 3.2 create DONE.
+- **[2026-06-07T11:33:03Z]** Story 3.2 dev DONE. Sprint: review. Changes uncommitted — code-review will commit.
+- **[2026-06-07T11:38:31Z]** Story 3.2 automate DONE.
