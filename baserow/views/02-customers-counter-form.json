@@ -1,0 +1,52 @@
+{
+  "type": "form",
+  "table": "Customers",
+  "name": "counter-entry-form",
+  "title": "Tạo hồ sơ khách – [Tên nhà thuốc]",
+  "submit_button_label": "Lưu hồ sơ",
+  "description": "Form nhập nhanh hồ sơ khách tại quầy ≤20s",
+  "fields": [
+    {
+      "name": "full_name",
+      "order": 1,
+      "required": true,
+      "hidden": false,
+      "label": "Họ tên"
+    },
+    {
+      "name": "phone",
+      "order": 2,
+      "required": true,
+      "hidden": false,
+      "label": "Số điện thoại",
+      "description": "Kiểm tra SĐT trùng trong lookup view trước khi tạo mới"
+    },
+    {
+      "name": "care_group",
+      "order": 3,
+      "required": true,
+      "hidden": false,
+      "label": "Nhóm chăm sóc (1–6)",
+      "description": "Nhập số từ 1 đến 6 (1=mãn tính, 2=OTC ngắn ngày, 3=kê đơn, 4=TPCN, 5=khiếu nại, 6=chưa đủ thông tin)"
+    },
+    {
+      "name": "friend_status",
+      "order": 4,
+      "required": true,
+      "hidden": false,
+      "label": "Trạng thái Zalo",
+      "default_value": "pending"
+    },
+    {
+      "name": "notes",
+      "order": 5,
+      "required": false,
+      "hidden": false,
+      "label": "Thuốc/sản phẩm đã mua + ghi chú"
+    },
+    { "name": "pharmacy_id",        "hidden": true },
+    { "name": "is_complaint_active","hidden": true },
+    { "name": "created_at",         "hidden": true },
+    { "name": "updated_at",         "hidden": true }
+  ]
+}

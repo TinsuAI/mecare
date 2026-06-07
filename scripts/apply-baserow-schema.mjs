@@ -1,22 +1,23 @@
 #!/usr/bin/env node
-// Apply MeCare Baserow schema + seed via REST API. Idempotent.
+// Apply MeCare Baserow schema + seed + views via REST API. Idempotent.
 // Zero deps (Node built-in fetch, Node >=18). Pattern kế thừa Story 1.1 tests/ ESM.
 //
 // Env:
 //   BASEROW_API_URL        vd http://localhost:8080  (mặc định)
 //   BASEROW_DATABASE_NAME  tên database trong Baserow (mặc định "MeCare")
 //   BASEROW_WORKSPACE      tên/ID workspace (mặc định: workspace đầu tiên)
-//   Auth — schema ops (tạo bảng/field) CẦN JWT user:
+//   Auth — schema ops (tạo bảng/field/view) CẦN JWT user:
 //     BASEROW_EMAIL + BASEROW_PASSWORD   -> lấy JWT (token-auth)
 //   Hoặc dùng JWT có sẵn:
 //     BASEROW_JWT
 //   BASEROW_API_TOKEN  (database token) — chỉ đủ quyền row CRUD (seed), KHÔNG tạo schema.
 //
 // Usage:
-//   node scripts/apply-baserow-schema.mjs              # schema + seed
+//   node scripts/apply-baserow-schema.mjs              # schema + seed + views
 //   node scripts/apply-baserow-schema.mjs --schema     # chỉ schema
 //   node scripts/apply-baserow-schema.mjs --seed       # chỉ seed (insert-only, skip key trùng)
 //   node scripts/apply-baserow-schema.mjs --seed --update-seed  # upsert: insert mới + UPDATE hàng đã tồn tại theo key
+//   node scripts/apply-baserow-schema.mjs --views      # chỉ views (form/grid)
 //   node scripts/apply-baserow-schema.mjs --dry-run    # parse + validate, KHÔNG gọi API
 
 import fs from "node:fs";
@@ -28,6 +29,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const SCHEMA_DIR = path.join(ROOT, "baserow", "schema");
 const SEED_DIR = path.join(ROOT, "baserow", "seed");
+const VIEWS_DIR = path.join(ROOT, "baserow", "views");
 
 const API_URL = (process.env.BASEROW_API_URL || "http://localhost:8080").replace(/\/$/, "");
 const DB_NAME = process.env.BASEROW_DATABASE_NAME || "MeCare";
@@ -39,6 +41,7 @@ const args = new Set(process.argv.slice(2));
 const DRY_RUN = args.has("--dry-run");
 const ONLY_SCHEMA = args.has("--schema");
 const ONLY_SEED = args.has("--seed");
+const ONLY_VIEWS = args.has("--views");
 const UPDATE_SEED = args.has("--update-seed"); // upsert: cập nhật nội dung hàng đã tồn tại theo key
 // Logic upsert (insert + PATCH giữ trạng thái duyệt) dùng chung từ openclaw/lib/kichban-ops.mjs
 // để cùng được test offline — KHÔNG reimplement inline (tránh divergence).
@@ -259,6 +262,113 @@ async function applySeed(dbId, seed, tableIdByName) {
   log(`• Seed ${seed.table}: +${res.inserted} mới, ${res.updated} cập nhật, ${res.skipped} bỏ qua (idempotent${UPDATE_SEED ? ", upsert" : ""})`);
 }
 
+// ── Load + validate view files (works offline, no API) ────────────────────────
+function loadViews() {
+  if (!fs.existsSync(VIEWS_DIR)) return [];
+  const files = fs.readdirSync(VIEWS_DIR)
+    .filter((f) => /^\d+.*\.json$/.test(f))
+    .sort();
+  return files.map((f) => {
+    const def = JSON.parse(fs.readFileSync(path.join(VIEWS_DIR, f), "utf8"));
+    if (!def.type) die(`views/${f}: thiếu "type" (form|grid)`);
+    if (!def.table) die(`views/${f}: thiếu "table"`);
+    if (!def.name) die(`views/${f}: thiếu "name"`);
+    def._file = f;
+    return def;
+  });
+}
+
+// ── Apply single view (idempotent) ────────────────────────────────────────────
+async function applyView(dbId, viewDef, tableIdByName) {
+  const tableId = tableIdByName[viewDef.table];
+  if (!tableId) die(`View ${viewDef._file}: bảng "${viewDef.table}" chưa tồn tại (chạy --schema trước).`);
+
+  // Fetch existing fields for this table (need field IDs for sortings/options).
+  const allFields = await api("GET", `/api/database/fields/table/${tableId}/`);
+  const fieldIdByName = {};
+  for (const f of allFields) fieldIdByName[f.name] = f.id;
+
+  // Idempotent: skip if view with same name already exists.
+  const existingViews = await api("GET", `/api/database/views/table/${tableId}/`);
+  let view = existingViews.find((v) => v.name === viewDef.name);
+  if (view) {
+    log(`• View tồn tại: ${viewDef.table}/${viewDef.name} (#${view.id}) — tái sử dụng`);
+  } else {
+    view = await api("POST", `/api/database/views/table/${tableId}/`, {
+      type: viewDef.type,
+      name: viewDef.name,
+    });
+    log(`✓ Tạo view: ${viewDef.table}/${viewDef.name} (#${view.id})`);
+  }
+
+  if (viewDef.type === "form") {
+    // Patch form-level meta (title, submit label, description).
+    await api("PATCH", `/api/database/views/form/${view.id}/`, {
+      ...(viewDef.title              && { title: viewDef.title }),
+      ...(viewDef.submit_button_label && { submit_button_label: viewDef.submit_button_label }),
+      ...(viewDef.description        && { description: viewDef.description }),
+    });
+
+    // Patch field options (visibility, order, required, label, description).
+    if (viewDef.fields && viewDef.fields.length) {
+      const fieldOptions = {};
+      for (const fd of viewDef.fields) {
+        const fid = fieldIdByName[fd.name];
+        if (!fid) { log(`  ⚠ field "${fd.name}" không tìm thấy trong bảng — bỏ qua`); continue; }
+        const opt = { enabled: !fd.hidden };
+        if (fd.order       !== undefined) opt.order       = fd.order;
+        if (fd.required    !== undefined) opt.required    = fd.required;
+        if (fd.label       !== undefined) opt.name        = fd.label;
+        if (fd.description !== undefined) opt.description = fd.description;
+        fieldOptions[fid] = opt;
+      }
+      await api("PATCH", `/api/database/views/${view.id}/field-options/`, { field_options: fieldOptions });
+      log(`  ↳ field options áp xong (${Object.keys(fieldOptions).length} fields)`);
+    }
+  }
+
+  if (viewDef.type === "grid") {
+    // Apply field visibility options.
+    if (viewDef.fields && viewDef.fields.length) {
+      const fieldOptions = {};
+      for (const fd of viewDef.fields) {
+        const fid = fieldIdByName[fd.name];
+        if (!fid) { log(`  ⚠ field "${fd.name}" không tìm thấy trong bảng — bỏ qua`); continue; }
+        fieldOptions[fid] = { hidden: !!fd.hidden };
+      }
+      await api("PATCH", `/api/database/views/${view.id}/field-options/`, { field_options: fieldOptions });
+      log(`  ↳ field visibility áp xong`);
+    }
+
+    // Apply sortings (POST each; idempotent: skip if same field+order combo exists).
+    if (viewDef.sortings && viewDef.sortings.length) {
+      const existingSorts = await api("GET", `/api/database/views/${view.id}/sortings/`);
+      const existingSet = new Set(
+        (existingSorts.results || existingSorts).map((s) => `${s.field}:${s.order}`)
+      );
+      for (const sort of viewDef.sortings) {
+        const fid = fieldIdByName[sort.field];
+        if (!fid) { log(`  ⚠ sort field "${sort.field}" không tìm thấy — bỏ qua`); continue; }
+        const key = `${fid}:${sort.order}`;
+        if (!existingSet.has(key)) {
+          await api("POST", `/api/database/views/${view.id}/sortings/`, { field: fid, order: sort.order });
+          log(`  ↳ sort thêm: ${sort.field} ${sort.order}`);
+        }
+      }
+    }
+  }
+}
+
+async function applyViews(dbId, tableIdByName) {
+  const views = loadViews();
+  if (!views.length) { log("• Views: không có file trong baserow/views/"); return; }
+  log(`Views: ${views.length} file — ${views.map((v) => `${v.table}/${v.name}`).join(", ")}`);
+  for (const v of views) {
+    await applyView(dbId, v, tableIdByName);
+  }
+  log("✓ Views áp xong.");
+}
+
 // ── Main ─────────────────────────────────────────────────────────────────────
 async function main() {
   const schemas = loadSchemas();
@@ -267,7 +377,9 @@ async function main() {
   if (DRY_RUN) {
     const seeds = loadSeeds();
     log(`Seed: ${seeds.length} file — ${seeds.map((s) => s.table).join(", ")}`);
-    log("✓ Dry-run OK — JSON hợp lệ, naming/primary kiểm tra xong. Không gọi API.");
+    const views = loadViews();
+    log(`Views: ${views.length} file — ${views.map((v) => `${v.table}/${v.name} (${v.type})`).join(", ") || "(none)"}`);
+    log("✓ Dry-run OK — JSON hợp lệ, naming/primary/views kiểm tra xong. Không gọi API.");
     return;
   }
 
@@ -275,19 +387,28 @@ async function main() {
   const db = await ensureDatabase();
   const tableIdByName = {};
 
-  if (!ONLY_SEED) {
+  if (!ONLY_SEED && !ONLY_VIEWS) {
     for (const def of schemas) {
       await ensureTable(db.id, def, tableIdByName);
     }
     log("✓ Schema áp xong.");
   }
 
-  if (!ONLY_SCHEMA) {
+  if (!ONLY_SCHEMA && !ONLY_VIEWS) {
     const seeds = loadSeeds();
     for (const seed of seeds) {
       await applySeed(db.id, seed, tableIdByName);
     }
     log("✓ Seed áp xong.");
+  }
+
+  if (!ONLY_SCHEMA && !ONLY_SEED) {
+    // Ensure tableIdByName populated even when ONLY_VIEWS (schema loop skipped).
+    if (ONLY_VIEWS) {
+      const tables = await api("GET", `/api/database/tables/database/${db.id}/`);
+      for (const t of tables) tableIdByName[t.name] = t.id;
+    }
+    await applyViews(db.id, tableIdByName);
   }
 }
 

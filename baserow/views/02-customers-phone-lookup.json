@@ -1,0 +1,21 @@
+{
+  "type": "grid",
+  "table": "Customers",
+  "name": "phone-lookup",
+  "description": "Tìm SĐT trùng trước khi tạo hồ sơ mới. Filter theo pharmacy_id để chỉ xem khách của tenant này.",
+  "sortings": [
+    { "field": "phone",      "order": "ASC" },
+    { "field": "full_name",  "order": "ASC" }
+  ],
+  "fields": [
+    { "name": "full_name",          "hidden": false },
+    { "name": "phone",              "hidden": false },
+    { "name": "care_group",         "hidden": false },
+    { "name": "friend_status",      "hidden": false },
+    { "name": "notes",              "hidden": false },
+    { "name": "pharmacy_id",        "hidden": false },
+    { "name": "is_complaint_active","hidden": true  },
+    { "name": "created_at",         "hidden": true  },
+    { "name": "updated_at",         "hidden": true  }
+  ]
+}
