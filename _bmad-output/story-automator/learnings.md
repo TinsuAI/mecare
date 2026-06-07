@@ -16,3 +16,26 @@
 Root cause: compose was written with host-side aliases (`N8N_HTTP_PORT`, `ZALO_BRIDGE_HOST_PORT`) but `.env.example` kept both internal and external vars, implying both are safe to change.
 
 **Fix story logged as 1.7.** Until fixed, keep `N8N_PORT=5678` and `ZALO_BRIDGE_PORT=3000` in `.env`. Only `N8N_HTTP_PORT` and `BASEROW_HTTP_PORT` are safe to change for host-port remapping.
+
+## Run: 2026-06-07T05:03:12Z
+
+**Epic:** Epic 1 — Nền tảng & Khử rủi ro (Foundation)
+**Stories:** 1.8
+
+### Patterns Observed
+- Story 1.8 was an operational verification story — no new code, just credentials + script execution
+- Story file existed before run (create step skipped correctly)
+- Single review cycle sufficient (Low complexity story)
+
+### Code Review Insights
+- Common issues: none — clean first pass
+- Average cycles to clean: 1
+
+### Timing Estimates
+- dev-story: ~10 min
+- automate: ~5 min
+- code-review: ~10 min
+
+### Recommendations for Future Runs
+- Operational/verification stories (no new code) run fast — assign Low complexity and single review budget
+- epics.md needs updating when stories are added post-sprint-planning (1.7, 1.8 were missing)

@@ -300,6 +300,30 @@ So that Epic 2+ có thể test với 9 bảng thật + data tructam trong Basero
 **When** chạy lại lần 2
 **Then** exit 0, không duplicate (idempotent)
 
+### Story 1.9: Seed đủ 38 kịch bản mẫu vào MessageTemplates
+
+As a kỹ sư vận hành MeCare,
+I want seed tất cả 38 scenarios từ `kichban-chamsoc-khachhang.md` vào bảng `MessageTemplates`,
+So that Epic 4 và Story 6.3 có đủ nội dung thật để test và chủ nhà thuốc có sẵn template để duyệt.
+
+**Acceptance Criteria:**
+
+**Given** Baserow live đã có schema từ Story 1.8
+**When** chạy seed đầy đủ
+**Then** bảng `MessageTemplates` có đúng 38 rows (6 nhóm × đủ scenarios), tất cả `status=draft`
+
+**Given** 38 rows đã seed
+**When** kiểm tra nội dung
+**Then** `body_template` tiếng Việt khớp với file kịch bản; `care_group` đúng số nhóm (1–6); `pharmacy_id` trỏ về tructam
+
+**Given** seed đã chạy thành công
+**When** chạy lại lần 2
+**Then** exit 0, không duplicate (idempotent — skip row đã tồn tại)
+
+**Given** scenario có nhiều variant (ví dụ 1.10 có 2 tin)
+**When** seed
+**Then** mỗi variant là 1 row riêng với tên rõ (ví dụ `care_group=1`, note phân biệt)
+
 ---
 
 ## Epic 2: Lớp Zalo Cá Nhân an toàn (anti-ban — R1)
@@ -674,6 +698,10 @@ So that kịch bản khớp nhu cầu nhà thuốc mà không cần MeCare can t
 **Given** record được sửa
 **When** kiểm tra audit
 **Then** lưu version cũ, rollback được; chỉ record `status=approved` mới vào template proactive (Story 4.1) / RAG FAQ (Story 5.1)
+
+**Given** chủ nhà thuốc đăng nhập Baserow
+**When** nhìn vào workspace
+**Then** chỉ thấy 2 bảng: `MessageTemplates` + `FaqEntries`; các bảng hệ thống (`QuotaCounter`, `Messages`, `EscalationCases`, `CareSchedule`, `Customers`, `Medications`) bị ẩn hoàn toàn; trong edit view không thấy các trường hệ thống (`pharmacy_id`, `version`, `approved_by`, `approved_at`) — chỉ thấy `care_group`, `body_template`/`question`/`answer`, `status`
 
 ---
 

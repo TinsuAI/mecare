@@ -1,37 +1,35 @@
-# Test Automation Summary — Story 1.1 (Scaffold repo & Docker Compose stack)
-
-**Framework:** Node.js built-in test runner (`node --test`) + `node:assert/strict`.
-Zero external dependencies — chosen because this is an infra repo with no app-level
-package manager state and tests must run offline/CI without `npm install`. Node v24.7
-native TypeScript support lets the zalo-bridge `.ts` stub run unmodified.
-
-**Run:** `cd tests && node --test`  →  **40 tests, 40 pass, 0 fail**.
+# Test Automation Summary — Story 1.9
 
 ## Generated Tests
 
-### API / E2E (spawn real stub servers, probe HTTP)
-- [x] `tests/api/zalo-bridge.test.js` — `/healthz` → 200 `{status:ok,service}`; unknown route → 404 `{error:not_found}` (AC2)
-- [x] `tests/api/openclaw.test.js` — `/healthz` → 200 `config_loaded:true`; 404 error path; memory-dir created on boot; **missing-config → exit 1** (fail-fast) (AC2)
+### Contract Tests (6 new tests across 2 files)
 
-### Contract / structural (encode the 4 ACs as regression assertions)
-- [x] `tests/contract/repo-layout.test.js` — AR-9 layout: 18 required paths + openclaw config trio (AC1)
-- [x] `tests/contract/gitignore.test.js` — `git check-ignore`: real tenant env & `.env` blocked; `_template.env` + `.env.example` trackable; data volumes ignored (AC1/AC4)
-- [x] `tests/contract/tenants-secrets.test.js` — `git ls-files`: no real `tenants/*.env`, no real `.env` committed (AC4)
-- [x] `tests/contract/compose.test.js` — `docker compose config --format json`: 5 services present, all `restart: unless-stopped`, all healthchecks, pinned tags (no `:latest`), baserow/n8n depend on postgres healthy, `pgdata` named volume, no hardcoded secrets (AC2/AC3/AC4)
-- [x] `tests/contract/openclaw-config.test.js` — provider pins non-CN (NFR-5), DeepSeek V4 Flash, key from env (no literal), memory SQLite+sqlite-vec (AC2)
-- [x] `tests/helpers/server.js` — shared spawn/probe helper
+- [x] `tests/contract/kichban-content.test.js` — 5 new tests in `"MessageTemplates — Story 1.9 specific contracts (AC2, AC3, AC4)"`
+  - `updated_by === "story-1.9"` exact value (AC2)
+  - `seed key === ["scenario_id"]` — idempotency key contract (AC3)
+  - `scenario_id` format matches `\d+\.\d+` pattern (AC2)
+  - Scenario 1.10 = exactly 1 row + `[cao huyết áp/tiểu đường]` placeholder (AC4)
+  - Group distribution: `{1:11, 2:5, 3:5, 4:6, 5:6, 6:5}` (story spec)
+  - All 38 expected scenario_ids present (1.1–1.11, 2.1–2.5, 3.1–3.5, 4.1–4.6, 5.1–5.6, 6.1–6.5)
+
+- [x] `tests/contract/baserow-schema.test.js` — 1 updated test in AC2
+  - `MessageTemplates` schema asserts `scenario_id` field present + type `text` (Story 1.9 schema change)
 
 ## Coverage
-- Acceptance Criteria: **AC1, AC2, AC3, AC4 — all covered** by automated assertions.
-- HTTP endpoints: 2/2 stub services (openclaw, zalo-bridge) — happy path + 404 + (openclaw) fail-fast.
-- Compose invariants: services, restart, healthcheck, tag-pin, depends_on, volumes, secret-leak.
-- Not covered (out of Story 1.1 scope): live Baserow/n8n HTTP healthz (requires full `docker compose up`, slow — already done manually in dev-story); real cloud calls to OpenRouter (intentionally excluded per AC2).
 
-## Gaps Discovered & Auto-Applied
-1. **No automated regression for the 4 ACs** — they were verified once manually in dev-story. → Added 40 automated tests above.
-2. **`openclaw/server.js` not host-testable** — `PORT`/`CONFIG_DIR` were hardcoded (`8000` / `/app/config`). → Made overridable via `OPENCLAW_PORT` / `OPENCLAW_CONFIG_DIR` env, **defaults unchanged** so container behavior is identical. (zalo-bridge already used `ZALO_BRIDGE_PORT` — no change needed.)
+| Gap | AC | Test file | Status |
+|-----|----|-----------|--------|
+| updated_by exact "story-1.9" | AC2 | kichban-content.test.js | added |
+| Seed key = ["scenario_id"] | AC3 | kichban-content.test.js | added |
+| scenario_id format X.Y | AC2 | kichban-content.test.js | added |
+| Scenario 1.10 = 1 row + placeholder | AC4 | kichban-content.test.js | added |
+| Group distribution 11-5-5-6-6-5 | spec | kichban-content.test.js | added |
+| All 38 scenario_ids present | AC1 | kichban-content.test.js | added |
+| scenario_id field in schema JSON | AC2 | baserow-schema.test.js | added |
 
-## Next Steps
-- Wire `cd tests && node --test` into CI (no install step needed).
-- Story 1.2+: add Baserow schema/seed tests once schema lands.
-- Add live-healthz E2E (compose up) as a slow/nightly job if desired.
+## Results
+
+- Baseline (Story 1.8): 285 tests
+- After Story 1.9 dev: 287 tests
+- After QA gap fill: 293 tests (+6)
+- Pass: 293/293 — 0 failures, 0 regressions
