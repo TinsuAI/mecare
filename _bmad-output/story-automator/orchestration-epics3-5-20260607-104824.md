@@ -3,8 +3,8 @@
 epic: "epics3-5"
 epicName: "MeCare - Epics 3-5"
 storyRange: ["3.1", "3.2", "4.1", "4.2", "4.3", "4.4", "5.1", "5.2", "5.3", "5.4"]
-status: IN_PROGRESS
-currentStory: 5.4
+status: EXECUTION_COMPLETE
+currentStory: retro-epic5
 currentStep: step-03a-execute-create
 stepsCompleted: []
 lastUpdated: 2026-06-07T14:52:00Z
@@ -63,7 +63,7 @@ completedSessions: []
 | 5.1 | ✅ | ✅ | ✅ | ✅ | ✅ | done |
 | 5.2 | ✅ | ✅ | ✅ | ✅ | ✅ | done |
 | 5.3 | ✅ | ✅ | ✅ | ✅ | ✅ | done |
-| 5.4 | ✅ | ✅ | ✅ | ⏳ | ⏳ | in-progress |
+| 5.4 | ✅ | ✅ | ✅ | ✅ | ✅ | done |
 
 ---
 

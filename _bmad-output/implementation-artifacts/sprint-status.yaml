@@ -66,13 +66,13 @@ development_status:
   epic-2-retrospective: done
 
   # Epic 3: Thu thập & phân nhóm khách tại quầy
-  epic-3: in-progress
+  epic-3: done
   3-1-tao-ho-so-khach-tai-quay-20s: done
   3-2-phan-khach-vao-dung-1-6-nhom-cham-soc-log-doi-nhom: done
   epic-3-retrospective: done
 
   # Epic 4: Chăm sóc chủ động theo nhóm
-  epic-4: in-progress
+  epic-4: done
   4-1-soan-tin-chu-dong-tu-template-kich-ban: done
   4-2-lap-lich-gui-dung-cadence-tung-nhom: done
   4-3-ap-rate-limit-nhom-tran-goi-1000-tin-thang: done
@@ -80,7 +80,7 @@ development_status:
   epic-4-retrospective: done
 
   # Epic 5: Trả lời thắc mắc & Leo thang Dược Sĩ
-  epic-5: in-progress
+  epic-5: done
   5-1-tra-loi-tu-dong-faq-trong-pham-vi-kich-ban: done
   5-2-phat-hien-trigger-leo-thang-cap-cuu: done
   5-3-relay-ca-sang-duoc-si-that-phan-hoi-khach: done
