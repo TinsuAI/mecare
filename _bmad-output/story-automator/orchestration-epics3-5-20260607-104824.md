@@ -60,7 +60,7 @@ completedSessions: []
 | 4.2 | ✅ | ✅ | ✅ | ✅ | ✅ | done |
 | 4.3 | ✅ | ✅ | ✅ | ✅ | ✅ | done |
 | 4.4 | ✅ | ✅ | ✅ | ✅ | ✅ | done |
-| 5.1 | ✅ | ✅ | ⏳ | ⏳ | ⏳ | in-progress |
+| 5.1 | ✅ | ✅ | ✅ | ⏳ | ⏳ | in-progress |
 | 5.2 | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | pending |
 | 5.3 | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | pending |
 | 5.4 | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | pending |
