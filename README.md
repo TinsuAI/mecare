@@ -36,6 +36,13 @@ docker compose up -d
 
 # 5. Theo dõi tới khi tất cả service `healthy`
 docker compose ps
+
+# 6. Set Baserow credentials trong .env (đăng ký tại http://localhost:8001)
+#    BASEROW_EMAIL=<email đăng ký Baserow>
+#    BASEROW_PASSWORD=<password>
+
+# 7. Apply schema (9 bảng) + seed dữ liệu tructam — idempotent, chạy lại safe
+node scripts/apply-baserow-schema.mjs
 ```
 
 Tất cả service đặt `restart: unless-stopped` → tự lên lại sau khi restart VPS. Dữ liệu Baserow/Postgres + memory store persist qua named volume.
