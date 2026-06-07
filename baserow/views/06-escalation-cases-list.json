@@ -1,0 +1,20 @@
+{
+  "type": "grid",
+  "table": "EscalationCases",
+  "name": "escalation-cases-list",
+  "description": "Danh sách ca leo thang — chủ nhà thuốc theo dõi trạng thái & phản hồi dược sĩ. Sort mới nhất lên đầu.",
+  "sortings": [
+    { "field": "created_at", "order": "DESC" }
+  ],
+  "fields": [
+    { "name": "case_id",          "hidden": false },
+    { "name": "state",            "hidden": false },
+    { "name": "trigger",          "hidden": false },
+    { "name": "customer_content", "hidden": false },
+    { "name": "pharmacist_reply", "hidden": false },
+    { "name": "created_at",       "hidden": false },
+    { "name": "resolved_at",      "hidden": false },
+    { "name": "pharmacy_id",      "hidden": true  },
+    { "name": "customer_id",      "hidden": true  }
+  ]
+}

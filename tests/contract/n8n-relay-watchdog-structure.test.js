@@ -117,4 +117,35 @@ describe("MC-Relay-Watchdog structure (Story 5.3 AC8)", () => {
       `Cron Trigger must connect to 'Guard: Is Business Hours', got '${next}'`
     );
   });
+
+  // ─── Story 5.4: AR-8 SLA Alert to Tinsu ───
+  test("12.14 — có HTTP POST node tên chứa 'Alert' hoặc 'Tinsu' (AC5 AR-8)", () => {
+    const found = watchdog.nodes.some(
+      (n) =>
+        n.type === "n8n-nodes-base.httpRequest" &&
+        (n.name?.toLowerCase().includes("alert") || n.name?.toLowerCase().includes("tinsu"))
+    );
+    assert.ok(found, "MC-Relay-Watchdog missing HTTP POST alert node with 'Alert' or 'Tinsu' in name (AC5)");
+  });
+
+  test("12.15 — node 'Send SLA Alert to Tinsu' có method POST (AC5)", () => {
+    const node = watchdog.nodes.find((n) => n.name === "Send SLA Alert to Tinsu");
+    assert.ok(node, "MC-Relay-Watchdog missing 'Send SLA Alert to Tinsu' node");
+    assert.equal(
+      node.type,
+      "n8n-nodes-base.httpRequest",
+      "Send SLA Alert to Tinsu must be httpRequest node"
+    );
+    assert.equal(node.parameters?.method, "POST", "Send SLA Alert to Tinsu must use POST method");
+  });
+
+  test("12.16 — node 'Send SLA Alert to Tinsu' URL tham chiếu ALERT_WEBHOOK_URL env var (AC5)", () => {
+    const node = watchdog.nodes.find((n) => n.name === "Send SLA Alert to Tinsu");
+    assert.ok(node, "Send SLA Alert to Tinsu node not found");
+    const url = node.parameters?.url || "";
+    assert.ok(
+      url.includes("ALERT_WEBHOOK_URL"),
+      `Send SLA Alert to Tinsu URL must reference ALERT_WEBHOOK_URL, got: ${url}`
+    );
+  });
 });

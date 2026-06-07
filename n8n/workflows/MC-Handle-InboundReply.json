@@ -1130,6 +1130,172 @@
         4800,
         360
       ]
+    },
+    {
+      "id": "gen-waiting-msg-id",
+      "name": "Generate Waiting Message ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3840,
+        240
+      ],
+      "parameters": {
+        "jsCode": "function uuidv4() {\n  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {\n    const r = Math.random() * 16 | 0;\n    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);\n  });\n}\nconst message_id = uuidv4();\nreturn [{ json: { ...($input.first()?.json || {}), message_id } }];"
+      }
+    },
+    {
+      "id": "audit-write-waiting-pending",
+      "name": "Audit: Write Waiting Message Pending",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        4080,
+        240
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_MESSAGES }}/?user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "pharmacy_id": "={{ $('Log Escalation Case Created').first().json.case_id?.split('-')[1] || $env.PHARMACY_SLUG }}",
+          "customer_ref": "={{ $('Classify Response').first().json.customer_ref || $('Classify Response').first().json.customer_id }}",
+          "message_id": "={{ $json.message_id }}",
+          "case_id": "={{ $('Log Escalation Case Created').first().json.case_id }}",
+          "care_group": "={{ $('Classify Response').first().json.care_group }}",
+          "type": "escalation",
+          "content": "[Tin chờ — đang xử lý ca]",
+          "status": "pending",
+          "ts": "={{ new Date().toISOString() }}"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "update-waiting-msg-status",
+      "name": "Update Waiting Message Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4320,
+        480
+      ],
+      "parameters": {
+        "jsCode": "const rowId = $('Audit: Write Waiting Message Pending').first().json.id;\nconst sendResult = $('Send Waiting Message to Customer').first().json;\nconst status = (sendResult && !sendResult.error) ? 'sent' : 'failed';\nconst baserowUrl = $env.BASEROW_URL;\nconst token = $env.BASEROW_TOKEN;\nconst table = $env.BASEROW_TABLE_MESSAGES;\ntry {\n  await $http.patch(\n    `${baserowUrl}/api/database/rows/table/${table}/${rowId}/?user_field_names=true`,\n    { body: { status }, headers: { Authorization: `Token ${token}` } }\n  );\n} catch (e) {\n  console.error('[MC-Handle-InboundReply] Audit: Write Waiting Message Pending status update failed:', e.message);\n}\nreturn [$input.first()];"
+      }
+    },
+    {
+      "id": "gen-relay-msg-id",
+      "name": "Generate Relay Message ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4560,
+        480
+      ],
+      "parameters": {
+        "jsCode": "function uuidv4() {\n  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {\n    const r = Math.random() * 16 | 0;\n    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);\n  });\n}\nconst message_id = uuidv4();\nreturn [{ json: { ...($input.first()?.json || {}), message_id } }];"
+      }
+    },
+    {
+      "id": "audit-write-relay-pending",
+      "name": "Audit: Write Relay Message Pending",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        4800,
+        480
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_MESSAGES }}/?user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "pharmacy_id": "={{ $env.PHARMACY_SLUG }}",
+          "customer_ref": "={{ $('Classify Response').first().json.customer_ref || $('Classify Response').first().json.customer_id }}",
+          "message_id": "={{ $json.message_id }}",
+          "case_id": "={{ $('Log Escalation Case Created').first().json.case_id }}",
+          "type": "escalation",
+          "content": "={{ '[MÃ CA: ' + $('Log Escalation Case Created').first().json.case_id + ']\\n📋 Khách: ' + ($('Classify Response').first().json.customer_ref || $('Classify Response').first().json.customer_id) + ' (Nhóm ' + $('Classify Response').first().json.care_group + ')\\n⚠️ Trigger: ' + $('Detect Escalation Trigger').first().json.trigger_excerpt + '\\n📝 Nội dung tin: ' + $('Classify Response').first().json.message_content }}",
+          "status": "pending",
+          "ts": "={{ new Date().toISOString() }}"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "update-relay-msg-status",
+      "name": "Update Relay Message Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5280,
+        480
+      ],
+      "parameters": {
+        "jsCode": "const rowId = $('Audit: Write Relay Message Pending').first().json.id;\nconst sendResult = $('Relay to Pharmacist Zalo').first().json;\nconst status = (sendResult && !sendResult.error) ? 'sent' : 'failed';\nconst baserowUrl = $env.BASEROW_URL;\nconst token = $env.BASEROW_TOKEN;\nconst table = $env.BASEROW_TABLE_MESSAGES;\ntry {\n  await $http.patch(\n    `${baserowUrl}/api/database/rows/table/${table}/${rowId}/?user_field_names=true`,\n    { body: { status }, headers: { Authorization: `Token ${token}` } }\n  );\n} catch (e) {\n  console.error('[MC-Handle-InboundReply] Audit: Write Relay Message Pending status update failed:', e.message);\n}\nreturn [$input.first()];"
+      }
+    },
+    {
+      "id": "gen-pharmacist-reply-msg-id",
+      "name": "Generate Pharmacist Reply Message ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2040,
+        -520
+      ],
+      "parameters": {
+        "jsCode": "function uuidv4() {\n  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {\n    const r = Math.random() * 16 | 0;\n    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);\n  });\n}\nconst message_id = uuidv4();\nreturn [{ json: { ...($input.first()?.json || {}), message_id } }];"
+      }
+    },
+    {
+      "id": "audit-write-pharmacist-reply-pending",
+      "name": "Audit: Write Pharmacist Reply Pending",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2280,
+        -520
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_MESSAGES }}/?user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "pharmacy_id": "={{ $env.PHARMACY_SLUG }}",
+          "customer_ref": "={{ $('Format Relay to Customer').first().json.customer_id }}",
+          "message_id": "={{ $json.message_id }}",
+          "case_id": "={{ $('Lookup Escalation Case').first().json.case_id }}",
+          "type": "pharmacist_reply",
+          "content": "={{ $('Format Relay to Customer').first().json.formatted_message }}",
+          "status": "pending",
+          "ts": "={{ new Date().toISOString() }}"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "update-pharmacist-reply-status",
+      "name": "Update Pharmacist Reply Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2520,
+        -400
+      ],
+      "parameters": {
+        "jsCode": "const rowId = $('Audit: Write Pharmacist Reply Pending').first().json.id;\nconst sendResult = $('Send Pharmacist Answer to Customer').first().json;\nconst status = (sendResult && !sendResult.error) ? 'sent' : 'failed';\nconst baserowUrl = $env.BASEROW_URL;\nconst token = $env.BASEROW_TOKEN;\nconst table = $env.BASEROW_TABLE_MESSAGES;\ntry {\n  await $http.patch(\n    `${baserowUrl}/api/database/rows/table/${table}/${rowId}/?user_field_names=true`,\n    { body: { status }, headers: { Authorization: `Token ${token}` } }\n  );\n} catch (e) {\n  console.error('[MC-Handle-InboundReply] Audit: Write Pharmacist Reply Pending status update failed:', e.message);\n}\nreturn [$input.first()];"
+      }
     }
   ],
   "connections": {
@@ -1457,7 +1623,7 @@
       "main": [
         [
           {
-            "node": "Send Waiting Message to Customer",
+            "node": "Generate Waiting Message ID",
             "type": "main",
             "index": 0
           }
@@ -1555,7 +1721,7 @@
       "main": [
         [
           {
-            "node": "Send Pharmacist Answer to Customer",
+            "node": "Generate Pharmacist Reply Message ID",
             "type": "main",
             "index": 0
           }
@@ -1566,7 +1732,7 @@
       "main": [
         [
           {
-            "node": "Update Case: Resolved",
+            "node": "Update Pharmacist Reply Status",
             "type": "main",
             "index": 0
           }
@@ -1577,7 +1743,7 @@
       "main": [
         [
           {
-            "node": "Relay to Pharmacist Zalo",
+            "node": "Update Waiting Message Status",
             "type": "main",
             "index": 0
           }
@@ -1588,7 +1754,7 @@
       "main": [
         [
           {
-            "node": "Lookup Case Row ID",
+            "node": "Update Relay Message Status",
             "type": "main",
             "index": 0
           }
@@ -1622,6 +1788,105 @@
         [
           {
             "node": "Return Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Waiting Message ID": {
+      "main": [
+        [
+          {
+            "node": "Audit: Write Waiting Message Pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit: Write Waiting Message Pending": {
+      "main": [
+        [
+          {
+            "node": "Send Waiting Message to Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Waiting Message Status": {
+      "main": [
+        [
+          {
+            "node": "Generate Relay Message ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Relay Message ID": {
+      "main": [
+        [
+          {
+            "node": "Audit: Write Relay Message Pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit: Write Relay Message Pending": {
+      "main": [
+        [
+          {
+            "node": "Relay to Pharmacist Zalo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Relay Message Status": {
+      "main": [
+        [
+          {
+            "node": "Lookup Case Row ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Pharmacist Reply Message ID": {
+      "main": [
+        [
+          {
+            "node": "Audit: Write Pharmacist Reply Pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit: Write Pharmacist Reply Pending": {
+      "main": [
+        [
+          {
+            "node": "Send Pharmacist Answer to Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Pharmacist Reply Status": {
+      "main": [
+        [
+          {
+            "node": "Update Case: Resolved",
             "type": "main",
             "index": 0
           }

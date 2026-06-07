@@ -1,0 +1,21 @@
+{
+  "type": "grid",
+  "table": "Messages",
+  "name": "messages-history",
+  "description": "Lịch sử toàn bộ tin nhắn audit-first (AR-7). Sort mới nhất lên đầu. Dùng để kiểm tra chất lượng chăm sóc và debug relay.",
+  "sortings": [
+    { "field": "ts", "order": "DESC" }
+  ],
+  "fields": [
+    { "name": "customer_ref", "hidden": false },
+    { "name": "type",         "hidden": false },
+    { "name": "status",       "hidden": false },
+    { "name": "case_id",      "hidden": false },
+    { "name": "content",      "hidden": false },
+    { "name": "ts",           "hidden": false },
+    { "name": "pharmacy_id",  "hidden": false },
+    { "name": "message_id",   "hidden": true  },
+    { "name": "care_group",   "hidden": true  },
+    { "name": "error",        "hidden": true  }
+  ]
+}

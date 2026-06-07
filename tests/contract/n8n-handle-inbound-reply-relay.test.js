@@ -115,12 +115,12 @@ describe("MC-Handle-InboundReply relay nodes (Story 5.3)", () => {
     );
   });
 
-  test("8.80 — Log Escalation Case Created kết nối tới Send Waiting Message to Customer (AC1)", () => {
+  test("8.80 — Log Escalation Case Created kết nối tới Generate Waiting Message ID (Story 5.4 audit-first)", () => {
     const nextNode = workflow.connections?.["Log Escalation Case Created"]?.main?.[0]?.[0]?.node;
     assert.equal(
       nextNode,
-      "Send Waiting Message to Customer",
-      `Log Escalation Case Created must connect to 'Send Waiting Message to Customer', got '${nextNode}'`
+      "Generate Waiting Message ID",
+      `Log Escalation Case Created must connect to 'Generate Waiting Message ID' (Story 5.4), got '${nextNode}'`
     );
   });
 
@@ -282,19 +282,19 @@ describe("MC-Handle-InboundReply relay nodes (Story 5.3)", () => {
     assert.equal(next, "Notify Pharmacist: Already Resolved", `got '${next}'`);
   });
 
-  test("8.103 — Format Relay to Customer → Send Pharmacist Answer to Customer (AC6)", () => {
+  test("8.103 — Format Relay to Customer → Generate Pharmacist Reply Message ID (Story 5.4 audit-first)", () => {
     const next = workflow.connections?.["Format Relay to Customer"]?.main?.[0]?.[0]?.node;
-    assert.equal(next, "Send Pharmacist Answer to Customer", `got '${next}'`);
+    assert.equal(next, "Generate Pharmacist Reply Message ID", `Story 5.4 inserts audit UUID node before send, got '${next}'`);
   });
 
-  test("8.104 — Send Pharmacist Answer to Customer → Update Case: Resolved (AC7)", () => {
+  test("8.104 — Send Pharmacist Answer to Customer → Update Pharmacist Reply Status (Story 5.4 audit status)", () => {
     const next = workflow.connections?.["Send Pharmacist Answer to Customer"]?.main?.[0]?.[0]?.node;
-    assert.equal(next, "Update Case: Resolved", `got '${next}'`);
+    assert.equal(next, "Update Pharmacist Reply Status", `Story 5.4 inserts status update node after send, got '${next}'`);
   });
 
-  test("8.105 — Relay to Pharmacist Zalo → Lookup Case Row ID (AC3 — get row_id for PATCH)", () => {
+  test("8.105 — Relay to Pharmacist Zalo → Update Relay Message Status (Story 5.4 audit status)", () => {
     const next = workflow.connections?.["Relay to Pharmacist Zalo"]?.main?.[0]?.[0]?.node;
-    assert.equal(next, "Lookup Case Row ID", `got '${next}'`);
+    assert.equal(next, "Update Relay Message Status", `Story 5.4 inserts status update node after relay send, got '${next}'`);
   });
 
   test("8.106 — Lookup Case Row ID → Extract Escalation Row (AC3 expand pattern)", () => {

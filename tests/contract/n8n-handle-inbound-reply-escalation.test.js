@@ -186,13 +186,13 @@ describe("MC-Handle-InboundReply escalation nodes (Story 5.2)", () => {
     );
   });
 
-  test("8.65 — Kết nối: Log Escalation Case Created → Send Waiting Message to Customer (Story 5.3 AC1 rewire)", () => {
-    // Story 5.3 extends this connection: Log Escalation Case Created now feeds relay chain (AC1) before Return Result
+  test("8.65 — Kết nối: Log Escalation Case Created → Generate Waiting Message ID (Story 5.4 audit-first rewire)", () => {
+    // Story 5.4 inserts audit-first UUID node before Send Waiting Message to Customer
     const nextNode = workflow.connections?.["Log Escalation Case Created"]?.main?.[0]?.[0]?.node;
     assert.equal(
       nextNode,
-      "Send Waiting Message to Customer",
-      `Log Escalation Case Created must connect to 'Send Waiting Message to Customer' (Story 5.3 AC1), got '${nextNode}'`
+      "Generate Waiting Message ID",
+      `Log Escalation Case Created must connect to 'Generate Waiting Message ID' (Story 5.4 audit-first), got '${nextNode}'`
     );
   });
 });
