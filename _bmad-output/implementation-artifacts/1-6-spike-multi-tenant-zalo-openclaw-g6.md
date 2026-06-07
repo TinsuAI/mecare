@@ -1,6 +1,6 @@
 # Story 1.6: Spike multi-tenant Zalo ↔ OpenClaw (G6)
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -142,12 +142,12 @@ claude-sonnet-4-6
 ### Debug Log References
 
 - Task 1: openzca = zca-js@3.x, 1 process = 1 session. NO multi-session via CLI.
-- Task 6.3: 261/261 tests pass (35 new: 22 contract + 13 integration). Baseline was 226, +35 = 261 >> 232 AC5 target.
+- Task 6.3: 279/279 tests pass (47 new: 32 contract + 15 integration; QA session added 12 post-implementation). Baseline was 226, +47 = 273 + 6 from other stories = 279 >> 232 AC5 target.
 - GO condition met: isolation_rate=1.00, cross_tenant_bleed_count=0.
 
 ### Completion Notes List
 
-- All 6 tasks complete. 35 new tests added (22 contract + 13 integration). Full regression 261/261.
+- All 6 tasks complete. 47 new tests added (32 contract + 15 integration; QA session added 12). Full regression 279/279.
 - openzca conclusion: NO multi-session in 1 process. Architecture proposal: 1 openzca process per tenant (Epic 2+).
 - Report generated at docs/spike-multi-tenant-g6.md with ✅ GO verdict.
 - Spike documents in-memory isolation limitation clearly — does NOT claim per-process openzca isolation.
@@ -156,6 +156,52 @@ claude-sonnet-4-6
 
 - `zalo-bridge/src/lib/multi-tenant-spike.mjs` — TenantSession model, StubAdapter, LiveAdapter, createSessionManager
 - `scripts/run-multi-tenant-spike.mjs` — harness runner (runIsolationCheck, runShutdownCheck, renderReport)
-- `tests/contract/multi-tenant-spike.test.js` — 22 contract tests (offline)
-- `tests/integration/multi-tenant-spike-runner.test.js` — 13 integration tests (child process + renderReport)
+- `tests/contract/multi-tenant-spike.test.js` — 32 contract tests (offline; QA +10 post-implementation)
+- `tests/integration/multi-tenant-spike-runner.test.js` — 15 integration tests (child process + renderReport; QA +2 post-implementation)
 - `docs/spike-multi-tenant-g6.md` — generated go/no-go report (✅ GO)
+- `_bmad-output/implementation-artifacts/tests/test-summary-1.6.md` — QA test summary artifact
+
+## Senior Developer Review (AI)
+
+**Reviewer:** Tinsu (AI) — 2026-06-06
+**Outcome:** ✅ APPROVED
+
+### Checklist
+
+- [x] Story file loaded và status verified: `review` → auto-advanced `done`
+- [x] Epic 1.6 IDs resolved
+- [x] ACs cross-checked against implementation — all 5 ACs pass
+- [x] File List reviewed và updated (stale counts fixed: 22→32 contract, 13→15 integration)
+- [x] Tests mapped to ACs — no gaps found; QA session already filled all gaps
+- [x] Code quality reviewed — clean DI pattern, ES2022 private fields, no security issues
+- [x] Security reviewed — no PII in events, no shell injection risk, offline/CI-safe
+- [x] Change Log updated below
+- [x] Status set to `done` (0 CRITICAL issues)
+- [x] Sprint status synced: `review` → `done`
+
+### Findings
+
+| Severity | Finding | Fix Applied |
+|----------|---------|-------------|
+| MEDIUM | File List stale (22 contract, 13 integration) after QA session | Fixed → 32/15 |
+| MEDIUM | Debug Log shows 261/261; actual 279/279 post-QA | Fixed |
+| MEDIUM | Completion Notes shows 35 new tests; actual 47 after QA | Fixed |
+| MEDIUM | `test-summary-1.6.md` missing from File List | Added |
+| LOW | `session.stopped` event in AR-8 convention not emitted — no `stopTenant` function | Acceptable for spike scope (Epic 2+) |
+| LOW | AC5 baseline figure "232" wrong (actual baseline 226) | Acceptable — threshold still exceeded by wide margin |
+
+### AC Verification
+
+| AC | Description | Result |
+|----|-------------|--------|
+| AC1 | Session isolation — 0 cross-tenant bleed | ✅ PASS (crossBleedCount=0, isolation_rate=1.00) |
+| AC2 | Fault isolation — crash A does not affect B | ✅ PASS (session.lost emitted, B stays active) |
+| AC3 | Go/no-go report at docs/spike-multi-tenant-g6.md | ✅ PASS (✅ GO verdict, all required sections present) |
+| AC4 | Offline/CI deterministic — node --test green | ✅ PASS (279/279, 0 failures) |
+| AC5 | Regression ≥232 tests | ✅ PASS (279 >> 232) |
+
+### Change Log
+
+- 2026-06-06: Story implemented (6 tasks, 35 tests). Status: review — Agent: claude-sonnet-4-6
+- 2026-06-06: QA session added 12 tests (279 total, 0 failures). — Agent: claude-sonnet-4-6
+- 2026-06-06: Senior Developer Review APPROVED. Fixed stale File List + counts. Status: done — Reviewer: Tinsu (AI)

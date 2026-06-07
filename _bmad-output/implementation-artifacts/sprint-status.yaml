@@ -50,7 +50,7 @@ development_status:
   1-3-sinh-ma-ca-chuan-lam-idempotency-key: done
   1-4-sua-duyet-kich-ban-duoc-si-hai-g1: done
   1-5-spike-guardrail-y-te-openclaw-g2: done
-  1-6-spike-multi-tenant-zalo-openclaw-g6: review
+  1-6-spike-multi-tenant-zalo-openclaw-g6: done
   epic-1-retrospective: optional
 
   # Epic 2: Lớp Zalo Cá Nhân an toàn (anti-ban — R1)

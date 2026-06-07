@@ -4,7 +4,7 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import {
@@ -146,5 +146,19 @@ describe("runner end-to-end (child process, stub, offline)", () => {
     });
     assert.equal(r.status, 0, r.stderr);
     assert.match(r.stdout, /✅ GO/, "stub adapter phải cho kết quả GO");
+  });
+
+  test("--dry-run KHÔNG ghi file docs/spike-multi-tenant-g6.md (stdout only)", () => {
+    const reportPath = resolve(ROOT, "docs/spike-multi-tenant-g6.md");
+    try { rmSync(reportPath); } catch { /* absent = OK */ }
+    spawnSync("node", [SCRIPT, "--dry-run"], { cwd: ROOT, encoding: "utf8", timeout: 30000 });
+    assert.ok(!existsSync(reportPath), "--dry-run không được tạo file báo cáo");
+  });
+
+  test("báo cáo file chứa cross_tenant_bleed_count=0 (AC1 metric)", () => {
+    spawnSync("node", [SCRIPT], { cwd: ROOT, encoding: "utf8", timeout: 30000 });
+    const reportPath = resolve(ROOT, "docs/spike-multi-tenant-g6.md");
+    const content = readFileSync(reportPath, "utf8");
+    assert.match(content, /cross_tenant_bleed_count.*\b0\b/, "báo cáo phải ghi cross_tenant_bleed_count=0");
   });
 });

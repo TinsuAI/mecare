@@ -233,4 +233,85 @@ describe("LiveAdapter — shell stubs (không gọi trong test tự động)", (
   test("startSession throw với message 'Epic 2+' (guard không gọi ngầm)", async () => {
     await assert.rejects(() => new LiveAdapter().startSession("test"), /Epic 2\+/);
   });
+
+  test("sendMessage throw Epic 2+ (chưa implement)", async () => {
+    await assert.rejects(() => new LiveAdapter().sendMessage("p", { text: "x" }), /Epic 2\+/);
+  });
+
+  test("receiveMessages throw Epic 2+ (chưa implement)", async () => {
+    await assert.rejects(() => new LiveAdapter().receiveMessages("p"), /Epic 2\+/);
+  });
+
+  test("crashSession throw Epic 2+ (chưa implement)", async () => {
+    await assert.rejects(() => new LiveAdapter().crashSession("p"), /Epic 2\+/);
+  });
+
+  test("getStatus throw Epic 2+ (chưa implement)", async () => {
+    await assert.rejects(() => new LiveAdapter().getStatus("p"), /Epic 2\+/);
+  });
+});
+
+describe("StubAdapter — biên và edge cases", () => {
+  test("statusAll() trả về [] khi chưa có tenant nào được start", () => {
+    const mgr = createSessionManager(new StubAdapter());
+    assert.deepEqual(mgr.statusAll(), []);
+  });
+
+  test("receiveMessages sau crash vẫn đọc được inbox (crash ≠ xóa dữ liệu)", async () => {
+    const adapter = new StubAdapter();
+    await adapter.startSession("tructam");
+    await adapter.sendMessage("tructam", { text: "tin cũ", id: "old1" });
+    await adapter.crashSession("tructam");
+    const inbox = await adapter.receiveMessages("tructam");
+    assert.ok(inbox.some(m => m.id === "old1"), "inbox vẫn giữ tin nhắn sau crash");
+  });
+
+  test("startSession cùng pharmacyId hai lần — session được reset (idempotent-safe)", async () => {
+    const adapter = new StubAdapter();
+    await adapter.startSession("moclan");
+    await adapter.sendMessage("moclan", { text: "trước reset", id: "pre" });
+    await adapter.startSession("moclan");
+    const inbox = await adapter.receiveMessages("moclan");
+    assert.equal(inbox.length, 0, "startSession lần 2 reset inbox (session mới)");
+    assert.equal(await adapter.getStatus("moclan"), "active");
+  });
+});
+
+describe("Concurrent operations — race safety (AC1 multi-tenant)", () => {
+  test("Promise.all startTenant 2 tenants song song — không race condition", async () => {
+    const mgr = createSessionManager(new StubAdapter());
+    await Promise.all([
+      mgr.startTenant("pharmacy_001"),
+      mgr.startTenant("pharmacy_002"),
+    ]);
+    const statuses = mgr.statusAll();
+    assert.equal(statuses.length, 2, "cả 2 tenant phải được start");
+    assert.ok(statuses.every(s => s.status === "active"), "cả 2 phải active");
+  });
+
+  test("send song song tới 2 tenants khác nhau — vẫn cô lập", async () => {
+    const mgr = createSessionManager(new StubAdapter());
+    await mgr.startTenant("pharmacy_001");
+    await mgr.startTenant("pharmacy_002");
+    await Promise.all([
+      mgr.send("pharmacy_001", { text: "A parallel", id: "pa1" }),
+      mgr.send("pharmacy_002", { text: "B parallel", id: "pb2" }),
+    ]);
+    const [r1, r2] = await Promise.all([
+      mgr.receive("pharmacy_001"),
+      mgr.receive("pharmacy_002"),
+    ]);
+    assert.ok(r1.some(m => m.id === "pa1"), "pharmacy_001 nhận tin của mình");
+    assert.ok(!r1.some(m => m.id === "pb2"), "pharmacy_001 KHÔNG nhận tin của pharmacy_002");
+    assert.ok(r2.some(m => m.id === "pb2"), "pharmacy_002 nhận tin của mình");
+    assert.ok(!r2.some(m => m.id === "pa1"), "pharmacy_002 KHÔNG nhận tin của pharmacy_001");
+  });
+
+  test("send đến pharmacy không tồn tại throw 'session not found' (passthrough adapter)", async () => {
+    const mgr = createSessionManager(new StubAdapter());
+    await assert.rejects(
+      () => mgr.send("ghost_tenant", { text: "hi", id: "x" }),
+      /session not found/
+    );
+  });
 });
