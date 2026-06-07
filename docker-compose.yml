@@ -125,6 +125,10 @@ services:
     environment:
       # Cổng NỘI BỘ container — app lắng nghe; KHÔNG đổi (healthcheck hardcode :3000)
       ZALO_BRIDGE_PORT: ${ZALO_BRIDGE_PORT:-3000}
+      # Baserow API (opt-in gate — Story 2.1)
+      BASEROW_TOKEN: ${BASEROW_TOKEN:-}
+      BASEROW_URL: ${BASEROW_URL:-http://baserow:80}
+      CUSTOMERS_TABLE_ID: ${CUSTOMERS_TABLE_ID:-}
     volumes:
       # Phiên Zalo cô lập per-tenant (NFR-6) — không trộn state giữa tenant
       - ./zalo-bridge/tenants:/app/tenants

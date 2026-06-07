@@ -8,6 +8,7 @@
 // Story 1.1 chỉ cần: khởi động được + expose healthcheck cho compose.
 
 import http from "node:http";
+import { handleSend } from "./send.ts";
 
 const PORT = Number(process.env.ZALO_BRIDGE_PORT ?? 3000);
 
@@ -18,6 +19,24 @@ const server = http.createServer((req, res) => {
     res.end(JSON.stringify({ status: "ok", service: "zalo-bridge" }));
     return;
   }
+
+  if (req.url === "/send" && req.method === "POST") {
+    const chunks: Buffer[] = [];
+    req.on("data", (c) => chunks.push(c));
+    req.on("end", () => {
+      let body: unknown;
+      try {
+        body = JSON.parse(Buffer.concat(chunks).toString());
+      } catch {
+        res.writeHead(400, { "content-type": "application/json" });
+        res.end(JSON.stringify({ error: "invalid_json" }));
+        return;
+      }
+      handleSend(req, res, body);
+    });
+    return;
+  }
+
   res.writeHead(404, { "content-type": "application/json" });
   res.end(JSON.stringify({ error: "not_found" }));
 });
