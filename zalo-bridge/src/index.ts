@@ -45,7 +45,7 @@ const server = http.createServer((req, res) => {
         body = JSON.parse(Buffer.concat(chunks).toString());
       } catch {
         res.writeHead(400, { "content-type": "application/json" });
-        res.end(JSON.stringify({ error: "invalid_signal_type" }));
+        res.end(JSON.stringify({ error: "invalid_json" }));
         return;
       }
       const payload = (body ?? {}) as Record<string, unknown>;

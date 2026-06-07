@@ -147,13 +147,58 @@ claude-sonnet-4-6
 - `evaluateAndAct` fires only from `recordSignal` hot path; `getRiskState` has inline auto-resume check only.
 - `ALERT_WEBHOOK_URL` uses Node 18+ built-in `fetch` with `AbortSignal.timeout(5000)`. Fire-and-forget.
 - 5 new env vars in `.env.example` under `# Risk monitor` section.
+- QA session added 10 gap-fill tests (6 contract + 4 API): default threshold coverage, RISK_AUTO_RESUME=false boundary, AC4 end-to-end recovery, AC1 webhook payload shape, AC6 pharmacy_id optional field. Total: 370 tests, 0 failures.
 
 ### File List
 
-- zalo-bridge/src/risk-monitor.ts (created)
+- zalo-bridge/src/risk-monitor.ts (created; review: sendAlert try-catch, evaluateAndAct param removed, resetToNormal idempotent guard, windowMs dedup)
 - zalo-bridge/src/send.ts (modified — risk gate + Story 2.4 comment)
-- zalo-bridge/src/index.ts (modified — /risk-state, /risk-resume, /risk-report routes)
-- tests/contract/risk-monitor.test.js (created)
-- tests/api/risk-monitor.test.js (created)
+- zalo-bridge/src/index.ts (modified — /risk-state, /risk-resume, /risk-report routes; review: /risk-report JSON parse error → "invalid_json")
+- tests/contract/risk-monitor.test.js (created; QA: +6 tests for default thresholds + RISK_AUTO_RESUME=false boundary)
+- tests/api/risk-monitor.test.js (created; QA: +4 tests for AC4 recovery, AC1 webhook payload, AC6 pharmacy_id)
 - .env.example (5 risk monitor env vars appended)
-- _bmad-output/implementation-artifacts/sprint-status.yaml (2-3 → in-progress)
+- _bmad-output/implementation-artifacts/sprint-status.yaml (2-3 → in-progress → done)
+
+## Senior Developer Review (AI)
+
+**Date:** 2026-06-07 | **Reviewer:** claude-sonnet-4-6 | **Outcome:** APPROVED
+
+### Issues Found and Auto-Fixed (7 total)
+
+| # | Severity | Issue | Fix Applied |
+|---|----------|-------|-------------|
+| H1 | HIGH | `sendAlert` missing internal try-catch — callers depended on `.catch()` chain; future caller without `.catch()` would cause unhandled rejection | Added try-catch inside `sendAlert`; changed callers to `void sendAlert(...)` pattern |
+| M1 | MEDIUM | `/risk-report` JSON parse catch returned `{ error: "invalid_signal_type" }` — inconsistent with `/send` route's `{ error: "invalid_json" }` | Changed catch block to return `"invalid_json"` in `index.ts` |
+| M2 | MEDIUM | `resetToNormal` fired webhook alert even when `currentState` already `"normal"` — spurious `risk.resumed` events on double-resume | Added `if (currentState === "normal") return;` guard |
+| M3 | MEDIUM | `windowMs()` called twice in `getRiskState` (inside `pruneWindow` + for `since_epoch_ms`) — redundant env var reads | Extracted `wMinutes` const; used for both `window_minutes` and `since_epoch_ms` |
+| M4 | MEDIUM | `evaluateAndAct(_nowMs?: number)` — `_nowMs` param unused; signals already pruned before call | Removed param; updated caller in `recordSignal` |
+| M5 | MEDIUM | Story File List did not reflect QA-added test modifications (10 new tests in 2 files) | Updated File List and Completion Notes |
+| L1 | LOW | `.catch(console.error)` pattern replaced by `void sendAlert(...)` after H1 fix | Cleaned all caller sites |
+
+### AC Coverage Verification
+
+- AC1 ✅ block+spam_report ≥ threshold → 503 + webhook alert (payload verified by new API test)
+- AC2 ✅ send_error ≥ threshold → paused (contract tested at default=5 and override=2)
+- AC3 ✅ RISK_AUTO_RESUME=true + empty window → auto-resume (contract + false boundary test)
+- AC4 ✅ POST /risk-resume → normal + /send returns 202 (end-to-end API test added)
+- AC5 ✅ GET /risk-state → correct schema (all 5 fields verified)
+- AC6 ✅ POST /risk-report validates signal_type; pharmacy_id optional accepted (API test)
+
+### Security Review
+
+- No injection vectors: signal_type validated via Set membership check (O(1), no regex)
+- No PII: risk-monitor handles signal types only, no customer_phone or content
+- Webhook URL is server-controlled env var — no user-supplied URL
+- AbortSignal.timeout(5000) prevents alert delivery from blocking indefinitely
+
+### Regression
+
+- 370/370 tests pass (344 pre-story + 26 new including 10 QA gap-fills)
+
+## Change Log
+
+| Date | Author | Change |
+|------|--------|--------|
+| 2026-06-07 | claude-sonnet-4-6 (dev) | Initial implementation — all 6 ACs, 362 tests |
+| 2026-06-07 | claude-sonnet-4-6 (qa) | Gap-fill: +10 tests (default thresholds, RISK_AUTO_RESUME=false, AC4 recovery, AC1 webhook, AC6 field) |
+| 2026-06-07 | claude-sonnet-4-6 (review) | Auto-fixed H1+M1–M5: sendAlert try-catch, resetToNormal guard, JSON error code, windowMs dedup, unused param removed |

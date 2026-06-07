@@ -26,15 +26,19 @@ async function sendAlert(event: string, reason: string): Promise<void> {
   console.error("[ALERT]", event, "reason=" + reason);
   const url = process.env.ALERT_WEBHOOK_URL ?? "";
   if (!url) return;
-  await fetch(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ event, reason, timestamp_ms: Date.now(), service: "zalo-bridge" }),
-    signal: AbortSignal.timeout(5000),
-  });
+  try {
+    await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ event, reason, timestamp_ms: Date.now(), service: "zalo-bridge" }),
+      signal: AbortSignal.timeout(5000),
+    });
+  } catch (err) {
+    console.error("[ALERT] webhook delivery failed:", err instanceof Error ? err.message : String(err));
+  }
 }
 
-function evaluateAndAct(_nowMs?: number): void {
+function evaluateAndAct(): void {
   const blockThreshold = Number(process.env.RISK_BLOCK_COUNT_THRESHOLD ?? 3);
   const errorThreshold = Number(process.env.RISK_ERROR_COUNT_THRESHOLD ?? 5);
 
@@ -49,7 +53,7 @@ function evaluateAndAct(_nowMs?: number): void {
     if (currentState !== "paused") {
       currentState = "paused";
       const reason = blockSpam >= blockThreshold ? "block_spam_threshold" : "error_threshold";
-      sendAlert("risk.paused", reason).catch(console.error);
+      void sendAlert("risk.paused", reason);
     }
     return;
   }
@@ -59,7 +63,7 @@ export function recordSignal(signal: RiskSignal, nowMs?: number): void {
   const now = nowMs ?? Date.now();
   signals.push({ timestamp_ms: now, signal });
   pruneWindow(now);
-  evaluateAndAct(now);
+  evaluateAndAct();
 }
 
 export function getRiskState(nowMs?: number): {
@@ -75,7 +79,7 @@ export function getRiskState(nowMs?: number): {
   // Threshold re-evaluation is NOT done here — thresholds only trigger on new signals via recordSignal.
   if (currentState === "paused" && process.env.RISK_AUTO_RESUME === "true" && signals.length === 0) {
     currentState = "normal";
-    sendAlert("risk.resumed", "auto").catch(console.error);
+    void sendAlert("risk.resumed", "auto");
   }
 
   let block = 0;
@@ -87,15 +91,17 @@ export function getRiskState(nowMs?: number): {
     else if (s.signal === "send_error") send_error++;
   }
 
+  const wMinutes = Number(process.env.RISK_WINDOW_MINUTES ?? 60);
   return {
     state: currentState,
     signal_counts: { block, spam_report, send_error },
-    window_minutes: Number(process.env.RISK_WINDOW_MINUTES ?? 60),
-    since_epoch_ms: now - windowMs(),
+    window_minutes: wMinutes,
+    since_epoch_ms: now - wMinutes * 60_000,
   };
 }
 
 export function resetToNormal(reason = "manual"): void {
+  if (currentState === "normal") return;
   currentState = "normal";
-  sendAlert("risk.resumed", reason).catch(console.error);
+  void sendAlert("risk.resumed", reason);
 }

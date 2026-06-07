@@ -130,3 +130,48 @@ describe("resetToNormal", () => {
     assert.equal(getRiskState().signal_counts.block, 1);
   });
 });
+
+// ── default thresholds (no env override) ─────────────────────
+
+describe("default thresholds", () => {
+  test("2 blocks below default threshold=3 → normal", () => {
+    recordSignal("block");
+    recordSignal("block");
+    assert.equal(getRiskState().state, "normal");
+  });
+
+  test("3 blocks at default threshold=3 → paused", () => {
+    recordSignal("block");
+    recordSignal("block");
+    recordSignal("block");
+    assert.equal(getRiskState().state, "paused");
+  });
+
+  test("4 send_errors below default threshold=5 → normal", () => {
+    for (let i = 0; i < 4; i++) recordSignal("send_error");
+    assert.equal(getRiskState().state, "normal");
+  });
+
+  test("5 send_errors at default threshold=5 → paused", () => {
+    for (let i = 0; i < 5; i++) recordSignal("send_error");
+    assert.equal(getRiskState().state, "paused");
+  });
+});
+
+// ── RISK_AUTO_RESUME=false boundary ──────────────────────────
+
+describe("RISK_AUTO_RESUME=false — window expires, stays paused", () => {
+  test("paused + window expires + RISK_AUTO_RESUME=false → stays paused", () => {
+    process.env.RISK_AUTO_RESUME = "false";
+    process.env.RISK_BLOCK_COUNT_THRESHOLD = "1";
+    const windowMs = 60 * 60_000;
+    const past = Date.now();
+    recordSignal("block", past);
+    assert.equal(getRiskState().state, "paused");
+    // Future nowMs: signals pruned, but auto-resume is disabled → stays paused
+    const future = past + windowMs + 1000;
+    const result = getRiskState(future);
+    assert.equal(result.state, "paused");
+    assert.equal(result.signal_counts.block, 0);
+  });
+});

@@ -240,3 +240,148 @@ describe("POST /send → 503 risk_throttled when state=paused (AC1)", () => {
     assert.equal(json.state, "paused");
   });
 });
+
+// ── AC4: /send returns 202 after /risk-resume ─────────────────
+
+describe("POST /risk-resume → /send resumes normal (AC4)", () => {
+  const PORT = 31328;
+  let srv;
+
+  before(async () => {
+    srv = await startServer({
+      entry: "zalo-bridge/src/index.ts",
+      port: PORT,
+      env: {
+        ZALO_BRIDGE_PORT: String(PORT),
+        BASEROW_URL: `http://127.0.0.1:${MOCK_BASEROW_PORT}`,
+        BASEROW_TOKEN: "test",
+        CUSTOMERS_TABLE_ID: "1",
+        RISK_BLOCK_COUNT_THRESHOLD: "2",
+        RISK_ERROR_COUNT_THRESHOLD: "100",
+        RISK_AUTO_RESUME: "false",
+        BUSINESS_HOUR_START: "0",
+        BUSINESS_HOUR_END: "24",
+        JITTER_MIN_MS: "1",
+        JITTER_MAX_MS: "5",
+      },
+    });
+  });
+
+  after(async () => { await srv.stop(); });
+
+  test("paused → POST /risk-resume → /send returns 202 (not blocked)", async () => {
+    // Trigger pause
+    await post(PORT, "/risk-report", { signal_type: "block" });
+    await post(PORT, "/risk-report", { signal_type: "block" });
+    const stateBeforeResume = await get(PORT, "/risk-state");
+    assert.equal(stateBeforeResume.json.state, "paused");
+
+    // Resume
+    await post(PORT, "/risk-resume", {});
+
+    // /send should now pass through (202)
+    const { status } = await post(PORT, "/send", {
+      pharmacy_id: "pharmacy-001",
+      customer_phone: "0901111111",
+      content: "Chào anh/chị",
+    });
+    assert.equal(status, 202);
+  });
+});
+
+// ── Alert webhook payload verification (AC1) ──────────────────
+
+describe("Alert webhook payload — risk.paused event (AC1)", () => {
+  const PORT = 31329;
+  const WEBHOOK_PORT = 31330;
+  let srv;
+  let webhookSrv;
+  let capturedPayload = null;
+
+  before(async () => {
+    // Mock webhook server that captures the POST payload
+    webhookSrv = http.createServer((req, res) => {
+      const chunks = [];
+      req.on("data", (c) => chunks.push(c));
+      req.on("end", () => {
+        try { capturedPayload = JSON.parse(Buffer.concat(chunks).toString()); } catch { /* ignore */ }
+        res.writeHead(200);
+        res.end();
+      });
+    });
+    await new Promise((resolve) => webhookSrv.listen(WEBHOOK_PORT, "127.0.0.1", resolve));
+
+    srv = await startServer({
+      entry: "zalo-bridge/src/index.ts",
+      port: PORT,
+      env: {
+        ZALO_BRIDGE_PORT: String(PORT),
+        BASEROW_URL: `http://127.0.0.1:${MOCK_BASEROW_PORT}`,
+        BASEROW_TOKEN: "test",
+        CUSTOMERS_TABLE_ID: "1",
+        RISK_BLOCK_COUNT_THRESHOLD: "2",
+        RISK_ERROR_COUNT_THRESHOLD: "100",
+        ALERT_WEBHOOK_URL: `http://127.0.0.1:${WEBHOOK_PORT}`,
+      },
+    });
+  });
+
+  after(async () => {
+    await srv.stop();
+    await new Promise((resolve) => webhookSrv.close(resolve));
+  });
+
+  test("threshold breach fires webhook with correct payload shape (AC1)", async () => {
+    capturedPayload = null;
+    const before_ms = Date.now();
+
+    // Inject signals to trigger pause + webhook
+    await post(PORT, "/risk-report", { signal_type: "block" });
+    await post(PORT, "/risk-report", { signal_type: "block" });
+
+    // Allow up to 2s for the fire-and-forget webhook to arrive
+    const deadline = Date.now() + 2000;
+    while (!capturedPayload && Date.now() < deadline) {
+      await new Promise((r) => setTimeout(r, 50));
+    }
+
+    assert.ok(capturedPayload, "webhook was not called");
+    assert.equal(capturedPayload.event, "risk.paused");
+    assert.equal(capturedPayload.reason, "block_spam_threshold");
+    assert.equal(capturedPayload.service, "zalo-bridge");
+    assert.ok(typeof capturedPayload.timestamp_ms === "number");
+    assert.ok(capturedPayload.timestamp_ms >= before_ms);
+  });
+});
+
+// ── AC6: pharmacy_id optional in /risk-report body ────────────
+
+describe("POST /risk-report — pharmacy_id optional field (AC6)", () => {
+  const PORT = 31331;
+  let srv;
+
+  before(async () => {
+    srv = await startServer({
+      entry: "zalo-bridge/src/index.ts",
+      port: PORT,
+      env: {
+        ZALO_BRIDGE_PORT: String(PORT),
+        BASEROW_URL: `http://127.0.0.1:${MOCK_BASEROW_PORT}`,
+        BASEROW_TOKEN: "test",
+        CUSTOMERS_TABLE_ID: "1",
+        RISK_BLOCK_COUNT_THRESHOLD: "100",
+      },
+    });
+  });
+
+  after(async () => { await srv.stop(); });
+
+  test("signal_type + pharmacy_id → 200 recorded", async () => {
+    const { status, json } = await post(PORT, "/risk-report", {
+      signal_type: "block",
+      pharmacy_id: "pharmacy-001",
+    });
+    assert.equal(status, 200);
+    assert.equal(json.recorded, true);
+  });
+});
