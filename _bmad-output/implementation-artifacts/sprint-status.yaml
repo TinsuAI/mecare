@@ -53,6 +53,7 @@ development_status:
   1-6-spike-multi-tenant-zalo-openclaw-g6: done
   1-7-fix-env-example-port-vars: done
   1-8-apply-baserow-schema-seed-live: done
+  1-9-seed-du-38-kich-ban-mau: review
   epic-1-retrospective: done
 
   # Epic 2: Lớp Zalo Cá Nhân an toàn (anti-ban — R1)

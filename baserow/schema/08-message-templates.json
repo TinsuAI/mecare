@@ -3,6 +3,7 @@
   "description": "Kịch bản proactive (nguồn sự thật). status draft/approved; chỉ approved dùng tải thật (enforce Epic 4/5).",
   "primary": "care_group",
   "fields": [
+    { "name": "scenario_id", "type": "text" },
     { "name": "pharmacy_id", "type": "link_row", "link_table": "Pharmacies" },
     { "name": "care_group", "type": "number", "decimals": 0, "note": "1..6" },
     { "name": "body_template", "type": "long_text" },

@@ -28,10 +28,17 @@ describe("seed kịch bản — persona cũ loại bỏ (AC1)", () => {
   });
 });
 
-describe("MessageTemplates — 6 nhóm chăm sóc, body_template không rỗng (AC2)", () => {
-  test("đủ care_group 1..6", () => {
-    const groups = MT.rows.map((r) => Number(r.care_group)).sort((a, b) => a - b);
-    assert.deepEqual(groups, [1, 2, 3, 4, 5, 6]);
+describe("MessageTemplates — 38 scenarios cá nhân, body_template không rỗng (AC2, Story 1.9)", () => {
+  test("38 rows, mỗi row có scenario_id", () => {
+    assert.equal(MT.rows.length, 38);
+    assert.ok(MT.rows.every(r => r.scenario_id), "mọi row phải có scenario_id");
+  });
+  test("scenario_id unique trong toàn bộ 38 rows", () => {
+    const ids = MT.rows.map(r => r.scenario_id);
+    assert.equal(new Set(ids).size, 38, "scenario_id phải unique");
+  });
+  test("care_group nằm trong range 1–6", () => {
+    assert.ok(MT.rows.every(r => r.care_group >= 1 && r.care_group <= 6));
   });
   test("mọi body_template không rỗng (>50 ký tự)", () => {
     for (const r of MT.rows) {
@@ -110,9 +117,10 @@ describe("an toàn y tế — quy tắc bù liều đầy đủ (AC3)", () => {
     assert.match(ALL, /1[–-]2 tiếng/);
   });
   test('câu nguyên văn "không uống gấp đôi để bù liều" nằm trong Nhóm 1', () => {
-    const g1 = MT.rows.find((r) => Number(r.care_group) === 1);
-    assert.ok(g1, "thiếu Nhóm 1");
-    assert.match(g1.body_template, /không uống gấp đôi để bù liều/);
+    const g1rows = MT.rows.filter((r) => Number(r.care_group) === 1);
+    assert.ok(g1rows.length > 0, "thiếu Nhóm 1");
+    assert.ok(g1rows.some((r) => /không uống gấp đôi để bù liều/.test(r.body_template)),
+      "Nhóm 1 phải có câu bù liều (scenario 1.4)");
   });
 });
 

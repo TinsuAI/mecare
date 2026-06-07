@@ -144,16 +144,16 @@ describe("Seed — draft khung, persona Dược Sĩ Hải (KHÔNG 'Ngọc')", ()
     assert.equal(ph.persona_name, "Dược Sĩ Hải");
   });
 
-  // Story 1.4 đã ĐIỀN nội dung: body_template không còn rỗng (xem kichban-content.test.js
-  // cho assertion nội dung chi tiết). Test này giữ contract khung: 6 nhóm + draft.
-  test("6 nhóm MessageTemplates draft, body_template đã điền (Story 1.4)", () => {
+  // Story 1.9 mở rộng: 38 rows per-scenario thay vì 6 rows per-group.
+  // Xem kichban-content.test.js cho assertion nội dung chi tiết.
+  test("38 scenarios MessageTemplates draft, body_template đã điền (Story 1.9)", () => {
     const rows = seedByTable.MessageTemplates.rows;
-    assert.equal(rows.length, 6, "phải đủ 6 nhóm");
-    assert.deepEqual(rows.map((r) => r.care_group).sort(), [1, 2, 3, 4, 5, 6]);
+    assert.equal(rows.length, 38, "phải đủ 38 scenarios");
+    assert.ok(rows.every((r) => r.care_group >= 1 && r.care_group <= 6), "care_group nằm trong range 1–6");
     for (const r of rows) {
       assert.equal(r.status, "draft");
       assert.ok(typeof r.body_template === "string" && r.body_template.trim().length > 0,
-        "body_template phải đã điền (Story 1.4)");
+        "body_template phải đã điền (Story 1.9)");
     }
   });
 
