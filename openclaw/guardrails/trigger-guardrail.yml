@@ -1,0 +1,152 @@
+# OpenClaw — Trigger Guardrail (Story 5.2)
+# FR-8: 8 trigger categories + emergency subtype detect → escalate.
+# Priority order mirrors Detect Escalation Trigger Code node in MC-Handle-InboundReply.
+# action: escalate (không reject) — luồng tiếp tục qua OpenClaw sang n8n EscalationCase.
+
+guardrail: trigger-guardrail
+version: "1.0.0"
+
+rules:
+  - id: emergency_rule
+    description: >
+      Dấu hiệu cấp cứu nguy hiểm tính mạng — gọi 115 ngay, KHÔNG chờ relay
+      (R2, FR-8, FR-9). Ưu tiên 1: check trước adverse_reaction/otc_red_flag.
+      Patterns: khó thở cấp, sưng mặt/lưỡi, mẩn đỏ lan nhanh, sốc, ngất, co giật.
+    action: escalate
+    priority: 1
+    triggers:
+      - pattern: "khó thở"
+      - pattern: "sưng mặt"
+      - pattern: "sưng lưỡi"
+      - pattern: "mẩn đỏ lan"
+      - pattern: "sốc phản vệ"
+      - pattern: "ngất"
+      - pattern: "co giật"
+      - pattern: "đau tức ngực"
+    on_trigger:
+      trigger_type: "emergency"
+      is_emergency: true
+
+  - id: adverse_reaction_rule
+    description: >
+      Phản ứng bất thường/có hại sau uống thuốc (không cấp cứu) — dị ứng, ngứa,
+      nổi mẩn, tác dụng phụ, phản ứng thuốc (FR-8 loại 1).
+    action: escalate
+    priority: 2
+    triggers:
+      - pattern: "dị ứng"
+      - pattern: "ngứa"
+      - pattern: "nổi mẩn"
+      - pattern: "phát ban"
+      - pattern: "tác dụng phụ"
+      - pattern: "phản ứng thuốc"
+      - pattern: "buồn nôn sau uống"
+    on_trigger:
+      trigger_type: "adverse_reaction"
+      is_emergency: false
+
+  - id: out_of_range_vitals_rule
+    description: >
+      Chỉ số sinh tồn vượt ngưỡng — HA > 130/80 mmHg; đường huyết đói > 7.2
+      hoặc < 4.4; sau ăn 2h > 10 mmol/L (FR-8 loại 2).
+    action: escalate
+    priority: 3
+    triggers:
+      - pattern: "huyết áp"
+      - pattern: "mmhg"
+      - pattern: "đường huyết"
+      - pattern: "mmol"
+      - pattern: "chỉ số vượt"
+    on_trigger:
+      trigger_type: "out_of_range_vitals"
+      is_emergency: false
+
+  - id: otc_red_flag_rule
+    description: >
+      Cờ đỏ Nhóm 2 OTC — sốt > 38.5°C kéo dài > 2 ngày; khó thở;
+      đau tức ngực; nôn ói nhiều lần; tiêu chảy liên tục (FR-8 loại 3).
+    action: escalate
+    priority: 4
+    triggers:
+      - pattern: "sốt không hạ"
+      - pattern: "sốt mấy ngày"
+      - pattern: "sốt 3 ngày"
+      - pattern: "nôn nhiều lần"
+      - pattern: "tiêu chảy liên tục"
+    on_trigger:
+      trigger_type: "otc_red_flag"
+      is_emergency: false
+
+  - id: otc_no_improvement_rule
+    description: >
+      Hết liệu trình OTC mà không đỡ hoặc nặng hơn — uống đủ mà không khỏi (FR-8 loại 4).
+    action: escalate
+    priority: 5
+    triggers:
+      - pattern: "uống hết thuốc không đỡ"
+      - pattern: "uống xong vẫn"
+      - pattern: "không cải thiện"
+      - pattern: "không khỏi"
+      - pattern: "uống đủ mà vẫn"
+    on_trigger:
+      trigger_type: "otc_no_improvement"
+      is_emergency: false
+
+  - id: medication_change_rule
+    description: >
+      Xin đổi thuốc hoặc thay đổi đơn thuốc đã kê — yêu cầu dược sĩ xem xét (FR-8 loại 5).
+    action: escalate
+    priority: 6
+    triggers:
+      - pattern: "đổi thuốc"
+      - pattern: "xin đổi"
+      - pattern: "đơn thuốc"
+      - pattern: "thay thuốc"
+      - pattern: "bác sĩ kê"
+    on_trigger:
+      trigger_type: "medication_change"
+      is_emergency: false
+
+  - id: drug_interaction_rule
+    description: >
+      Tương tác thuốc hoặc chống chỉ định — kết hợp thuốc cần tư vấn dược sĩ (FR-8 loại 6).
+    action: escalate
+    priority: 7
+    triggers:
+      - pattern: "tương tác thuốc"
+      - pattern: "chống chỉ định"
+      - pattern: "uống cùng lúc"
+      - pattern: "kết hợp thuốc"
+      - pattern: "phối hợp thuốc"
+    on_trigger:
+      trigger_type: "drug_interaction"
+      is_emergency: false
+
+  - id: complaint_serious_rule
+    description: >
+      Khiếu nại nghiêm trọng — cần dược sĩ xử lý trực tiếp (FR-8 loại 7).
+      Cờ cắt ngang is_complaint_active=true được check trước (trong n8n Code node).
+    action: escalate
+    priority: 8
+    triggers:
+      - pattern: "khiếu nại"
+      - pattern: "tố cáo"
+      - pattern: "bồi thường"
+      - pattern: "thuốc giả"
+      - pattern: "phản ánh"
+    on_trigger:
+      trigger_type: "complaint_serious"
+      is_emergency: false
+
+  - id: ai_uncertainty_rule
+    description: >
+      Catch-all (FR-8 loại 8): AI không chắc, câu hỏi chuyên sâu ngoài kịch bản,
+      hoặc can_answer=false từ FAQ guardrail (Story 5.1). Fallback cuối —
+      không trùng lặp pattern với các rule trên. Luôn escalate khi không match gì.
+    action: escalate
+    priority: 9
+    condition:
+      catch_all: true
+    on_trigger:
+      trigger_type: "ai_uncertainty"
+      is_emergency: false

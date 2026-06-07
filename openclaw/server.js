@@ -1,15 +1,17 @@
-// OpenClaw — foundation stub bootstrap (Story 1.1) + FAQ tool stub (Story 5.1)
+// OpenClaw — foundation stub bootstrap (Story 1.1) + FAQ tool stub (Story 5.1) + escalation tool (Story 5.2)
 //
 // Story 1.1: healthcheck stub; sqlite-vec runtime thuộc Epic 2+.
 // Story 5.1: thêm /tools/faq_lookup và /tools/reindex_faq stubs để n8n
 //   MC-Handle-InboundReply và MC-Sync-FaqEntries có thể gọi trong dev/test.
 //   RAG thật (sqlite-vec cosine) triển khai khi OpenClaw runtime sẵn sàng (Epic 2+);
 //   stub dùng keyword-overlap (guardrail-spike.mjs retrieve) như fallback.
+// Story 5.2: thêm /tools/create_escalation_case — tạo EscalationCase trong Baserow khi trigger phát hiện.
 
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { loadApprovedScripts, retrieve, detectDiagnosis, detectDoseChange } from "./lib/guardrail-spike.mjs";
+import { allocateNewCaseId, getOrCreateByCaseId, makeBaserowStore } from "./lib/case-allocator.mjs";
 
 // Defaults = container layout (AC2). Override qua env chỉ để test trên host.
 const PORT = Number(process.env.OPENCLAW_PORT ?? 8000);
@@ -166,6 +168,55 @@ const server = http.createServer(async (req, res) => {
     console.log(`[openclaw] reindex_faq pharmacy=${pharmacy_id} entries=${approved.length}`);
 
     return jsonResp(res, 200, { indexed: approved.length, pharmacy_id });
+  }
+
+  // POST /tools/create_escalation_case — Story 5.2 AC2, AC4
+  if (req.method === "POST" && req.url === "/tools/create_escalation_case") {
+    let body;
+    try {
+      body = JSON.parse(await readBody(req));
+    } catch {
+      return jsonResp(res, 400, { error: "invalid_json" });
+    }
+
+    const { pharmacy_id, customer_id, trigger_type, trigger, customer_content, case_id } = body ?? {};
+    if (!pharmacy_id || !customer_id || !trigger_type || !trigger || !customer_content) {
+      return jsonResp(res, 400, { error: "pharmacy_id, customer_id, trigger_type, trigger, customer_content required" });
+    }
+
+    let store;
+    try {
+      store = makeBaserowStore({
+        ...process.env,
+        ESCALATION_TABLE_ID: process.env.ESCALATION_CASES_TABLE_ID ?? process.env.ESCALATION_TABLE_ID,
+      });
+    } catch (err) {
+      console.error("[openclaw] create_escalation_case: store init failed —", err.message);
+      return jsonResp(res, 503, { error: "escalation_store_unavailable", detail: err.message });
+    }
+
+    const createdAt = new Date().toISOString();
+    const fields = { customer_id, trigger_type, trigger, customer_content, state: "open", created_at: createdAt };
+
+    try {
+      let result;
+      if (case_id) {
+        result = await getOrCreateByCaseId(store, case_id, { pharmacy_id, ...fields });
+      } else {
+        result = await allocateNewCaseId(store, {
+          slug: String(pharmacy_id),
+          pharmacyId: pharmacy_id,
+          at: new Date(),
+          fields: { pharmacy_id, ...fields },
+        });
+      }
+      // TODO Story 5.3: sau khi tạo case, relay sang Zalo dược sĩ thật
+      const status = result.created ? 201 : 200;
+      return jsonResp(res, status, { case_id: result.case_id, state: "open", created: result.created });
+    } catch (err) {
+      console.error("[openclaw] create_escalation_case error:", err.message);
+      return jsonResp(res, 500, { error: "escalation_case_failed", detail: err.message });
+    }
   }
 
   res.writeHead(404, { "content-type": "application/json" });

@@ -575,6 +575,168 @@
         3600,
         600
       ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const msg = ($('Classify Response').first().json.message_content ?? '').toLowerCase();\nconst classified_type = $('Classify Response').first().json.classified_type ?? '';\nconst is_complaint_active = $('Webhook Trigger').first().json.body.is_complaint_active ?? false;\n\n// Priority 1: is_complaint_active flag (cờ cắt ngang Nhóm 5)\nif (is_complaint_active === true || is_complaint_active === 'true') {\n  return [{ json: { trigger_type: 'complaint_serious', trigger_excerpt: '[is_complaint_active=true]', is_emergency: false, needs_escalation: true } }];\n}\n\n// Priority 2: emergency keywords (tập con của adverse_reaction/otc_red_flag)\nconst EMERGENCY_KW = ['khó thở', 'sưng mặt', 'sưng lưỡi', 'mẩn đỏ lan', 'sốc phản vệ', 'ngất', 'co giật'];\nfor (const kw of EMERGENCY_KW) {\n  if (msg.includes(kw)) {\n    return [{ json: { trigger_type: 'emergency', trigger_excerpt: kw, is_emergency: true, needs_escalation: true } }];\n  }\n}\nif (msg.includes('đau tức ngực') && msg.includes('khó thở')) {\n  return [{ json: { trigger_type: 'emergency', trigger_excerpt: 'đau tức ngực + khó thở', is_emergency: true, needs_escalation: true } }];\n}\n\n// Priority 3: adverse_reaction\nconst ADVERSE_KW = ['dị ứng', 'ngứa', 'nổi mẩn', 'phát ban', 'tác dụng phụ', 'phản ứng thuốc'];\nfor (const kw of ADVERSE_KW) {\n  if (msg.includes(kw)) return [{ json: { trigger_type: 'adverse_reaction', trigger_excerpt: kw, is_emergency: false, needs_escalation: true } }];\n}\n\n// Priority 4: out_of_range_vitals (HA, đường huyết)\nconst VITALS_KW = ['huyết áp', 'mmhg', 'đường huyết', 'mmol', 'chỉ số vượt'];\nfor (const kw of VITALS_KW) {\n  if (msg.includes(kw)) return [{ json: { trigger_type: 'out_of_range_vitals', trigger_excerpt: kw, is_emergency: false, needs_escalation: true } }];\n}\n\n// Priority 5: otc_red_flag\nconst OTC_RED_KW = ['sốt không hạ', 'sốt mấy ngày', 'sốt 3 ngày', 'nôn nhiều lần', 'tiêu chảy liên tục'];\nfor (const kw of OTC_RED_KW) {\n  if (msg.includes(kw)) return [{ json: { trigger_type: 'otc_red_flag', trigger_excerpt: kw, is_emergency: false, needs_escalation: true } }];\n}\n\n// Priority 6: otc_no_improvement\nconst NO_IMP_KW = ['uống hết thuốc không đỡ', 'uống xong vẫn', 'không cải thiện', 'không khỏi', 'uống đủ mà vẫn'];\nfor (const kw of NO_IMP_KW) {\n  if (msg.includes(kw)) return [{ json: { trigger_type: 'otc_no_improvement', trigger_excerpt: kw, is_emergency: false, needs_escalation: true } }];\n}\n\n// Priority 7: medication_change\nconst MED_KW = ['đổi thuốc', 'xin đổi', 'đơn thuốc', 'thay thuốc', 'bác sĩ kê'];\nfor (const kw of MED_KW) {\n  if (msg.includes(kw)) return [{ json: { trigger_type: 'medication_change', trigger_excerpt: kw, is_emergency: false, needs_escalation: true } }];\n}\n\n// Priority 8: drug_interaction\nconst DRUG_KW = ['tương tác thuốc', 'chống chỉ định', 'uống cùng lúc', 'kết hợp thuốc', 'phối hợp thuốc'];\nfor (const kw of DRUG_KW) {\n  if (msg.includes(kw)) return [{ json: { trigger_type: 'drug_interaction', trigger_excerpt: kw, is_emergency: false, needs_escalation: true } }];\n}\n\n// Priority 9: complaint_serious keywords (không có cờ is_complaint_active)\nconst COMPLAINT_KW = ['khiếu nại', 'tố cáo', 'bồi thường', 'thuốc giả', 'phản ánh'];\nfor (const kw of COMPLAINT_KW) {\n  if (msg.includes(kw)) return [{ json: { trigger_type: 'complaint_serious', trigger_excerpt: kw, is_emergency: false, needs_escalation: true } }];\n}\n\n// Priority 10: ai_uncertainty catch-all (free_form không match / can_answer=false từ FAQ)\nreturn [{ json: { trigger_type: 'ai_uncertainty', trigger_excerpt: '', is_emergency: false, needs_escalation: true } }];"
+      },
+      "id": "detect-escalation-trigger",
+      "name": "Detect Escalation Trigger",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.is_emergency }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-is-emergency",
+      "name": "Guard: Is Emergency",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2880,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://zalo-bridge:{{ $env.ZALO_BRIDGE_PORT }}/send",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "customer_id": "={{ $('Classify Response').first().json.customer_id }}",
+          "message": "⚠️ Dấu hiệu nguy hiểm! Vui lòng gọi **115** ngay hoặc đến cơ sở y tế gần nhất. Đừng chờ dược sĩ — đây là tình huống khẩn cấp.",
+          "bypass_persona": true
+        }
+      },
+      "id": "send-emergency-115",
+      "name": "Send Emergency 115",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        3120,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.needs_escalation }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-needs-escalation",
+      "name": "Guard: Needs Escalation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3120,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://openclaw:8000/tools/create_escalation_case",
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pharmacy_id",
+              "value": "={{ $('Classify Response').first().json.pharmacy_id }}"
+            },
+            {
+              "name": "customer_id",
+              "value": "={{ $('Classify Response').first().json.customer_id }}"
+            },
+            {
+              "name": "trigger_type",
+              "value": "={{ $('Detect Escalation Trigger').first().json.trigger_type }}"
+            },
+            {
+              "name": "trigger",
+              "value": "={{ $('Detect Escalation Trigger').first().json.trigger_excerpt }}"
+            },
+            {
+              "name": "customer_content",
+              "value": "={{ $('Classify Response').first().json.message_content }}"
+            }
+          ]
+        }
+      },
+      "id": "create-escalation-case",
+      "name": "Create Escalation Case",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        3360,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "esc1",
+              "name": "classified_type",
+              "value": "escalation_case_created",
+              "type": "string"
+            },
+            {
+              "id": "esc2",
+              "name": "case_id",
+              "value": "={{ $json.case_id }}",
+              "type": "string"
+            },
+            {
+              "id": "esc3",
+              "name": "trigger_type",
+              "value": "={{ $('Detect Escalation Trigger').first().json.trigger_type }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "log-escalation-case-created",
+      "name": "Log Escalation Case Created",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        3600,
+        360
+      ]
     }
   ],
   "connections": {
@@ -749,7 +911,7 @@
       "main": [
         [
           {
-            "node": "Return Result",
+            "node": "Detect Escalation Trigger",
             "type": "main",
             "index": 0
           }
@@ -819,6 +981,86 @@
       ]
     },
     "Update Messages Status": {
+      "main": [
+        [
+          {
+            "node": "Return Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Detect Escalation Trigger": {
+      "main": [
+        [
+          {
+            "node": "Guard: Is Emergency",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Is Emergency": {
+      "main": [
+        [
+          {
+            "node": "Send Emergency 115",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Guard: Needs Escalation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Emergency 115": {
+      "main": [
+        [
+          {
+            "node": "Create Escalation Case",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Needs Escalation": {
+      "main": [
+        [
+          {
+            "node": "Create Escalation Case",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Escalation Case": {
+      "main": [
+        [
+          {
+            "node": "Log Escalation Case Created",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Escalation Case Created": {
       "main": [
         [
           {

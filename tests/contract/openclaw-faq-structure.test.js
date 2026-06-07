@@ -132,4 +132,12 @@ describe("FaqEntries seed data đủ cho e2e test (Story 5.1, AC2, AC4)", () => 
       "no_diagnosis_rule must not be applied to message_content — symptom descriptions in questions cause false positives"
     );
   });
+
+  test("10.17 — server.js chứa POST handler /tools/create_escalation_case (Story 5.2 AC2)", () => {
+    const src = fs.readFileSync(repoPath("openclaw/server.js"), "utf8");
+    assert.ok(
+      src.includes("/tools/create_escalation_case"),
+      "server.js must have POST handler for /tools/create_escalation_case"
+    );
+  });
 });

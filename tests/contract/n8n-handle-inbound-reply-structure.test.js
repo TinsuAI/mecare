@@ -383,12 +383,12 @@ describe("MC-Handle-InboundReply workflow structure", () => {
     );
   });
 
-  test("8.43 — Log Escalation Trigger kết nối tới Return Result (AC5, AC6)", () => {
+  test("8.43 — Log Escalation Trigger kết nối tới Detect Escalation Trigger (Story 5.2 Task 4.7)", () => {
     const nextNode = workflow.connections?.["Log Escalation Trigger"]?.main?.[0]?.[0]?.node;
     assert.equal(
       nextNode,
-      "Return Result",
-      `Log Escalation Trigger must connect to 'Return Result', got '${nextNode}'`
+      "Detect Escalation Trigger",
+      `Log Escalation Trigger must connect to 'Detect Escalation Trigger' (Story 5.2 rewire), got '${nextNode}'`
     );
   });
 
