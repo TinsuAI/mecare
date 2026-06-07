@@ -257,4 +257,88 @@ describe("MC-Schedule-DueReminders workflow structure", () => {
       "Query CareSchedule must include rate_limited rows (via inclusion or not_equal exclusion)"
     );
   });
+
+  test("5.36 — 'Guard: Quota Blocked' condition kiểm tra allowed === false (AC1: chặn khi quota hết)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Guard: Quota Blocked");
+    const conditions = node?.parameters?.conditions?.conditions ?? [];
+    const hasAllowedFalse = conditions.some(
+      (c) => String(c.leftValue).includes("allowed") && c.rightValue === false
+    );
+    assert.ok(hasAllowedFalse, "Guard: Quota Blocked must check allowed === false");
+  });
+
+  test("5.37 — 'Log Quota Alert' URL tham chiếu BASEROW_TABLE_MESSAGES (AC5: ghi vào Messages thay Error_Logs)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Log Quota Alert");
+    const url = node?.parameters?.url ?? "";
+    assert.ok(
+      url.includes("BASEROW_TABLE_MESSAGES"),
+      `Log Quota Alert URL must reference BASEROW_TABLE_MESSAGES, got: ${url}`
+    );
+  });
+
+  test("5.38 — 'Log Quota Alert' body có type=escalation (AC5: tránh 'alert' không hợp lệ trong Messages)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Log Quota Alert");
+    const params = node?.parameters?.bodyParameters?.parameters ?? [];
+    const typeParam = params.find((p) => p.name === "type");
+    assert.ok(typeParam, "Log Quota Alert missing 'type' body param");
+    assert.equal(typeParam.value, "escalation", "Log Quota Alert type must be 'escalation'");
+  });
+
+  test("5.39 — 'Log Quota Alert' body có status=failed (AC5: status hợp lệ trong Messages)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Log Quota Alert");
+    const params = node?.parameters?.bodyParameters?.parameters ?? [];
+    const statusParam = params.find((p) => p.name === "status");
+    assert.ok(statusParam, "Log Quota Alert missing 'status' body param");
+    assert.equal(statusParam.value, "failed", "Log Quota Alert status must be 'failed'");
+  });
+
+  test("5.40 — 'Increment QuotaCounter' URL dùng Get QuotaCounter Row results[0].id (AC6: PATCH đúng row)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Increment QuotaCounter");
+    const url = node?.parameters?.url ?? "";
+    assert.ok(
+      url.includes("Get QuotaCounter Row") && url.includes("results[0].id"),
+      `Increment QuotaCounter URL must reference Get QuotaCounter Row results[0].id, got: ${url}`
+    );
+  });
+
+  test("5.41 — 'Increment QuotaCounter' body tăng sent_count + 1 (AC6: đếm đúng số tin đã gửi)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Increment QuotaCounter");
+    const params = node?.parameters?.bodyParameters?.parameters ?? [];
+    const sentCountParam = params.find((p) => p.name === "sent_count");
+    assert.ok(sentCountParam, "Increment QuotaCounter missing 'sent_count' body param");
+    assert.ok(
+      String(sentCountParam.value).includes("sent_count") && String(sentCountParam.value).includes("+ 1"),
+      `Increment QuotaCounter sent_count must add 1, got: ${sentCountParam.value}`
+    );
+  });
+
+  test("5.42 — 'Get QuotaCounter Row' URL lọc theo pharmacy_id VÀ period_month (AC7: isolation đúng tenant+tháng)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Get QuotaCounter Row");
+    const url = node?.parameters?.url ?? "";
+    assert.ok(
+      url.includes("pharmacy_id"),
+      `Get QuotaCounter Row URL must filter by pharmacy_id, got: ${url}`
+    );
+    assert.ok(
+      url.includes("period_month"),
+      `Get QuotaCounter Row URL must filter by period_month, got: ${url}`
+    );
+  });
+
+  test("5.43 — 'Create QuotaCounter Row' body có sent_count=1 (AC6: tháng mới bắt đầu từ 1)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Create QuotaCounter Row");
+    const params = node?.parameters?.bodyParameters?.parameters ?? [];
+    const sentCountParam = params.find((p) => p.name === "sent_count");
+    assert.ok(sentCountParam, "Create QuotaCounter Row missing 'sent_count' body param");
+    assert.equal(String(sentCountParam.value), "1", "Create QuotaCounter Row sent_count must be 1 for new month");
+  });
+
+  test("5.44 — 'Guard: Quota Row Exists' condition kiểm tra count > 0 (AC6: upsert pattern)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Guard: Quota Row Exists");
+    const conditions = node?.parameters?.conditions?.conditions ?? [];
+    const hasCountGt0 = conditions.some(
+      (c) => String(c.leftValue).includes("count") && c.rightValue === 0
+    );
+    assert.ok(hasCountGt0, "Guard: Quota Row Exists must check count > 0");
+  });
 });

@@ -129,4 +129,40 @@ describe("MC-Quota-Enforce workflow structure", () => {
     assert.ok(names.includes("cap"), "Return Result missing 'cap' field");
     assert.ok(names.includes("bypassed"), "Return Result missing 'bypassed' field");
   });
+
+  test("7.17 — Return Result set node có field quota_row_id (AC6: cho phép increment bằng row ID)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Return Result");
+    const assignments = node?.parameters?.assignments?.assignments ?? [];
+    const names = assignments.map((a) => a.name);
+    assert.ok(names.includes("quota_row_id"), "Return Result missing 'quota_row_id' field");
+  });
+
+  test("7.18 — Eval Quota code trả quota_row_id: row.id khi row tồn tại (AC6: tránh GET thứ hai)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Eval Quota");
+    const code = node?.parameters?.jsCode ?? "";
+    assert.ok(
+      code.includes("quota_row_id") && code.includes("row.id"),
+      "Eval Quota must expose quota_row_id: row.id for existing-row case"
+    );
+  });
+
+  test("7.19 — Group 5 Bypass if-node kiểm tra care_group === 5 (AC4: nhóm VIP bypass)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Group 5 Bypass");
+    const conditions = node?.parameters?.conditions?.conditions ?? [];
+    const hasGroup5Check = conditions.some(
+      (c) => String(c.rightValue) === "5" || c.rightValue === 5
+    );
+    assert.ok(hasGroup5Check, "Group 5 Bypass must check care_group === 5");
+  });
+
+  test("7.20 — Return: Bypassed có sent_count=0 và cap=1000 (AC4: output contract đầy đủ)", () => {
+    const node = workflow.nodes.find((n) => n.name === "Return: Bypassed");
+    const assignments = node?.parameters?.assignments?.assignments ?? [];
+    const sentCount = assignments.find((a) => a.name === "sent_count");
+    const cap = assignments.find((a) => a.name === "cap");
+    assert.ok(sentCount, "Return: Bypassed missing 'sent_count' field");
+    assert.equal(sentCount?.value, 0, "Return: Bypassed must set sent_count=0");
+    assert.ok(cap, "Return: Bypassed missing 'cap' field");
+    assert.equal(cap?.value, 1000, "Return: Bypassed must set cap=1000");
+  });
 });
