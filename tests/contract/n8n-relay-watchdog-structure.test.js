@@ -61,11 +61,11 @@ describe("MC-Relay-Watchdog structure (Story 5.3 AC8)", () => {
     assert.ok(found, "MC-Relay-Watchdog missing 'Guard: Is Business Hours' code node");
   });
 
-  test("12.7 — 'Guard: Outside Hours' if node tồn tại (AC8 ngoài giờ skip)", () => {
+  test("12.7 — 'Guard: In Business Hours' if node tồn tại (AC8 ngoài giờ skip)", () => {
     const found = watchdog.nodes.some(
-      (n) => n.name === "Guard: Outside Hours" && n.type === "n8n-nodes-base.if"
+      (n) => n.name === "Guard: In Business Hours" && n.type === "n8n-nodes-base.if"
     );
-    assert.ok(found, "MC-Relay-Watchdog missing 'Guard: Outside Hours' if node");
+    assert.ok(found, "MC-Relay-Watchdog missing 'Guard: In Business Hours' if node");
   });
 
   test("12.8 — 'Compute SLA Cutoff' code node tồn tại (AC8 SLA timestamp)", () => {

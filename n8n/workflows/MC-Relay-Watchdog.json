@@ -47,7 +47,7 @@
         }
       },
       "id": "watchdog-guard-business-hours",
-      "name": "Guard: Outside Hours",
+      "name": "Guard: In Business Hours",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [480, 0]
@@ -65,7 +65,7 @@
     {
       "parameters": {
         "method": "GET",
-        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.ESCALATION_CASES_TABLE_ID }}/?user_field_names=true&filter__state__equal=waiting_pharmacist&filter__created_at__date__before={{ $json.sla_cutoff }}",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.ESCALATION_CASES_TABLE_ID }}/?user_field_names=true&filter__state__equal=waiting_pharmacist",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -112,18 +112,7 @@
     },
     {
       "parameters": {
-        "batchSize": 1,
-        "options": {}
-      },
-      "id": "watchdog-split-cases",
-      "name": "Split Overdue Cases",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [1440, 0]
-    },
-    {
-      "parameters": {
-        "jsCode": "const cases = $('Query Overdue Cases').first().json.results || [];\nconst slaMinutes = $('Compute SLA Cutoff').first().json.sla_minutes;\nconst reminders = cases.map(c => ({\n  case_id: c.case_id,\n  customer_id: c.customer_id,\n  sla_minutes: slaMinutes\n}));\nreturn reminders.map(r => ({ json: r }));"
+        "jsCode": "const cases = $('Query Overdue Cases').first().json.results || [];\nconst sla = $('Compute SLA Cutoff').first().json;\nconst slaMinutes = sla.sla_minutes;\nconst slaCutoff = sla.sla_cutoff;\nconst overdue = cases.filter(c => new Date(c.created_at).getTime() < new Date(slaCutoff).getTime());\nconst reminders = overdue.map(c => ({\n  case_id: c.case_id,\n  customer_id: c.customer_id,\n  sla_minutes: slaMinutes\n}));\nreturn reminders.map(r => ({ json: r }));"
       },
       "id": "watchdog-expand-cases",
       "name": "Expand Overdue Cases",
@@ -168,14 +157,14 @@
       "main": [
         [
           {
-            "node": "Guard: Outside Hours",
+            "node": "Guard: In Business Hours",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Guard: Outside Hours": {
+    "Guard: In Business Hours": {
       "main": [
         [
           {

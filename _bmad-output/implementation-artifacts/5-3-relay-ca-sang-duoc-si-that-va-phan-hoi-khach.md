@@ -282,3 +282,59 @@ claude-sonnet-4-6
 - tests/contract/n8n-handle-inbound-reply-relay.test.js — tạo mới, 17 tests 8.66–8.82 (Task 6.1)
 - tests/contract/n8n-relay-watchdog-structure.test.js — tạo mới, 5 tests 12.1–12.5 (Task 6.2)
 - tests/contract/n8n-handle-inbound-reply-escalation.test.js — cập nhật test 8.65 (Story 5.3 rewire)
+
+## Senior Developer Review (AI)
+
+**Reviewer:** gabenidolcs · **Date:** 2026-06-07 · **Outcome:** APPROVED (with auto-fixes applied)
+
+### Review Summary
+
+All 10 acceptance criteria (AC1–AC10) are fully implemented and covered by 57 contract tests (44 relay + 13 watchdog), all passing. Three issues were found and auto-fixed during review; no CRITICAL issues block approval.
+
+### Issues Found and Fixed
+
+#### [HIGH] MC-Relay-Watchdog: Broken SLA date filter — same-day cases never caught
+**File:** `n8n/workflows/MC-Relay-Watchdog.json` · Node: `Query Overdue Cases`
+
+`filter__created_at__date__before={{ $json.sla_cutoff }}` uses Baserow's DATE-only filter, which compares the date portion of `created_at` (e.g., `2026-06-07`) against the date portion of the ISO cutoff. For any case created TODAY, `created_at date < today` is always false — the watchdog never sends same-day SLA reminders, which is the primary use case.
+
+**Fix:** Removed the broken Baserow date filter from the `Query Overdue Cases` URL; moved SLA cutoff filtering to `Expand Overdue Cases` Code node using full ISO timestamp comparison:
+```js
+const overdue = cases.filter(c => new Date(c.created_at).getTime() < new Date(slaCutoff).getTime());
+```
+
+#### [MEDIUM] MC-Relay-Watchdog: `Guard: Outside Hours` name inverted vs condition
+**File:** `n8n/workflows/MC-Relay-Watchdog.json` · Node renamed
+
+IF node named `Guard: Outside Hours` had condition `in_business_hours == true` (true branch proceeds during business hours). A future developer reading the name would expect the condition to be the inverse — and might "fix" it, causing reminders to fire at 3 AM.
+
+**Fix:** Renamed to `Guard: In Business Hours` to match the condition. Updated `connections` map and test 12.7 accordingly.
+
+#### [LOW] MC-Relay-Watchdog: Orphan `Split Overdue Cases` node
+**File:** `n8n/workflows/MC-Relay-Watchdog.json`
+
+`Split Overdue Cases` (type: `splitInBatches`) was left in the workflow JSON unconnected after the implementation switched to `Expand Overdue Cases` (Code node). Dead node with no inputs or outputs.
+
+**Fix:** Removed node from workflow JSON. No connection changes required (it was isolated).
+
+### Checklist
+
+- [x] Story Status: review
+- [x] AC1–AC10 cross-checked vs implementation — all implemented
+- [x] File List validated — 8 files all present and committed
+- [x] Tests: 57 story-specific tests, 733/734 suite pass (1 pre-existing unrelated failure)
+- [x] Code quality review performed on changed files
+- [x] Security: env vars via `$env.*` n8n pattern, no secrets in code
+- [x] Medical safety AC6: verbatim relay confirmed (`pharmacistMsg` unchanged, prefix only)
+- [x] Regression AC10: Guard: Is Pharmacist Sender false branch → Classify Response confirmed
+- [x] Issues found: 3 (HIGH×1, MEDIUM×1, LOW×1) — all auto-fixed
+- [x] No CRITICAL issues (ACs not implemented or tasks marked done but missing)
+- [x] Status promoted: review → done
+
+### Change Log
+
+| Date | Author | Change |
+|------|--------|--------|
+| 2026-06-07 | Dev Agent (claude-sonnet-4-6) | Implementation complete — 42 nodes, 57 tests |
+| 2026-06-07 | QA Agent (claude-sonnet-4-6) | QA gap-fill — 35 tests added, 733/734 suite |
+| 2026-06-07 | Review Agent (claude-sonnet-4-6) | APPROVED — 3 issues found and auto-fixed in MC-Relay-Watchdog.json |
