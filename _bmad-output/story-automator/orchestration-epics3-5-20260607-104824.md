@@ -62,7 +62,7 @@ completedSessions: []
 | 4.4 | ✅ | ✅ | ✅ | ✅ | ✅ | done |
 | 5.1 | ✅ | ✅ | ✅ | ✅ | ✅ | done |
 | 5.2 | ✅ | ✅ | ✅ | ✅ | ✅ | done |
-| 5.3 | ✅ | ⏳ | ⏳ | ⏳ | ⏳ | in-progress |
+| 5.3 | ✅ | ✅ | ⏳ | ⏳ | ⏳ | in-progress |
 | 5.4 | ⏳ | ⏳ | ⏳ | ⏳ | ⏳ | pending |
 
 ---

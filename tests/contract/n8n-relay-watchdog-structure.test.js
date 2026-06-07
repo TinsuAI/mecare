@@ -1,5 +1,6 @@
 // Contract — n8n workflow structure cho MC-Relay-Watchdog (Story 5.3, AC8).
-// Tests 12.1–12.5: file tồn tại, Cron Trigger, Baserow query node, reminder send node, workflow name.
+// Tests 12.1–12.13: file tồn tại, Cron Trigger, Baserow query node, reminder send node, workflow name,
+//   business hours guard, SLA cutoff logic, full node inventory, connection chain.
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -50,5 +51,70 @@ describe("MC-Relay-Watchdog structure (Story 5.3 AC8)", () => {
         (n.name?.toLowerCase().includes("reminder") || n.name?.toLowerCase().includes("send"))
     );
     assert.ok(found, "MC-Relay-Watchdog missing Send Reminder HTTP POST node");
+  });
+
+  // ─── Gap-fill: Missing node inventory (Story 5.3 QA) ───
+  test("12.6 — 'Guard: Is Business Hours' code node tồn tại (AC8 giờ làm việc check)", () => {
+    const found = watchdog.nodes.some(
+      (n) => n.name === "Guard: Is Business Hours" && n.type === "n8n-nodes-base.code"
+    );
+    assert.ok(found, "MC-Relay-Watchdog missing 'Guard: Is Business Hours' code node");
+  });
+
+  test("12.7 — 'Guard: Outside Hours' if node tồn tại (AC8 ngoài giờ skip)", () => {
+    const found = watchdog.nodes.some(
+      (n) => n.name === "Guard: Outside Hours" && n.type === "n8n-nodes-base.if"
+    );
+    assert.ok(found, "MC-Relay-Watchdog missing 'Guard: Outside Hours' if node");
+  });
+
+  test("12.8 — 'Compute SLA Cutoff' code node tồn tại (AC8 SLA timestamp)", () => {
+    const found = watchdog.nodes.some(
+      (n) => n.name === "Compute SLA Cutoff" && n.type === "n8n-nodes-base.code"
+    );
+    assert.ok(found, "MC-Relay-Watchdog missing 'Compute SLA Cutoff' code node");
+  });
+
+  test("12.9 — 'Guard: Has Overdue Cases' if node tồn tại (AC8 empty result guard)", () => {
+    const found = watchdog.nodes.some(
+      (n) => n.name === "Guard: Has Overdue Cases" && n.type === "n8n-nodes-base.if"
+    );
+    assert.ok(found, "MC-Relay-Watchdog missing 'Guard: Has Overdue Cases' if node");
+  });
+
+  test("12.10 — 'Expand Overdue Cases' code node tồn tại (AC8 iterate cases)", () => {
+    const found = watchdog.nodes.some(
+      (n) => n.name === "Expand Overdue Cases" && n.type === "n8n-nodes-base.code"
+    );
+    assert.ok(found, "MC-Relay-Watchdog missing 'Expand Overdue Cases' code node");
+  });
+
+  // ─── Gap-fill: Content / behavior tests ───
+  test("12.11 — Compute SLA Cutoff code tham chiếu RELAY_SLA_MINUTES env var (AC8 configurable SLA)", () => {
+    const node = watchdog.nodes.find((n) => n.name === "Compute SLA Cutoff");
+    const code = node?.parameters?.jsCode || "";
+    assert.ok(
+      code.includes("RELAY_SLA_MINUTES"),
+      "Compute SLA Cutoff must read RELAY_SLA_MINUTES from process.env"
+    );
+  });
+
+  test("12.12 — Guard: Is Business Hours code chứa isBusinessHourGmt7 inline (AC8 no local import)", () => {
+    const node = watchdog.nodes.find((n) => n.name === "Guard: Is Business Hours");
+    const code = node?.parameters?.jsCode || "";
+    assert.ok(
+      code.includes("isBusinessHour"),
+      "Guard: Is Business Hours must contain inline isBusinessHourGmt7 logic (no local require)"
+    );
+  });
+
+  // ─── Gap-fill: Connection chain ───
+  test("12.13 — Cron Trigger → Guard: Is Business Hours (AC8 entry chain)", () => {
+    const next = watchdog.connections?.["Cron Trigger"]?.main?.[0]?.[0]?.node;
+    assert.equal(
+      next,
+      "Guard: Is Business Hours",
+      `Cron Trigger must connect to 'Guard: Is Business Hours', got '${next}'`
+    );
   });
 });
