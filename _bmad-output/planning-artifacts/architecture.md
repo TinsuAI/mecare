@@ -216,7 +216,12 @@ Khách ──Zalo── [openzalo channel] ─┐
 
 **n8n workflows:**
 - Tên: `MC-<domain>-<action>` — `MC-Schedule-DueReminders`, `MC-Relay-Watchdog`, `MC-Zalo-Send`.
-- Mỗi workflow 1 trách nhiệm; sub-flow gọi qua Execute Workflow.
+- Mỗi workflow 1 trách nhiệm; sub-flow gọi qua Execute Workflow (`executeWorkflowTrigger` làm trigger).
+- **Baserow list response:** trả `{count, results[]}` — phải có `Expand Results` Code node (`results.map(r=>({json:r}))`) TRƯỚC `SplitInBatches`. Thiếu node này → batch nhận envelope, không nhận rows.
+- **$json context reset:** sau mỗi `httpRequest` node, `$json` = response của node đó. Dùng named reference `$('NodeName').first().json` để access upstream data trong branching workflows.
+- **link_row fields:** Baserow trả array `[{id, value}]` — dùng `$json["field_name"][0]["id"]` để lấy row ID.
+- **Batch resilience:** `continueOnFail: true` bắt buộc trên `executeWorkflow` và `httpRequest` nodes trong batch loops. Không có flag → một network error treo cả batch.
+- **Local module:** n8n Code node không import local file. Logic từ `n8n/lib/` phải copy-paste inline vào Code node. File lib tồn tại riêng để unit test.
 
 **OpenClaw / agent:**
 - Tool name: snake_case động từ — `create_escalation_case`, `lookup_customer`, `send_care_message`.
@@ -297,12 +302,17 @@ mecare/
 │   └── views/                      # form + grid views (Story 3.1/3.2: counter-form, phone-lookup, customers-by-group, group-changes-log)
 │
 ├── n8n/                            # SCHEDULER + relay watchdog + quota
+│   ├── lib/                        # pure JS logic (unit-tested; copy-paste inline vào Code nodes)
+│   │   ├── compose-message.js      # substituteTemplate, detectMissingPlaceholders, appendTpcnSuffix, buildCustomerRef
+│   │   └── schedule-utils.js       # nextDueAt, isBusinessHourGmt7, addMinutes
 │   └── workflows/
-│       ├── MC-Schedule-DueReminders.json   # cron → query due → gửi (FR-4)
-│       ├── MC-Quota-Enforce.json           # trần gói tháng (FR-5)
-│       ├── MC-Relay-Watchdog.json          # timeout ca leo thang (FR-9)
-│       ├── MC-Zalo-Send.json               # gọi zalo-bridge gửi tin chủ động
-│       └── MC-Alert-Ops.json               # alert Tinsu (session/quota/treo)
+│       ├── MC-Compose-MessageFromTemplate.json  # template → placeholder fill → audit-first Messages pending (FR-3)
+│       ├── MC-Schedule-DueReminders.json        # cron → query due → opt-out/group6 guard → quota → gửi (FR-4)
+│       ├── MC-Quota-Enforce.json               # trần gói tháng (FR-5); Group 5 bypass
+│       ├── MC-Zalo-Send.json                   # gọi zalo-bridge gửi tin; update Messages.status
+│       ├── MC-Handle-InboundReply.json         # webhook: classify → opt-out/done_signal/Group6 unlock (FR-6)
+│       ├── MC-Relay-Watchdog.json              # timeout ca leo thang (FR-9) — Epic 5 scope
+│       └── MC-Alert-Ops.json                  # alert Tinsu (session/quota/treo) — future scope
 │
 ├── openclaw/                       # AGENT + memory + channel Zalo
 │   ├── config/
@@ -365,7 +375,7 @@ mecare/
 | FR-3 (soạn tin) | Baserow `MessageTemplates` (approved) + n8n điền placeholder (proactive) / agent RAG `FaqEntries` (reactive) |
 | FR-4 (lập lịch) | `n8n/workflows/MC-Schedule-DueReminders` + Baserow `CareSchedule` |
 | FR-5 (rate/trần gói) | `n8n/MC-Quota-Enforce` + `zalo-bridge/throttle.ts` |
-| FR-6 (phản hồi/opt-out) | OpenClaw agent + Baserow `Customers` |
+| FR-6 (phản hồi/opt-out) | `n8n/workflows/MC-Handle-InboundReply` (webhook) + Baserow `Customers.is_opted_out` + `CareSchedule` status update; OpenClaw calls webhook on inbound message |
 | FR-7 (FAQ) | OpenClaw agent + RAG trên Baserow `FaqEntries` (approved) |
 | FR-8 (trigger) | `openclaw/guardrails/` + agent |
 | FR-9, FR-10 (relay/lưu) | `create_escalation_case` + `n8n/MC-Relay-Watchdog` + Baserow `EscalationCases`/`Messages` |
@@ -375,7 +385,7 @@ mecare/
 
 ### Integration / Data Flow
 
-- **Proactive:** n8n cron → Baserow due query → quota check → template → zalo-bridge send → ghi `Messages`.
+- **Proactive:** n8n cron → Baserow due query → check `is_opted_out` + Group 6 lock → quota check (MC-Quota-Enforce) → template fill (MC-Compose-MessageFromTemplate) → zalo-bridge send (MC-Zalo-Send) → ghi `Messages`; handle 429 as `rate_limited` (retry next cron), quota exhausted as `quota_exceeded`.
 - **Reactive:** khách →Zalo→ listen → OpenClaw agent (RAG + guardrail) → reply qua bridge / tạo `EscalationCase`.
 - **Relay:** trigger → `EscalationCase` (mã ca) → bridge gửi dược sĩ thật → phương án về (khớp mã ca) → agent reply khách → Baserow.
 - **External integrations:** OpenRouter (DeepSeek, PII-min) · Zalo Web (openzca) · alert kênh Tinsu.
