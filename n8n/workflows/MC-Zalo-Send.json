@@ -1,0 +1,306 @@
+{
+  "name": "MC-Zalo-Send",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger-001",
+      "name": "Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_CUSTOMERS }}/{{ $json.customer_id }}/?user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        }
+      },
+      "id": "fetch-customer",
+      "name": "Fetch Customer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://zalo-bridge:{{ $env.ZALO_BRIDGE_PORT }}/send",
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pharmacy_id",
+              "value": "={{ $('Trigger').first().json.pharmacy_id }}"
+            },
+            {
+              "name": "customer_phone",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ $('Trigger').first().json.content }}"
+            },
+            {
+              "name": "message_id",
+              "value": "={{ $('Trigger').first().json.message_id }}"
+            }
+          ]
+        }
+      },
+      "id": "send-via-zalo-bridge",
+      "name": "Send via zalo-bridge",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        480,
+        0
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-send-error",
+      "name": "Guard: Send Error",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_MESSAGES }}/?filter__field_message_id__equal={{ $('Trigger').first().json.message_id }}&user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "status": "failed"
+        }
+      },
+      "id": "update-messages-failed",
+      "name": "Update Messages Failed",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        960,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "r1",
+              "name": "result",
+              "value": "failed",
+              "type": "string"
+            },
+            {
+              "id": "r2",
+              "name": "reason",
+              "value": "={{ $('Send via zalo-bridge').first().json.error }}",
+              "type": "string"
+            },
+            {
+              "id": "r3",
+              "name": "message_id",
+              "value": "={{ $('Trigger').first().json.message_id }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "return-failed",
+      "name": "Return: Failed",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_MESSAGES }}/?filter__field_message_id__equal={{ $('Trigger').first().json.message_id }}&user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "status": "sent"
+        }
+      },
+      "id": "update-messages-sent",
+      "name": "Update Messages Sent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        960,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "r4",
+              "name": "result",
+              "value": "sent",
+              "type": "string"
+            },
+            {
+              "id": "r5",
+              "name": "message_id",
+              "value": "={{ $('Trigger').first().json.message_id }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "return-sent",
+      "name": "Return: Sent",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        120
+      ]
+    }
+  ],
+  "connections": {
+    "Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Customer": {
+      "main": [
+        [
+          {
+            "node": "Send via zalo-bridge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send via zalo-bridge": {
+      "main": [
+        [
+          {
+            "node": "Guard: Send Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Send Error": {
+      "main": [
+        [
+          {
+            "node": "Update Messages Failed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Messages Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Messages Failed": {
+      "main": [
+        [
+          {
+            "node": "Return: Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Messages Sent": {
+      "main": [
+        [
+          {
+            "node": "Return: Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,856 @@
+{
+  "name": "MC-Schedule-DueReminders",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/15 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "trigger-schedule",
+      "name": "Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Inline from n8n/lib/schedule-utils.js (n8n cannot import local modules)\nfunction isBusinessHourGmt7(nowMs, startHour, endHour) {\n  const gmt7Hour = ((nowMs + 7 * 3600000) / 3600000) % 24;\n  return gmt7Hour >= startHour && gmt7Hour < endHour;\n}\n\nconst start = Number($env.BUSINESS_HOUR_START ?? 7);\nconst end = Number($env.BUSINESS_HOUR_END ?? 21);\nconst nowMs = Date.now();\nconst withinHours = isBusinessHourGmt7(nowMs, start, end);\nreturn [{ json: { withinHours } }];"
+      },
+      "id": "business-hours-check",
+      "name": "Business Hours Check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.withinHours }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-outside-hours",
+      "name": "Guard: Outside Hours",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "result",
+              "value": "outside_business_hours",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "reason",
+              "value": "outside_business_hours",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "set-outside-hours",
+      "name": "Set: Outside Hours",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        720,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst now_iso = now.toISOString();\nreturn [{ json: { now_iso } }];"
+      },
+      "id": "compute-now-iso",
+      "name": "Compute Now ISO",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_CARE_SCHEDULE }}/?filter__field_status__equal=pending&filter__field_due_at__date_before_or_equal_than={{ $json.now_iso }}&user_field_names=true",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        }
+      },
+      "id": "query-care-schedule",
+      "name": "Query CareSchedule",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        960,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-no-due-items",
+      "name": "Guard: No Due Items",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b1",
+              "name": "result",
+              "value": "no_due_items",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "set-no-due-items",
+      "name": "Set: No Due Items",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        1440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "process-each-row",
+      "name": "Process Each Row",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1440,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const crypto = require('crypto');\nconst row = $input.first().json;\nconst message_id = crypto.randomUUID();\nreturn [{ json: { message_id, ...row } }];"
+      },
+      "id": "generate-message-id",
+      "name": "Generate message_id",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "MC-Compose-MessageFromTemplate",
+          "mode": "name"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "pharmacy_id",
+              "stringValue": "={{ $json.pharmacy_id }}"
+            },
+            {
+              "name": "customer_id",
+              "stringValue": "={{ $json.customer_id }}"
+            },
+            {
+              "name": "care_group",
+              "stringValue": "={{ $json.care_group }}"
+            },
+            {
+              "name": "message_id",
+              "stringValue": "={{ $json.message_id }}"
+            }
+          ]
+        }
+      },
+      "id": "compose-message",
+      "name": "Compose Message",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        240
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.result }}",
+              "rightValue": "composed",
+              "operator": {
+                "type": "string",
+                "operation": "notEqual"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-compose-skip",
+      "name": "Guard: Compose Skip",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_CARE_SCHEDULE }}/{{ $('Process Each Row').first().json.id }}/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "status": "skipped"
+        }
+      },
+      "id": "update-care-schedule-skipped",
+      "name": "Update CareSchedule Skipped",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2400,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "MC-Zalo-Send",
+          "mode": "name"
+        },
+        "fields": {
+          "values": [
+            {
+              "name": "pharmacy_id",
+              "stringValue": "={{ $('Process Each Row').first().json.pharmacy_id }}"
+            },
+            {
+              "name": "customer_id",
+              "stringValue": "={{ $('Process Each Row').first().json.customer_id }}"
+            },
+            {
+              "name": "message_id",
+              "stringValue": "={{ $('Generate message_id').first().json.message_id }}"
+            },
+            {
+              "name": "content",
+              "stringValue": "={{ $json.content }}"
+            }
+          ]
+        }
+      },
+      "id": "send-message",
+      "name": "Send Message",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        360
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.result }}",
+              "rightValue": "sent",
+              "operator": {
+                "type": "string",
+                "operation": "notEqual"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-send-failed",
+      "name": "Guard: Send Failed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_CARE_SCHEDULE }}/{{ $('Process Each Row').first().json.id }}/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "status": "skipped"
+        }
+      },
+      "id": "update-care-schedule-send-fail",
+      "name": "Update CareSchedule SkippedOnSendFail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2880,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_CARE_SCHEDULE }}/{{ $('Process Each Row').first().json.id }}/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "status": "sent"
+        }
+      },
+      "id": "update-care-schedule-sent",
+      "name": "Update CareSchedule Sent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2880,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Inline from n8n/lib/schedule-utils.js\nfunction nextDueAt(dueAtIso, cadenceType) {\n  const offsets = { weekly: 7, monthly: 30, quarterly: 90 };\n  const days = offsets[cadenceType];\n  if (!days) return null;\n  return new Date(Date.parse(dueAtIso) + days * 86400000).toISOString();\n}\n\nfunction addMinutes(isoStr, minutes) {\n  return new Date(Date.parse(isoStr) + minutes * 60000).toISOString();\n}\n\nconst row = $('Process Each Row').first().json;\nconst cadenceType = row.cadence_type;\nconst nextDue = nextDueAt(row.due_at, cadenceType);\nconst create_next = nextDue !== null;\nconst sent_at = new Date().toISOString();\nconst follow_up_due_at = addMinutes(sent_at, 90);\nreturn [{ json: { ...row, create_next, next_due_at: nextDue, sent_at, follow_up_due_at } }];"
+      },
+      "id": "schedule-next-recurrence",
+      "name": "Schedule Next Recurrence",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3120,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.create_next }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-create-next",
+      "name": "Guard: Create Next",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3360,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_CARE_SCHEDULE }}/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pharmacy_id",
+              "value": "={{ $json.pharmacy_id }}"
+            },
+            {
+              "name": "customer_id",
+              "value": "={{ $json.customer_id }}"
+            },
+            {
+              "name": "care_group",
+              "value": "={{ $json.care_group }}"
+            },
+            {
+              "name": "due_at",
+              "value": "={{ $json.next_due_at }}"
+            },
+            {
+              "name": "cadence_type",
+              "value": "={{ $json.cadence_type }}"
+            },
+            {
+              "name": "status",
+              "value": "pending"
+            }
+          ]
+        }
+      },
+      "id": "create-next-care-schedule",
+      "name": "Create Next CareSchedule",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        3600,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $('Process Each Row').first().json.care_group }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "guard-group1-followup",
+      "name": "Guard: Group1 FollowUp",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3600,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BASEROW_URL }}/api/database/rows/table/{{ $env.BASEROW_TABLE_CARE_SCHEDULE }}/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.BASEROW_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pharmacy_id",
+              "value": "={{ $('Schedule Next Recurrence').first().json.pharmacy_id }}"
+            },
+            {
+              "name": "customer_id",
+              "value": "={{ $('Schedule Next Recurrence').first().json.customer_id }}"
+            },
+            {
+              "name": "care_group",
+              "value": "1"
+            },
+            {
+              "name": "due_at",
+              "value": "={{ $('Schedule Next Recurrence').first().json.follow_up_due_at }}"
+            },
+            {
+              "name": "cadence_type",
+              "value": "once"
+            },
+            {
+              "name": "status",
+              "value": "pending"
+            }
+          ]
+        }
+      },
+      "id": "create-followup-care-schedule",
+      "name": "Create FollowUp CareSchedule",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        3840,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract individual rows from Baserow list response {count, results:[...]}\nconst rows = $json.results ?? [];\nreturn rows.map(row => ({ json: row }));"
+      },
+      "id": "expand-results",
+      "name": "Expand Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        240
+      ]
+    }
+  ],
+  "connections": {
+    "Trigger": {
+      "main": [
+        [
+          {
+            "node": "Business Hours Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Business Hours Check": {
+      "main": [
+        [
+          {
+            "node": "Guard: Outside Hours",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Outside Hours": {
+      "main": [
+        [
+          {
+            "node": "Set: Outside Hours",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Compute Now ISO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute Now ISO": {
+      "main": [
+        [
+          {
+            "node": "Query CareSchedule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query CareSchedule": {
+      "main": [
+        [
+          {
+            "node": "Guard: No Due Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: No Due Items": {
+      "main": [
+        [
+          {
+            "node": "Set: No Due Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Expand Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Each Row": {
+      "main": [
+        [
+          {
+            "node": "Generate message_id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate message_id": {
+      "main": [
+        [
+          {
+            "node": "Compose Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compose Message": {
+      "main": [
+        [
+          {
+            "node": "Guard: Compose Skip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Compose Skip": {
+      "main": [
+        [
+          {
+            "node": "Update CareSchedule Skipped",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message": {
+      "main": [
+        [
+          {
+            "node": "Guard: Send Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Send Failed": {
+      "main": [
+        [
+          {
+            "node": "Update CareSchedule SkippedOnSendFail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update CareSchedule Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update CareSchedule Sent": {
+      "main": [
+        [
+          {
+            "node": "Schedule Next Recurrence",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Next Recurrence": {
+      "main": [
+        [
+          {
+            "node": "Guard: Create Next",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Create Next": {
+      "main": [
+        [
+          {
+            "node": "Create Next CareSchedule",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Guard: Group1 FollowUp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Next CareSchedule": {
+      "main": [
+        [
+          {
+            "node": "Guard: Group1 FollowUp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard: Group1 FollowUp": {
+      "main": [
+        [
+          {
+            "node": "Create FollowUp CareSchedule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Expand Results": {
+      "main": [
+        [
+          {
+            "node": "Process Each Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
