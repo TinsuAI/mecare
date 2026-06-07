@@ -15,7 +15,8 @@
 1. Copy `.env.example` → `.env`, điền giá trị thật (xem PORT GUIDE trong file).
 2. `docker compose up -d` — tất cả 5 service phải `healthy`.
 3. Truy cập `https://mecareapp.tinsu.ai` → tạo tài khoản admin Baserow đầu tiên.
-4. Chạy `node scripts/apply-baserow-schema.mjs` để khởi tạo schema MeCare.
+4. Chạy `node scripts/apply-baserow-schema.mjs` để khởi tạo 10 bảng schema MeCare.
+5. Chạy `node scripts/apply-baserow-schema.mjs --views` để tạo views tại quầy (counter-form, phone-lookup, customers-by-group, group-changes-log — Story 3.1/3.2).
 
 ## Onboarding tenant mới
 

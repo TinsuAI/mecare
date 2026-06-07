@@ -142,6 +142,7 @@ Khách ──Zalo── [openzalo channel] ─┐
   - `QuotaCounter` (tin/tháng/tenant — trần gói)
   - `MessageTemplates` (template proactive per nhóm: `body_template`, `status` draft/approved, `version`, `updated_by`, `approved_at`) — **nguồn sự thật kịch bản chủ động**
   - `FaqEntries` (FAQ reactive: `question`, `answer`, `mandatory_suffix` TPCN, `status`, `version`, `updated_by`, `approved_at`) — **nguồn sự thật FAQ**
+  - `CustomerGroupChanges` (audit log đổi nhóm: `changed_at`, `customer_id`, `pharmacy_id`, `from_group`, `to_group`, `changed_by` — append-only, không xóa) — **thêm Story 3.2**
 - **Kịch bản = Baserow authoritative.** Chủ hiệu thuốc tự sửa + tự duyệt (draft→approved) qua Baserow UI per-tenant; chỉ `status=approved` được dùng. `openclaw/kichban/` (nếu giữ) = cache phái sinh, rebuild từ Baserow.
 - **DB engine:** PostgreSQL dùng chung (Baserow + n8n schema riêng).
 - **Memory layer (OpenClaw, SQLite + sqlite-vec) = phái sinh, recall-only.** Index hội thoại + hoạt động hiệu thuốc để bơm context cho agent. Rebuild được từ Baserow `Messages`. KHÔNG giữ số liệu dashboard cần (tránh dual source of truth).
@@ -288,9 +289,12 @@ mecare/
 │   │   ├── 04-care-schedule.json   # CareSchedule (lịch due)
 │   │   ├── 05-messages.json        # Messages (audit-first, FR-10)
 │   │   ├── 06-escalation-cases.json# EscalationCases (mã ca)
-│   │   └── 07-quota-counter.json   # QuotaCounter
+│   │   ├── 07-quota-counter.json   # QuotaCounter
+│   │   ├── 08-message-templates.json  # MessageTemplates (kịch bản chủ động)
+│   │   ├── 09-faq-entries.json     # FaqEntries (FAQ reactive)
+│   │   └── 10-customer-group-changes.json  # CustomerGroupChanges (audit log đổi nhóm — Story 3.2)
 │   ├── seed/                       # data mẫu Trúc Tâm
-│   └── views/                      # dashboard + form view config (FR-14,15,1)
+│   └── views/                      # form + grid views (Story 3.1/3.2: counter-form, phone-lookup, customers-by-group, group-changes-log)
 │
 ├── n8n/                            # SCHEDULER + relay watchdog + quota
 │   └── workflows/

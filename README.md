@@ -41,8 +41,11 @@ docker compose ps
 #    BASEROW_EMAIL=<email đăng ký Baserow>
 #    BASEROW_PASSWORD=<password>
 
-# 7. Apply schema (9 bảng) + seed dữ liệu tructam — idempotent, chạy lại safe
+# 7. Apply schema (10 bảng) + seed dữ liệu tructam — idempotent, chạy lại safe
 node scripts/apply-baserow-schema.mjs
+
+# 7b. Apply Baserow views (counter form, phone lookup, group views — Story 3.1/3.2)
+node scripts/apply-baserow-schema.mjs --views
 ```
 
 Tất cả service đặt `restart: unless-stopped` → tự lên lại sau khi restart VPS. Dữ liệu Baserow/Postgres + memory store persist qua named volume.
