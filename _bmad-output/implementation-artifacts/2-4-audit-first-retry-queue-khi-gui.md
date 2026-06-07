@@ -320,3 +320,51 @@ claude-sonnet-4-6
 - tests/api/send-throttle.test.js
 - tests/contract/baserow-schema.test.js
 - tests/contract/opt-in-gate.test.js
+
+## Senior Developer Review (AI)
+
+**Reviewer:** Tinsu (AI) — 2026-06-07
+**Outcome:** ✅ APPROVED
+
+### Checklist
+
+- [x] Story file loaded from `_bmad-output/implementation-artifacts/2-4-audit-first-retry-queue-khi-gui.md`
+- [x] Story Status verified as reviewable (`done` — reviewed pre-merge per workflow)
+- [x] Epic and Story IDs resolved (2.4)
+- [x] Story Context located (AR-7 audit-first, NFR-4 no message loss, NFR-5 PII-min)
+- [x] Epic Tech Spec located (architecture.md references confirmed)
+- [x] Architecture/standards docs loaded
+- [x] Tech stack detected: Node 24 native TS strip, built-in fetch, Baserow REST, openzca HTTP
+- [x] Acceptance Criteria cross-checked against implementation — all 3 ACs confirmed
+- [x] File List reviewed — 11 files, all present in git history
+- [x] Tests identified and mapped to ACs; QA gap-fills committed (394 total)
+- [x] Code quality review performed on all changed files
+- [x] Security review performed — PII clean (no phone in logs), alert fire-and-forget, no injection risk
+- [x] Outcome decided: Approve
+- [x] Review notes appended under "Senior Developer Review (AI)"
+- [x] Change Log updated (commit b489d8c)
+- [x] Status: remains `done` — 0 CRITICAL issues
+- [x] Sprint status synced
+
+### Issues Found & Fixed
+
+| # | Severity | File | Issue | Fix |
+|---|----------|------|-------|-----|
+| 1 | HIGH | `messages-client.ts` L25 | `createMessageRecord` no `AbortSignal.timeout` — stalls send pipeline on slow Baserow | Added `signal: AbortSignal.timeout(10_000)` |
+| 2 | HIGH | Story file L298-300 | Duplicate empty `### File List` + misnamed `### Completion Notes List` | Removed empty duplicate; unified section |
+| 3 | MEDIUM | `messages-client.ts` L60 | `updateMessageStatus` no `AbortSignal.timeout` — blocks `queueDeadLetter` before 202 response | Added `signal: AbortSignal.timeout(10_000)` |
+| 4 | MEDIUM | Story file L304 | Completion notes said 387 tests; 394 after QA gap-fills (uncommitted) | Updated count + committed 7 gap-fill tests |
+| 5 | LOW | `sprint-status.yaml` | `last_updated` comment referenced story-2.3 context | Updated to story-2.4 review |
+
+### AC Verification
+
+- **AC1 (audit-first)**: `createMessageRecord(pending)` at send.ts:74 — before retry loop at L86. `send-audit.test.js` AC1 asserts `baserowPost.seq < openzcaSend.seq` ✓
+- **AC2 (retry + dead-letter)**: loop at send.ts:86-100, MAX_RETRIES=3, `recordSignal("send_error")` each failure, `queueDeadLetter` + `session.lost` alert after exhaustion. Test asserts exactly 3 openzca calls ✓
+- **AC3 (idempotent)**: PATCH same `rowId` at send.ts:103-104. Test asserts exactly 1 POST + 1 PATCH ✓
+
+### Security
+
+- No PII in logs — `customer_phone` never logged; `customer_ref` is SHA-256 16-char token ✓
+- Alert is fire-and-forget with `AbortSignal.timeout(5000)` + `.catch(console.error)` ✓
+- openzca request body: `pharmacy_id`, `recipient`, `content` — no PII beyond what is already sent to Zalo ✓
+- No SQL/command injection surface — all external calls via structured JSON ✓
