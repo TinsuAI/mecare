@@ -355,4 +355,49 @@ describe("MC-Handle-InboundReply workflow structure", () => {
       `expected >= 19 nodes (11 Epic4 + 8 Story5.1), got ${workflow.nodes.length}`
     );
   });
+
+  test("8.40 — Guard: Can Answer false branch kết nối tới Format FAQ Reply (AC2)", () => {
+    const falseBranchTarget = workflow.connections?.["Guard: Can Answer"]?.main?.[1]?.[0]?.node;
+    assert.equal(
+      falseBranchTarget,
+      "Format FAQ Reply",
+      `Guard: Can Answer false branch (can_answer=true) must go to 'Format FAQ Reply', got '${falseBranchTarget}'`
+    );
+  });
+
+  test("8.41 — Guard: Is Free Form false branch kết nối tới Return Result (AC1)", () => {
+    const falseBranchTarget = workflow.connections?.["Guard: Is Free Form"]?.main?.[1]?.[0]?.node;
+    assert.equal(
+      falseBranchTarget,
+      "Return Result",
+      `Guard: Is Free Form false branch (not free_form) must go to 'Return Result', got '${falseBranchTarget}'`
+    );
+  });
+
+  test("8.42 — Guard: Is Complaint Active false branch kết nối tới Call OpenClaw FAQ (AC6)", () => {
+    const falseBranchTarget = workflow.connections?.["Guard: Is Complaint Active"]?.main?.[1]?.[0]?.node;
+    assert.equal(
+      falseBranchTarget,
+      "Call OpenClaw FAQ",
+      `Guard: Is Complaint Active false branch (not active) must go to 'Call OpenClaw FAQ', got '${falseBranchTarget}'`
+    );
+  });
+
+  test("8.43 — Log Escalation Trigger kết nối tới Return Result (AC5, AC6)", () => {
+    const nextNode = workflow.connections?.["Log Escalation Trigger"]?.main?.[0]?.[0]?.node;
+    assert.equal(
+      nextNode,
+      "Return Result",
+      `Log Escalation Trigger must connect to 'Return Result', got '${nextNode}'`
+    );
+  });
+
+  test("8.44 — Format FAQ Reply kết nối tới Audit: Write Messages Pending (AC7 audit-first)", () => {
+    const nextNode = workflow.connections?.["Format FAQ Reply"]?.main?.[0]?.[0]?.node;
+    assert.equal(
+      nextNode,
+      "Audit: Write Messages Pending",
+      `Format FAQ Reply must connect to 'Audit: Write Messages Pending', got '${nextNode}'`
+    );
+  });
 });
