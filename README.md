@@ -44,7 +44,7 @@ docker compose ps
 # 7. Apply schema (10 bảng) + seed dữ liệu tructam — idempotent, chạy lại safe
 node scripts/apply-baserow-schema.mjs
 
-# 7b. Apply Baserow views (counter form, phone lookup, group views — Story 3.1/3.2)
+# 7b. Apply Baserow views (all 10 views: counter form, lookup, group, escalation, dashboard, edit views)
 node scripts/apply-baserow-schema.mjs --views
 ```
 
@@ -67,7 +67,7 @@ mecare/
 
 ## Tài liệu vận hành
 
-- [docs/runbook-onboarding.md](docs/runbook-onboarding.md) — onboarding nhà thuốc mới (placeholder, hoàn thiện ở epic sau).
+- [docs/runbook-onboarding.md](docs/runbook-onboarding.md) — onboarding nhà thuốc mới: seed kịch bản, cấu hình relay dược sĩ, warm-up 4 giai đoạn, relay test 2 chiều, privacy protocol, checklist go-live.
 
 ## Bảo mật
 
