@@ -131,4 +131,70 @@ describe("Story 7.2 — Warm-up & relay test runbook", () => {
       );
     });
   });
+
+  describe("19.13 — runbook document msg counts cụ thể (AC2)", () => {
+    test("19.13: runbook có msg counts 5, 15, 30, 50 tin/ngày cho từng tuần", () => {
+      assert.ok(
+        runbook.includes("| Tuần 1") && (runbook.includes("| 5 ") || runbook.includes("| 5|") || /Tuần 1[^|]*\|\s*5\b/.test(runbook)),
+        "runbook phải document 5 tin/ngày cho Tuần 1"
+      );
+      assert.ok(
+        /Tuần 2[^\n]*15|15[^\n]*Tuần 2/.test(runbook),
+        "runbook phải document 15 tin/ngày cho Tuần 2"
+      );
+      assert.ok(
+        /Tuần 3[^\n]*30|30[^\n]*Tuần 3/.test(runbook),
+        "runbook phải document 30 tin/ngày cho Tuần 3"
+      );
+      assert.ok(
+        /Tuần 4\+[^\n]*50|50[^\n]*Tuần 4\+/.test(runbook),
+        "runbook phải document 50 tin/ngày cho Tuần 4+"
+      );
+    });
+  });
+
+  describe("19.14 — runbook hướng dẫn copy env vars vào tenants/<slug>.env (AC1)", () => {
+    test("19.14: runbook nói copy WARMUP env vars vào tenants/<slug>.env", () => {
+      assert.ok(
+        runbook.includes("tenants/<slug>.env"),
+        "runbook phải hướng dẫn copy env vars vào tenants/<slug>.env"
+      );
+      assert.ok(
+        runbook.includes("bash zalo-bridge/warmup.sh") || runbook.includes("bash warmup.sh"),
+        "runbook phải nhắc chạy warmup.sh để sinh env vars (ví dụ: bash zalo-bridge/warmup.sh)"
+      );
+    });
+  });
+
+  describe("19.15 — relay checklist có trigger keywords (AC3 bước 1)", () => {
+    test("19.15: runbook có ít nhất 1 từ khóa trigger leo thang (nguy hiểm / cấp cứu / khó thở / không chắc)", () => {
+      const hasTriggerKeyword =
+        runbook.includes("nguy hiểm") ||
+        runbook.includes("cấp cứu") ||
+        runbook.includes("khó thở") ||
+        runbook.includes("không chắc");
+      assert.ok(
+        hasTriggerKeyword,
+        "runbook relay checklist phải có ít nhất 1 từ khóa trigger leo thang để test"
+      );
+    });
+  });
+
+  describe("19.16 — relay checklist xác nhận status=open khi EscalationCase tạo (AC3 bước 2)", () => {
+    test("19.16: runbook bước 2 relay có status=open", () => {
+      assert.ok(
+        runbook.includes("status=open"),
+        "runbook relay checklist bước 2 phải confirm EscalationCase status=open"
+      );
+    });
+  });
+
+  describe("19.17 — runbook yêu cầu mã ca khớp chính xác (AC4)", () => {
+    test("19.17: runbook nhấn mạnh case_id phải khớp chính xác giữa Zalo và Baserow", () => {
+      assert.ok(
+        runbook.includes("khớp chính xác"),
+        "runbook phải có yêu cầu case_id khớp chính xác — không có ký tự thừa, không khác format"
+      );
+    });
+  });
 });
