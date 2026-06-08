@@ -1,0 +1,21 @@
+{
+  "type": "grid",
+  "table": "FaqEntries",
+  "name": "faq-entries-edit",
+  "description": "Edit view cho chủ nhà thuốc tự quản lý FAQ phản ứng. TENANT ISOLATION: set filter pharmacy_id = tenant của bạn trước khi xem (theo onboarding runbook Story 7.1) — Baserow link_row filter đòi row_id cụ thể, view không hardcode filter value. Filter by pharmacy_id per tenant qua onboarding runbook. Chỉ status=approved được dùng trong RAG FAQ (Story 5.1).",
+  "sortings": [
+    { "field": "scope", "order": "ASC" }
+  ],
+  "fields": [
+    { "name": "scope",            "hidden": false },
+    { "name": "question",         "hidden": false },
+    { "name": "answer",           "hidden": false },
+    { "name": "mandatory_suffix", "hidden": false },
+    { "name": "status",           "hidden": false },
+    { "name": "pharmacy_id",      "hidden": true  },
+    { "name": "version",          "hidden": true  },
+    { "name": "updated_by",       "hidden": true  },
+    { "name": "approved_at",      "hidden": true  },
+    { "name": "approved_by",      "hidden": true  }
+  ]
+}

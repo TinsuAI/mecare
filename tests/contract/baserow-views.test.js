@@ -467,6 +467,11 @@ describe("AC4 gap (Story 6.1) — CareSchedule back-reference schema", () => {
 
 const quotaCounterDashboard = loadView("07-quota-counter-dashboard.json");
 
+// ── Story 6.3: Quản lý & tự duyệt kịch bản — edit views ──
+
+const messageTemplatesEdit = loadView("08-message-templates-edit.json");
+const faqEntriesEdit = loadView("09-faq-entries-edit.json");
+
 describe("AC1 (Story 6.2) — quota-counter-dashboard file exists", () => {
   test("16.1: loadView trả về object hợp lệ", () => {
     assert.ok(quotaCounterDashboard && typeof quotaCounterDashboard === "object",
@@ -532,5 +537,114 @@ describe("AC4 description (Story 6.2) — quota-counter-dashboard tenant isolati
       "description phải nhắc pharmacy_id để document tenant isolation");
     assert.match(quotaCounterDashboard.description, /runbook/i,
       "description phải nhắc runbook (onboarding step để set filter per-tenant)");
+  });
+});
+
+describe("AC1 (Story 6.3) — message-templates-edit file exists", () => {
+  test("17.1: loadView trả về object hợp lệ", () => {
+    assert.ok(messageTemplatesEdit && typeof messageTemplatesEdit === "object",
+      "08-message-templates-edit.json phải tồn tại và parse được");
+  });
+});
+
+describe("AC1 (Story 6.3) — message-templates-edit type và table", () => {
+  test("17.2: type = grid", () => {
+    assert.equal(messageTemplatesEdit.type, "grid", "type phải là grid");
+  });
+  test("17.3: table = MessageTemplates", () => {
+    assert.equal(messageTemplatesEdit.table, "MessageTemplates", "table phải là MessageTemplates");
+  });
+});
+
+describe("AC2 (Story 6.3) — message-templates-edit visible fields", () => {
+  test("17.4: care_group visible", () => {
+    const f = messageTemplatesEdit.fields.find((x) => x.name === "care_group");
+    assert.ok(f, "fields phải có care_group");
+    assert.equal(f.hidden, false, "care_group phải visible");
+  });
+  test("17.5: body_template visible", () => {
+    const f = messageTemplatesEdit.fields.find((x) => x.name === "body_template");
+    assert.ok(f, "fields phải có body_template");
+    assert.equal(f.hidden, false, "body_template phải visible");
+  });
+  test("17.6: status visible", () => {
+    const f = messageTemplatesEdit.fields.find((x) => x.name === "status");
+    assert.ok(f, "fields phải có status");
+    assert.equal(f.hidden, false, "status phải visible");
+  });
+});
+
+describe("AC2 (Story 6.3) — message-templates-edit hidden system fields", () => {
+  test("17.7: pharmacy_id hidden", () => {
+    const f = messageTemplatesEdit.fields.find((x) => x.name === "pharmacy_id");
+    assert.ok(f, "fields phải có pharmacy_id");
+    assert.equal(f.hidden, true, "pharmacy_id phải hidden (tenant isolation)");
+  });
+  test("17.8: version hidden", () => {
+    const f = messageTemplatesEdit.fields.find((x) => x.name === "version");
+    assert.ok(f, "fields phải có version");
+    assert.equal(f.hidden, true, "version phải hidden (system field)");
+  });
+  test("17.9: updated_by hidden", () => {
+    const f = messageTemplatesEdit.fields.find((x) => x.name === "updated_by");
+    assert.ok(f, "fields phải có updated_by");
+    assert.equal(f.hidden, true, "updated_by phải hidden (system field)");
+  });
+  test("17.10: approved_at hidden", () => {
+    const f = messageTemplatesEdit.fields.find((x) => x.name === "approved_at");
+    assert.ok(f, "fields phải có approved_at");
+    assert.equal(f.hidden, true, "approved_at phải hidden (system field)");
+  });
+});
+
+describe("AC3 (Story 6.3) — faq-entries-edit file exists", () => {
+  test("17.11: loadView trả về object hợp lệ", () => {
+    assert.ok(faqEntriesEdit && typeof faqEntriesEdit === "object",
+      "09-faq-entries-edit.json phải tồn tại và parse được");
+  });
+});
+
+describe("AC3 (Story 6.3) — faq-entries-edit type và table", () => {
+  test("17.12: type = grid", () => {
+    assert.equal(faqEntriesEdit.type, "grid", "type phải là grid");
+  });
+  test("17.13: table = FaqEntries", () => {
+    assert.equal(faqEntriesEdit.table, "FaqEntries", "table phải là FaqEntries");
+  });
+});
+
+describe("AC4 (Story 6.3) — faq-entries-edit visible fields", () => {
+  test("17.14: scope visible", () => {
+    const f = faqEntriesEdit.fields.find((x) => x.name === "scope");
+    assert.ok(f, "fields phải có scope");
+    assert.equal(f.hidden, false, "scope phải visible");
+  });
+  test("17.15: question visible", () => {
+    const f = faqEntriesEdit.fields.find((x) => x.name === "question");
+    assert.ok(f, "fields phải có question");
+    assert.equal(f.hidden, false, "question phải visible");
+  });
+  test("17.16: answer visible", () => {
+    const f = faqEntriesEdit.fields.find((x) => x.name === "answer");
+    assert.ok(f, "fields phải có answer");
+    assert.equal(f.hidden, false, "answer phải visible");
+  });
+  test("17.17: status visible", () => {
+    const f = faqEntriesEdit.fields.find((x) => x.name === "status");
+    assert.ok(f, "fields phải có status");
+    assert.equal(f.hidden, false, "status phải visible");
+  });
+});
+
+describe("AC4 (Story 6.3) — faq-entries-edit hidden system fields", () => {
+  test("17.18: pharmacy_id hidden", () => {
+    const f = faqEntriesEdit.fields.find((x) => x.name === "pharmacy_id");
+    assert.ok(f, "fields phải có pharmacy_id");
+    assert.equal(f.hidden, true, "pharmacy_id phải hidden (tenant isolation)");
+  });
+  test("17.19: version hidden", () => {
+    const f = faqEntriesEdit.fields.find((x) => x.name === "version");
+    assert.ok(f, "fields phải có version");
+    assert.equal(f.hidden, true, "version phải hidden (system field)");
   });
 });

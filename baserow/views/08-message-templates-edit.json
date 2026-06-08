@@ -1,0 +1,20 @@
+{
+  "type": "grid",
+  "table": "MessageTemplates",
+  "name": "message-templates-edit",
+  "description": "Edit view cho chủ nhà thuốc tự quản lý kịch bản chăm sóc. TENANT ISOLATION: set filter pharmacy_id = tenant của bạn trước khi xem (theo onboarding runbook Story 7.1) — Baserow link_row filter đòi row_id cụ thể, view không hardcode filter value. Filter by pharmacy_id per tenant qua onboarding runbook. R2 WARNING: chủ nhà thuốc chịu trách nhiệm nội dung y tế khi approve — không approve nội dung chưa được kiểm chứng. DRAFT→APPROVED WORKFLOW: sửa record → status auto về draft (set thủ công hoặc qua Baserow automation); bấm approve → set status=approved + cập nhật version/updated_by/approved_at (qua Baserow automation hoặc onboarding runbook). Chỉ status=approved được dùng trong proactive templates (Story 4.1).",
+  "sortings": [
+    { "field": "care_group", "order": "ASC" }
+  ],
+  "fields": [
+    { "name": "care_group",    "hidden": false },
+    { "name": "body_template", "hidden": false },
+    { "name": "status",        "hidden": false },
+    { "name": "scenario_id",   "hidden": true  },
+    { "name": "pharmacy_id",   "hidden": true  },
+    { "name": "version",       "hidden": true  },
+    { "name": "updated_by",    "hidden": true  },
+    { "name": "approved_at",   "hidden": true  },
+    { "name": "approved_by",   "hidden": true  }
+  ]
+}
