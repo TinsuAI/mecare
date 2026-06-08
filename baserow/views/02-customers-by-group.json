@@ -2,7 +2,7 @@
   "type": "grid",
   "table": "Customers",
   "name": "customers-by-group",
-  "description": "Danh sách khách theo nhóm chăm sóc. Inline-edit care_group để đổi nhóm. Dùng kèm CustomerGroupChanges để log thay đổi.",
+  "description": "Danh sách khách theo nhóm chăm sóc. Inline-edit care_group để đổi nhóm. Dùng kèm CustomerGroupChanges để log thay đổi. Tenant isolation: set filter pharmacy_id = tenant của bạn trước khi xem (hoặc theo runbook Story 7.1). Baserow link_row filter đòi row_id cụ thể — view không hardcode filter value.",
   "sortings": [
     { "field": "care_group", "order": "ASC" },
     { "field": "full_name",  "order": "ASC" }
@@ -12,6 +12,8 @@
     { "name": "phone",               "hidden": false },
     { "name": "care_group",          "hidden": false },
     { "name": "is_complaint_active", "hidden": false },
+    { "name": "is_opted_out",        "hidden": false },
+    { "name": "group6_unlocked",     "hidden": false },
     { "name": "friend_status",       "hidden": false },
     { "name": "notes",               "hidden": false },
     { "name": "pharmacy_id",         "hidden": false },

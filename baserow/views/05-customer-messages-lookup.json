@@ -1,0 +1,22 @@
+{
+  "type": "grid",
+  "table": "Messages",
+  "name": "customer-messages-lookup",
+  "description": "Lịch sử hội thoại — filter theo pharmacy_id để xem tin của tenant. customer_ref = token ẩn danh (NFR-5, không phải tên/SĐT thật). Không có back-reference từ Customer record do thiết kế PII-min v1.",
+  "sortings": [
+    { "field": "pharmacy_id", "order": "ASC" },
+    { "field": "ts",          "order": "DESC" }
+  ],
+  "fields": [
+    { "name": "customer_ref", "hidden": false },
+    { "name": "type",         "hidden": false },
+    { "name": "status",       "hidden": false },
+    { "name": "case_id",      "hidden": false },
+    { "name": "content",      "hidden": false },
+    { "name": "ts",           "hidden": false },
+    { "name": "pharmacy_id",  "hidden": false },
+    { "name": "message_id",   "hidden": true  },
+    { "name": "error",        "hidden": true  },
+    { "name": "care_group",   "hidden": true  }
+  ]
+}

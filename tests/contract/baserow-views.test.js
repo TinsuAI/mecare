@@ -5,10 +5,15 @@ import fs from "node:fs";
 import path from "node:path";
 import { repoPath } from "../helpers/server.js";
 
-const VIEWS_DIR = repoPath("baserow/views");
+const VIEWS_DIR   = repoPath("baserow/views");
+const SCHEMAS_DIR = repoPath("baserow/schema");
 
 function loadView(filename) {
   return JSON.parse(fs.readFileSync(path.join(VIEWS_DIR, filename), "utf8"));
+}
+
+function loadSchema(filename) {
+  return JSON.parse(fs.readFileSync(path.join(SCHEMAS_DIR, filename), "utf8"));
 }
 
 const counterForm = loadView("02-customers-counter-form.json");
@@ -314,5 +319,146 @@ describe("AC8 (Story 5.4) — escalation-cases-list grid view", () => {
 
   test("description tồn tại", () => {
     assert.ok(escalationList.description, "escalation-cases-list thiếu description");
+  });
+});
+
+// ── Story 6.1: Customer profile & group filter views (AC1/AC5/AC6/AC7/AC8) ──
+
+const customersGallery   = loadView("02-customers-gallery.json");
+const messagesLookup     = loadView("05-customer-messages-lookup.json");
+
+describe("AC1/AC7 (Story 6.1) — customers-by-group updated", () => {
+  test("15.1: is_opted_out có trong fields với hidden: false", () => {
+    const field = customersByGroup.fields.find((f) => f.name === "is_opted_out");
+    assert.ok(field, "is_opted_out thiếu trong customers-by-group");
+    assert.equal(field.hidden, false, "is_opted_out phải visible");
+  });
+
+  test("15.2: group6_unlocked có trong fields với hidden: false", () => {
+    const field = customersByGroup.fields.find((f) => f.name === "group6_unlocked");
+    assert.ok(field, "group6_unlocked thiếu trong customers-by-group");
+    assert.equal(field.hidden, false, "group6_unlocked phải visible");
+  });
+
+  test("15.3: tổng visible field count ≥ 9", () => {
+    const required = ["full_name", "phone", "care_group", "is_complaint_active", "is_opted_out", "group6_unlocked", "friend_status", "notes", "pharmacy_id"];
+    const visible = new Set(
+      customersByGroup.fields.filter((f) => f.hidden === false).map((f) => f.name)
+    );
+    for (const name of required) {
+      assert.ok(visible.has(name), `${name} phải visible trong customers-by-group`);
+    }
+    assert.ok(visible.size >= 9, `visible field count ${visible.size} < 9`);
+  });
+});
+
+describe("AC6 (Story 6.1) — customers-gallery view", () => {
+  test("15.4: type=gallery, table=Customers, name=customers-gallery", () => {
+    assert.equal(customersGallery.type, "gallery");
+    assert.equal(customersGallery.table, "Customers");
+    assert.equal(customersGallery.name, "customers-gallery");
+  });
+
+  test("15.5: full_name, care_group, phone, is_complaint_active, is_opted_out, friend_status visible", () => {
+    const visible = new Set(
+      customersGallery.fields.filter((f) => f.hidden === false).map((f) => f.name)
+    );
+    for (const name of ["full_name", "care_group", "phone", "is_complaint_active", "is_opted_out", "friend_status"]) {
+      assert.ok(visible.has(name), `${name} phải visible trong customers-gallery`);
+    }
+  });
+
+  test("15.6: description tồn tại và đề cập pharmacy_id filter", () => {
+    assert.ok(customersGallery.description, "customers-gallery thiếu description");
+    assert.match(customersGallery.description, /pharmacy_id/, "description phải đề cập pharmacy_id filter");
+  });
+});
+
+describe("AC5 (Story 6.1) — customer-messages-lookup view", () => {
+  test("15.7: type=grid, table=Messages, name=customer-messages-lookup", () => {
+    assert.equal(messagesLookup.type, "grid");
+    assert.equal(messagesLookup.table, "Messages");
+    assert.equal(messagesLookup.name, "customer-messages-lookup");
+  });
+
+  test("15.8: sort ts DESC; customer_ref, type, status, case_id, content, ts, pharmacy_id visible; message_id và error hidden", () => {
+    const tsSort = messagesLookup.sortings.find((s) => s.field === "ts");
+    assert.ok(tsSort, "sortings phải có entry cho field ts");
+    assert.equal(tsSort.order, "DESC", "ts phải sort DESC");
+
+    const visible = new Set(
+      messagesLookup.fields.filter((f) => f.hidden === false).map((f) => f.name)
+    );
+    for (const name of ["customer_ref", "type", "status", "case_id", "content", "ts", "pharmacy_id"]) {
+      assert.ok(visible.has(name), `${name} phải visible trong customer-messages-lookup`);
+    }
+
+    const hidden = new Set(
+      messagesLookup.fields.filter((f) => f.hidden === true).map((f) => f.name)
+    );
+    assert.ok(hidden.has("message_id"), "message_id phải hidden");
+    assert.ok(hidden.has("error"), "error phải hidden");
+  });
+});
+
+// ── Story 6.1 gap-fill: AC1/AC2/AC3/AC4/AC5/AC6 supplemental ──
+
+const purchasesSchema    = loadSchema("03-medications.json");
+const careScheduleSchema = loadSchema("04-care-schedule.json");
+
+describe("AC1 gap (Story 6.1) — customers-by-group sort order", () => {
+  test("15.9: sortings = care_group ASC then full_name ASC", () => {
+    assert.ok(Array.isArray(customersByGroup.sortings), "sortings phải là array");
+    const careGroupSort = customersByGroup.sortings.find((s) => s.field === "care_group");
+    assert.ok(careGroupSort, "sortings phải có entry care_group");
+    assert.equal(careGroupSort.order, "ASC", "care_group phải sort ASC");
+    const fullNameSort = customersByGroup.sortings.find((s) => s.field === "full_name");
+    assert.ok(fullNameSort, "sortings phải có entry full_name");
+    assert.equal(fullNameSort.order, "ASC", "full_name phải sort ASC");
+  });
+});
+
+describe("AC2 gap (Story 6.1) — customers-by-group tenant isolation", () => {
+  test("15.10: description tồn tại và đề cập pharmacy_id isolation", () => {
+    assert.ok(customersByGroup.description, "customers-by-group thiếu description");
+    assert.match(customersByGroup.description, /pharmacy_id/, "description phải đề cập pharmacy_id");
+  });
+});
+
+describe("AC5 gap (Story 6.1) — customer-messages-lookup pharmacy_id sort", () => {
+  test("15.11: sortings có pharmacy_id ASC (tenant grouping)", () => {
+    const pidSort = messagesLookup.sortings.find((s) => s.field === "pharmacy_id");
+    assert.ok(pidSort, "sortings phải có entry pharmacy_id");
+    assert.equal(pidSort.order, "ASC", "pharmacy_id phải sort ASC để nhóm theo tenant");
+  });
+});
+
+describe("AC6 gap (Story 6.1) — customers-gallery sort order", () => {
+  test("15.12: sortings = care_group ASC then full_name ASC", () => {
+    assert.ok(Array.isArray(customersGallery.sortings), "sortings phải là array");
+    const careGroupSort = customersGallery.sortings.find((s) => s.field === "care_group");
+    assert.ok(careGroupSort, "sortings phải có entry care_group");
+    assert.equal(careGroupSort.order, "ASC", "care_group phải sort ASC");
+    const fullNameSort = customersGallery.sortings.find((s) => s.field === "full_name");
+    assert.ok(fullNameSort, "sortings phải có entry full_name");
+    assert.equal(fullNameSort.order, "ASC", "full_name phải sort ASC");
+  });
+});
+
+describe("AC3 gap (Story 6.1) — Purchases back-reference schema", () => {
+  test("15.13: Purchases.customer_id là link_row → Customers", () => {
+    const field = purchasesSchema.fields.find((f) => f.name === "customer_id");
+    assert.ok(field, "03-medications.json phải có field customer_id");
+    assert.equal(field.type, "link_row", "customer_id phải type=link_row");
+    assert.equal(field.link_table, "Customers", "customer_id phải link tới Customers table");
+  });
+});
+
+describe("AC4 gap (Story 6.1) — CareSchedule back-reference schema", () => {
+  test("15.14: CareSchedule.customer_id là link_row → Customers", () => {
+    const field = careScheduleSchema.fields.find((f) => f.name === "customer_id");
+    assert.ok(field, "04-care-schedule.json phải có field customer_id");
+    assert.equal(field.type, "link_row", "customer_id phải type=link_row");
+    assert.equal(field.link_table, "Customers", "customer_id phải link tới Customers table");
   });
 });

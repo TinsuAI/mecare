@@ -1,0 +1,23 @@
+{
+  "type": "gallery",
+  "table": "Customers",
+  "name": "customers-gallery",
+  "description": "Gallery view hồ sơ khách — browse theo card. Lọc theo pharmacy_id trước khi xem.",
+  "sortings": [
+    { "field": "care_group", "order": "ASC" },
+    { "field": "full_name",  "order": "ASC" }
+  ],
+  "fields": [
+    { "name": "full_name",           "hidden": false },
+    { "name": "care_group",          "hidden": false },
+    { "name": "phone",               "hidden": false },
+    { "name": "is_complaint_active", "hidden": false },
+    { "name": "is_opted_out",        "hidden": false },
+    { "name": "friend_status",       "hidden": false },
+    { "name": "notes",               "hidden": true  },
+    { "name": "pharmacy_id",         "hidden": true  },
+    { "name": "group6_unlocked",     "hidden": true  },
+    { "name": "created_at",          "hidden": true  },
+    { "name": "updated_at",          "hidden": true  }
+  ]
+}
