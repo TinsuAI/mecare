@@ -270,8 +270,9 @@ Khách ──Zalo── [openzalo channel] ─┐
 - Ghi `Messages` audit-first trước mọi side-effect.
 - Quota check 2 tầng (n8n tháng + bridge ngày) trước khi gửi.
 - Fail-safe: nghi ngờ y tế → leo thang, không tự trả lời.
+- **Baserow view tenant isolation:** `pharmacy_id` field BẮT BUỘC `hidden: true` trong mọi view JSON; description của view PHẢI ghi rõ "Filter by pharmacy_id per tenant qua onboarding runbook" — KHÔNG hardcode link_row filter value (cần row_id cụ thể per tenant).
 
-**Anti-patterns (TRÁNH):** gửi tên/SĐT thật ra cloud · tạo ID ca tùy tiện · gửi tin không qua quota check · agent sinh tự do nội dung y tế proactive · drop tin lỗi không alert · trộn camelCase/snake_case.
+**Anti-patterns (TRÁNH):** gửi tên/SĐT thật ra cloud · tạo ID ca tùy tiện · gửi tin không qua quota check · agent sinh tự do nội dung y tế proactive · drop tin lỗi không alert · trộn camelCase/snake_case · hardcode pharmacy_id row_id trong view JSON.
 
 ## Project Structure & Boundaries
 
@@ -301,7 +302,7 @@ mecare/
 │   │   ├── 09-faq-entries.json     # FaqEntries (FAQ reactive)
 │   │   └── 10-customer-group-changes.json  # CustomerGroupChanges (audit log đổi nhóm — Story 3.2)
 │   ├── seed/                       # data mẫu Trúc Tâm
-│   └── views/                      # form + grid views; 02-customers-by-group, 02-customers-counter-form, 02-customers-phone-lookup, 05-messages-history, 06-escalation-cases-list, 10-customer-group-changes-log
+│   └── views/                      # form + grid views; 02-customers-by-group, 02-customers-counter-form, 02-customers-phone-lookup, 02-customers-gallery, 05-messages-history, 05-customer-messages-lookup, 06-escalation-cases-list, 07-quota-counter-dashboard, 08-message-templates-edit, 09-faq-entries-edit, 10-customer-group-changes-log
 │
 ├── n8n/                            # SCHEDULER + relay watchdog + quota
 │   ├── lib/                        # pure JS logic (unit-tested; copy-paste inline vào Code nodes)
