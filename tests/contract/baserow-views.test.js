@@ -517,3 +517,20 @@ describe("AC1 sort (Story 6.2) — quota-counter-dashboard sort period_month DES
     assert.equal(s.order, "DESC", "period_month phải sort DESC (mới nhất lên đầu)");
   });
 });
+
+describe("AC1 name (Story 6.2) — quota-counter-dashboard view name", () => {
+  test("16.9: name = quota-counter-dashboard", () => {
+    assert.equal(quotaCounterDashboard.name, "quota-counter-dashboard",
+      "view name phải là quota-counter-dashboard");
+  });
+});
+
+describe("AC4 description (Story 6.2) — quota-counter-dashboard tenant isolation documented", () => {
+  test("16.10: description mention pharmacy_id và runbook (tenant isolation contract)", () => {
+    assert.ok(quotaCounterDashboard.description, "07-quota-counter-dashboard.json thiếu description");
+    assert.match(quotaCounterDashboard.description, /pharmacy_id/i,
+      "description phải nhắc pharmacy_id để document tenant isolation");
+    assert.match(quotaCounterDashboard.description, /runbook/i,
+      "description phải nhắc runbook (onboarding step để set filter per-tenant)");
+  });
+});

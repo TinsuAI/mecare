@@ -1,6 +1,6 @@
 # Story 6.2: Dashboard chỉ số cơ bản
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -83,12 +83,49 @@ claude-sonnet-4-6
 
 - Created `baserow/views/07-quota-counter-dashboard.json`: grid view, QuotaCounter table, period_month/sent_count/cap visible, pharmacy_id hidden, sorted period_month DESC.
 - Added tests 16.1–16.8 to `tests/contract/baserow-views.test.js`. All 8 tests pass.
-- Full test suite: 790/790 pass (782 existing + 8 new). Zero regressions.
+- QA workflow added tests 16.9–16.10 for additional name/description coverage (AC1 name contract, AC4 tenant isolation documentation contract).
+- Full test suite: 792/792 pass (782 existing + 10 new). Zero regressions.
 - No custom frontend code created (architecture.md line 167 constraint respected).
 
 ### File List
 
 - `baserow/views/07-quota-counter-dashboard.json` (new)
-- `tests/contract/baserow-views.test.js` (modified — added tests 16.1–16.8)
+- `tests/contract/baserow-views.test.js` (modified — added tests 16.1–16.10; 16.9–16.10 added by QA for name/description coverage)
 - `_bmad-output/implementation-artifacts/sprint-status.yaml` (modified — 6-2: done)
 - `_bmad-output/implementation-artifacts/6-2-dashboard-chi-so-co-ban.md` (modified — task checkboxes, completion notes)
+
+## Senior Developer Review (AI)
+
+**Date:** 2026-06-07
+**Reviewer:** gabenidolcs (AI-assisted)
+**Outcome:** APPROVED ✅
+
+### Review Notes
+
+**Verified ACs:**
+- AC1 ✅ — `07-quota-counter-dashboard.json` exists, valid JSON, `type=grid`, `table=QuotaCounter`
+- AC2 ✅ — `period_month`, `sent_count`, `cap` all `hidden=false`; `pharmacy_id` `hidden=true`
+- AC3 ✅ — `sortings[0].field=period_month`, `sortings[0].order=DESC`
+- AC4 ✅ — `pharmacy_id` hidden in view JSON; description documents "pharmacy_id" + "runbook" tenant isolation pattern
+- AC5 ✅ — `06-escalation-cases-list.json` has `case_id`, `state`, `created_at` all visible; no new view needed
+- AC6 ✅ — `02-customers-by-group.json` shows care_group distribution sorted ASC; no new view needed
+- AC7 ✅ — Tests 16.1–16.10 pass; full suite 792/792, zero regressions (AC7 requires ≥790)
+- AC8 ✅ — No Express route, EJS template, API endpoint, or custom frontend code found
+
+**Issues auto-fixed (2 MEDIUM, 2 LOW):**
+1. [MEDIUM-fixed] Story status was `ready-for-dev` → updated to `done`
+2. [MEDIUM-fixed] Tests 16.9–16.10 were unstaged → staged and committed
+3. [LOW-fixed] Completion notes said "8 tests / 790 pass" → updated to "10 tests / 792 pass"
+4. [LOW-fixed] File list note said "16.1–16.8" → updated to "16.1–16.10"
+
+**Notes:**
+- `02-customers-by-group.json` has `pharmacy_id` visible (not hidden) — pre-existing Story 6.1 behavior; tenant isolation enforced via runtime filter per onboarding runbook. Out of scope for 6.2.
+- Tests 16.9–16.10 added by QA workflow strengthen AC1 (name contract) and AC4 (description documents tenant isolation). Good additions.
+
+### Change Log
+
+| Date | Author | Change |
+|------|--------|--------|
+| 2026-06-07 | gabenidolcs (AI) | Story created |
+| 2026-06-07 | gabenidolcs (AI) | Implementation complete — all tasks done, 792 tests pass |
+| 2026-06-07 | gabenidolcs (AI) | Review approved — 4 issues auto-fixed, status → done |
