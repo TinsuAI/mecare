@@ -101,7 +101,12 @@ Trước khi mở tải thật cho nhà thuốc, xác nhận **3 điều kiện 
   - [ ] **(c1) Warm-up env vars set:** Chạy `bash zalo-bridge/warmup.sh <slug>`, copy env vars giai đoạn 1 vào `tenants/<slug>.env`, restart zalo-bridge. Nâng giai đoạn theo tuần (xem section "Warm-up giai đoạn tải thấp").
   - [ ] **(c2) Relay test 2 chiều pass:** Hoàn thành checklist 6 bước trong section "Kiểm thử relay 2 chiều" — EscalationCase tạo, dược sĩ nhận tin, reply relay thành công, `status=resolved`.
 
-> Chỉ mở tải thật sau khi cả 3 điều kiện trên đều xanh.
+- [ ] **(d) Story 7.3 — NFR-7 privacy & complaint path xác nhận:**
+  - Xác nhận field `is_complaint_active` tồn tại trong schema customers (Baserow → bảng Customers → kiểm tra column).
+  - Xác nhận field `group6_unlocked` tồn tại trong schema customers (Baserow → bảng Customers → kiểm tra column).
+  - Xác nhận `PHARMACIST_ZALO_ID` đã điền — complaint escalation path cần ID này để gửi relay dược sĩ.
+
+> Chỉ mở tải thật sau khi cả 4 điều kiện trên đều xanh.
 
 ## Warm-up giai đoạn tải thấp
 
@@ -191,6 +196,56 @@ Zalo → zalo-bridge → OpenClaw (khớp mã ca) → relay trả lời → Khá
 **Mã ca format:** `ESC-<pharmacy_slug>-<YYYYMMDD>-<seq>` (pattern: `/^ESC-([a-z0-9]+)-(\d{8})-(\d+)$/`)
 
 Kết quả kiểm thử chỉ đạt khi `case_id` trong tin gửi dược sĩ **khớp chính xác** với `case_id` trong bảng `EscalationCases` Baserow — không có ký tự thừa, không khác format.
+
+## Privacy & quy trình khiếu nại trong vận hành
+
+### Quyền từ chối thông tin sức khỏe (Nhóm 6)
+
+Khách chọn `care_group=6` là khách **từ chối cung cấp thông tin sức khỏe**. Hệ thống tôn trọng quyền này: không ép, không hỏi lại.
+
+**Cách hệ thống xử lý Nhóm 6:**
+
+- **Inbound reply (khách nhắn vào):** Luôn được phục vụ bình thường — `guard-is-group6` trong `MC-Handle-InboundReply` chỉ ghi nhận, không chặn. Khi Nhóm 6 reply lần đầu, node `unlock-group6-customer` tự đặt `group6_unlocked=true`.
+- **Proactive outbound (hệ thống nhắn ra):**
+  - `group6_unlocked=false` (chưa từng phản hồi): `guard-group6-locked` trong `MC-Schedule-DueReminders` **chặn** — không gửi tin chủ động.
+  - `group6_unlocked=true` (đã phản hồi ít nhất 1 lần): guard vượt qua — tin proactive được gửi bình thường.
+
+**Nguyên tắc vận hành:** Không yêu cầu Nhóm 6 cung cấp thêm thông tin để nhận dịch vụ. Nếu khách tự chủ động nhắn, hệ thống phục vụ và unlock tự động — không cần can thiệp thủ công.
+
+### Quy trình tiếp nhận khiếu nại chất lượng (Nhóm 5)
+
+Khi khách khiếu nại về chất lượng sản phẩm, hệ thống tự phân loại `trigger_type=complaint_serious` và tạo `EscalationCase` → relay dược sĩ. Dược sĩ **không để khách tự xử lý** — tiếp nhận ngay và xử lý trong ngày (NFR-3).
+
+**Hai đường kích hoạt complaint_serious:**
+1. Cờ `is_complaint_active=true` trong record khách (Priority 1 trong Classification jsCode) — ưu tiên tuyệt đối, kích hoạt trước tất cả phân loại khác.
+2. Từ khóa trong tin nhắn (Priority 9): `khiếu nại`, `tố cáo`, `bồi thường`, `thuốc giả`, `phản ánh`.
+
+**Lưu ý:** `is_complaint_active` là cờ cắt ngang — KHÔNG ghi đè `care_group`. Khách vẫn giữ nhóm chăm sóc gốc khi có khiếu nại.
+
+**Checklist thu thập bằng chứng (dược sĩ thực hiện khi nhận EscalationCase loại complaint_serious):**
+
+1. Thu thập ảnh sản phẩm (chụp rõ nhãn)
+2. Ghi số lô (batch number) và HSD (hạn sử dụng) từ hộp/lọ
+3. Khách mô tả triệu chứng hoặc vấn đề chất lượng
+4. Cam kết với khách: đổi sản phẩm / hoàn tiền / báo NSX (nhà sản xuất)
+5. Tạo báo cáo nội bộ và báo nhà sản xuất nếu cần
+
+**SLA khiếu nại (NFR-3):**
+
+| Thời điểm | Hành động |
+|-----------|-----------|
+| Trong giờ làm việc | Tiếp nhận ngay, xử lý trong ngày |
+| Ngoài giờ làm việc | Ghi nhận ngay, phản hồi sáng hôm sau |
+
+### Quy tắc gửi khuyến mãi
+
+Tin khuyến mãi chỉ gửi đến khách **đã từng mua sản phẩm liên quan** — phân nhóm qua `care_group`:
+
+- `care_group=4` = Nhóm 4 (proactive follow-up sau mua) — khách đã mua sản phẩm liên quan.
+- `MC-Schedule-DueReminders` lọc customers theo `care_group` từ Baserow trước khi gửi → tin khuyến mãi chỉ đến đúng nhóm.
+- Template được gán `care_group` tại seed time — dược sĩ không cần filter thủ công.
+
+**Nguyên tắc:** Không gửi promo đại trà. Mỗi template khuyến mãi có `care_group` target cụ thể; hệ thống tự lọc đúng đối tượng.
 
 ## Kiểm tra stack healthy
 
