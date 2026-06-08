@@ -16,7 +16,7 @@ so that kịch bản khớp nhu cầu nhà thuốc mà không cần MeCare can t
 4. **AC4 — FaqEntries fields đúng:** `scope`, `question`, `answer`, `mandatory_suffix`, `status` đều `hidden=false`; system fields `pharmacy_id`, `version`, `updated_by`, `approved_at`, `approved_by` đều `hidden=true`.
 5. **AC5 — Tenant isolation documented:** `pharmacy_id` ẩn trong cả 2 view JSON; description của mỗi view ghi rõ "Filter by pharmacy_id per tenant qua onboarding runbook" — link_row filter không hardcode vì cần row_id cụ thể per tenant (đồng nhất với pattern Story 6.1 + 6.2).
 6. **AC6 — R2 warning + draft→approved workflow documented:** description của `08-message-templates-edit.json` ghi rõ cảnh báo R2 (chủ chịu trách nhiệm nội dung y tế) và workflow draft→approved (sửa → auto draft; bấm approve → status=approved, cần set version/updated_by/approved_at qua Baserow automation hoặc onboarding runbook).
-7. **AC7 — Contract tests pass:** Tests 17.1–17.19 trong `tests/contract/baserow-views.test.js` cover AC1–AC5; toàn bộ suite pass (kể cả 792 existing tests không có regression).
+7. **AC7 — Contract tests pass:** Tests 17.1–17.29 trong `tests/contract/baserow-views.test.js` cover AC1–AC6; toàn bộ suite pass (kể cả 792 existing tests không có regression).
 8. **AC8 — Không build frontend:** Không tạo Express route, EJS template, API endpoint, hay bất kỳ custom frontend code nào (architecture.md line 167).
 
 ## Tasks / Subtasks
@@ -190,13 +190,45 @@ claude-sonnet-4-6
 ### Debug Log References
 
 ### Completion Notes List
-- 811/811 tests pass (792 existing + 19 new tests 17.1–17.19)
+- 821/821 tests pass (792 existing + 19 original tests 17.1–17.19 + 10 gap-fill tests 17.20–17.29)
+- QA gap-fill: tests 17.20–17.29 added covering scenario_id/approved_by hidden (AC2), mandatory_suffix visible + updated_by/approved_at/approved_by hidden (AC4), tenant isolation description (AC5), R2 warning + draft→approved description (AC6)
 - Workspace visibility ("chỉ thấy 2 bảng") is Baserow Admin UI permission — deferred to Story 7.1 runbook
 - R2 warning + draft→approved workflow documented in view description; enforcement via Baserow automation or runbook
 
 ### File List
 - baserow/views/08-message-templates-edit.json (new)
 - baserow/views/09-faq-entries-edit.json (new)
-- tests/contract/baserow-views.test.js (modified: loadView calls + tests 17.1–17.19)
+- tests/contract/baserow-views.test.js (modified: loadView calls + tests 17.1–17.29)
 - _bmad-output/implementation-artifacts/sprint-status.yaml (6-3: ready-for-dev → done)
 - _bmad-output/implementation-artifacts/6-3-quan-ly-tu-duyet-kich-ban-chu-hieu-thuoc.md (task checkboxes + completion notes)
+
+## Senior Developer Review (AI)
+
+**Reviewer:** gabenidolcs (claude-sonnet-4-6) on 2026-06-07
+
+**Outcome: APPROVED**
+
+### Review Summary
+
+Implementation is correct and complete. Both view JSONs match AC field visibility requirements exactly. 821/821 tests pass with no regressions. No frontend code created (AC8 ✅). Tenant isolation documented in descriptions per established Story 6.1/6.2 pattern. R2 warning + draft→approved workflow documented in 08 description.
+
+### Issues Found and Auto-Fixed
+
+| # | Severity | Issue | Fix Applied |
+|---|----------|-------|-------------|
+| 1 | MEDIUM | QA gap-fill tests 17.20–17.29 + completion notes update were unstaged — not committed after S86 session | Committed via review commit |
+| 2 | LOW | AC7 text referenced "17.1–17.19 cover AC1–AC5" — stale after QA gap-fill extended to 17.29 | Updated to "17.1–17.29 cover AC1–AC6" |
+| 3 | LOW | File List entry showed "tests 17.1–17.19" | Updated to "17.1–17.29" |
+| 4 | LOW | sprint-status comment: "6-3: done (dev complete)" | Updated to "review approved" |
+
+### Checklist
+
+- [x] Story file loaded
+- [x] Status verified (done)
+- [x] ACs cross-checked against implementation — all 8 ACs met
+- [x] File list reviewed — 2 new view JSONs, 1 modified test file, sprint-status, story artifact
+- [x] Tests mapped to ACs — 17.1–17.29 cover AC1–AC6; 821/821 pass
+- [x] Code quality reviewed — clean JSON structure, consistent with Story 6.1/6.2 pattern
+- [x] Security reviewed — static JSON, no dynamic code, no credentials, no XSS surface
+- [x] No CRITICAL issues found
+- [x] Sprint status synced — comment updated to "review approved"

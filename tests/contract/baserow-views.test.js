@@ -648,3 +648,77 @@ describe("AC4 (Story 6.3) — faq-entries-edit hidden system fields", () => {
     assert.equal(f.hidden, true, "version phải hidden (system field)");
   });
 });
+
+describe("AC2 (Story 6.3) — message-templates-edit additional hidden system fields", () => {
+  test("17.20: scenario_id hidden", () => {
+    const f = messageTemplatesEdit.fields.find((x) => x.name === "scenario_id");
+    assert.ok(f, "fields phải có scenario_id");
+    assert.equal(f.hidden, true, "scenario_id phải hidden (system key)");
+  });
+  test("17.21: approved_by hidden", () => {
+    const f = messageTemplatesEdit.fields.find((x) => x.name === "approved_by");
+    assert.ok(f, "fields phải có approved_by");
+    assert.equal(f.hidden, true, "approved_by phải hidden (system field)");
+  });
+});
+
+describe("AC4 (Story 6.3) — faq-entries-edit mandatory_suffix visible", () => {
+  test("17.22: mandatory_suffix visible", () => {
+    const f = faqEntriesEdit.fields.find((x) => x.name === "mandatory_suffix");
+    assert.ok(f, "fields phải có mandatory_suffix");
+    assert.equal(f.hidden, false, "mandatory_suffix phải visible");
+  });
+});
+
+describe("AC4 (Story 6.3) — faq-entries-edit additional hidden system fields", () => {
+  test("17.23: updated_by hidden", () => {
+    const f = faqEntriesEdit.fields.find((x) => x.name === "updated_by");
+    assert.ok(f, "fields phải có updated_by");
+    assert.equal(f.hidden, true, "updated_by phải hidden (system field)");
+  });
+  test("17.24: approved_at hidden", () => {
+    const f = faqEntriesEdit.fields.find((x) => x.name === "approved_at");
+    assert.ok(f, "fields phải có approved_at");
+    assert.equal(f.hidden, true, "approved_at phải hidden (system field)");
+  });
+  test("17.25: approved_by hidden", () => {
+    const f = faqEntriesEdit.fields.find((x) => x.name === "approved_by");
+    assert.ok(f, "fields phải có approved_by");
+    assert.equal(f.hidden, true, "approved_by phải hidden (system field)");
+  });
+});
+
+describe("AC5 (Story 6.3) — tenant isolation documented in descriptions", () => {
+  test("17.26: 08-message-templates-edit description có tenant isolation note", () => {
+    assert.ok(
+      typeof messageTemplatesEdit.description === "string" &&
+        messageTemplatesEdit.description.includes("Filter by pharmacy_id per tenant qua onboarding runbook"),
+      "description phải ghi rõ tenant isolation runbook"
+    );
+  });
+  test("17.27: 09-faq-entries-edit description có tenant isolation note", () => {
+    assert.ok(
+      typeof faqEntriesEdit.description === "string" &&
+        faqEntriesEdit.description.includes("Filter by pharmacy_id per tenant qua onboarding runbook"),
+      "description phải ghi rõ tenant isolation runbook"
+    );
+  });
+});
+
+describe("AC6 (Story 6.3) — R2 warning + draft→approved documented in 08 description", () => {
+  test("17.28: description có R2 warning", () => {
+    assert.ok(
+      typeof messageTemplatesEdit.description === "string" &&
+        messageTemplatesEdit.description.includes("R2"),
+      "description phải có cảnh báo R2 (chủ chịu trách nhiệm nội dung y tế)"
+    );
+  });
+  test("17.29: description có draft→approved workflow", () => {
+    assert.ok(
+      typeof messageTemplatesEdit.description === "string" &&
+        messageTemplatesEdit.description.toLowerCase().includes("draft") &&
+        messageTemplatesEdit.description.toLowerCase().includes("approved"),
+      "description phải document workflow draft→approved"
+    );
+  });
+});
