@@ -462,3 +462,58 @@ describe("AC4 gap (Story 6.1) — CareSchedule back-reference schema", () => {
     assert.equal(field.link_table, "Customers", "customer_id phải link tới Customers table");
   });
 });
+
+// ── Story 6.2: Dashboard chỉ số cơ bản — quota-counter-dashboard view ──
+
+const quotaCounterDashboard = loadView("07-quota-counter-dashboard.json");
+
+describe("AC1 (Story 6.2) — quota-counter-dashboard file exists", () => {
+  test("16.1: loadView trả về object hợp lệ", () => {
+    assert.ok(quotaCounterDashboard && typeof quotaCounterDashboard === "object",
+      "07-quota-counter-dashboard.json phải tồn tại và parse được");
+  });
+});
+
+describe("AC2 (Story 6.2) — quota-counter-dashboard type và table", () => {
+  test("16.2: type = grid", () => {
+    assert.equal(quotaCounterDashboard.type, "grid", "type phải là grid");
+  });
+  test("16.3: table = QuotaCounter", () => {
+    assert.equal(quotaCounterDashboard.table, "QuotaCounter", "table phải là QuotaCounter");
+  });
+});
+
+describe("AC3 (Story 6.2) — quota-counter-dashboard visible fields", () => {
+  test("16.4: period_month visible", () => {
+    const f = quotaCounterDashboard.fields.find((x) => x.name === "period_month");
+    assert.ok(f, "fields phải có period_month");
+    assert.equal(f.hidden, false, "period_month phải visible");
+  });
+  test("16.5: sent_count visible", () => {
+    const f = quotaCounterDashboard.fields.find((x) => x.name === "sent_count");
+    assert.ok(f, "fields phải có sent_count");
+    assert.equal(f.hidden, false, "sent_count phải visible");
+  });
+  test("16.6: cap visible", () => {
+    const f = quotaCounterDashboard.fields.find((x) => x.name === "cap");
+    assert.ok(f, "fields phải có cap");
+    assert.equal(f.hidden, false, "cap phải visible");
+  });
+});
+
+describe("AC4 (Story 6.2) — quota-counter-dashboard tenant isolation", () => {
+  test("16.7: pharmacy_id hidden", () => {
+    const f = quotaCounterDashboard.fields.find((x) => x.name === "pharmacy_id");
+    assert.ok(f, "fields phải có pharmacy_id");
+    assert.equal(f.hidden, true, "pharmacy_id phải hidden (tenant isolation)");
+  });
+});
+
+describe("AC1 sort (Story 6.2) — quota-counter-dashboard sort period_month DESC", () => {
+  test("16.8: sortings có period_month DESC", () => {
+    assert.ok(Array.isArray(quotaCounterDashboard.sortings), "sortings phải là array");
+    const s = quotaCounterDashboard.sortings.find((x) => x.field === "period_month");
+    assert.ok(s, "sortings phải có entry period_month");
+    assert.equal(s.order, "DESC", "period_month phải sort DESC (mới nhất lên đầu)");
+  });
+});

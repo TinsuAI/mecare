@@ -1,0 +1,15 @@
+{
+  "type": "grid",
+  "table": "QuotaCounter",
+  "name": "quota-counter-dashboard",
+  "description": "Dashboard quota tháng per-tenant — hiển thị sent_count vs cap. Tenant isolation: set filter pharmacy_id = tenant của bạn trước khi xem (hoặc theo runbook Story 7.1). Baserow link_row filter đòi row_id cụ thể — view không hardcode filter value.",
+  "sortings": [
+    { "field": "period_month", "order": "DESC" }
+  ],
+  "fields": [
+    { "name": "period_month", "hidden": false },
+    { "name": "sent_count",   "hidden": false },
+    { "name": "cap",          "hidden": false },
+    { "name": "pharmacy_id",  "hidden": true  }
+  ]
+}
