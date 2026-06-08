@@ -97,9 +97,100 @@ Trước khi mở tải thật cho nhà thuốc, xác nhận **3 điều kiện 
   grep PHARMACIST_ZALO_ID tenants/<slug>.env
   ```
 
-- [ ] **(c) Tiếp theo — Story 7.2:** Warm-up & kiểm thử relay 2 chiều trước khi mở tải đầy (xem Story 7.2 — end-to-end relay test).
+- [ ] **(c) Story 7.2 — Warm-up & relay test 2 chiều:**
+  - [ ] **(c1) Warm-up env vars set:** Chạy `bash zalo-bridge/warmup.sh <slug>`, copy env vars giai đoạn 1 vào `tenants/<slug>.env`, restart zalo-bridge. Nâng giai đoạn theo tuần (xem section "Warm-up giai đoạn tải thấp").
+  - [ ] **(c2) Relay test 2 chiều pass:** Hoàn thành checklist 6 bước trong section "Kiểm thử relay 2 chiều" — EscalationCase tạo, dược sĩ nhận tin, reply relay thành công, `status=resolved`.
 
 > Chỉ mở tải thật sau khi cả 3 điều kiện trên đều xanh.
+
+## Warm-up giai đoạn tải thấp
+
+Tài khoản Zalo mới cần được "làm nóng" (warm-up) với tải thấp trước khi gửi đầy 50 tin/ngày. Bỏ qua bước này có nguy cơ bị Zalo giới hạn hoặc khoá tài khoản.
+
+### Chạy warmup.sh để sinh env vars
+
+```bash
+bash zalo-bridge/warmup.sh <pharmacy_slug>
+```
+
+Script in ra bảng kế hoạch 4 giai đoạn và env vars gợi ý. **Không tự gửi tin.**
+
+### 4 giai đoạn ramp-up
+
+| Giai đoạn | Tin/ngày | Thời gian   |
+|-----------|----------|-------------|
+| Tuần 1    | 5        | Ngày 1–7    |
+| Tuần 2    | 15       | Ngày 8–14   |
+| Tuần 3    | 30       | Ngày 15–21  |
+| Tuần 4+   | 50       | Ngày 22+    |
+
+### Áp env vars từng giai đoạn
+
+**Bước 1 — Giai đoạn 1 (Tuần 1):**
+1. Sao chép env vars giai đoạn 1 từ output `warmup.sh` vào `tenants/<slug>.env`:
+   ```
+   WARMUP_DAILY_CAP=5
+   WARMUP_UNTIL_EPOCH_MS=<epoch_ms_7_ngay_sau>
+   ```
+2. `docker compose restart zalo-bridge`
+
+**Nâng giai đoạn:** Lặp lại với env vars giai đoạn 2, 3 khi đến thời hạn.
+
+**Tắt warm-up sau giai đoạn cuối (Tuần 4+):**
+
+```
+# tenants/<slug>.env
+DAILY_SEND_CAP=50
+# Xoá hoặc comment dòng WARMUP_UNTIL_EPOCH_MS
+```
+
+Sau đó: `docker compose restart zalo-bridge`
+
+### Xác nhận warm-up đang active
+
+Warm-up active khi log zalo-bridge ghi `dailyCap` theo `WARMUP_DAILY_CAP` (không phải `DAILY_SEND_CAP`):
+
+```bash
+docker compose logs --tail=50 zalo-bridge | grep -i "daily\|warmup\|cap"
+```
+
+> Không có endpoint riêng check warm-up. Xác nhận qua daily cap trong logs khi test gửi tin.
+
+## Kiểm thử relay 2 chiều
+
+Kiểm thử end-to-end luồng leo thang relay trước khi mở tải thật. Thực hiện thủ công sau khi stack đang chạy và `PHARMACIST_ZALO_ID` đã điền.
+
+### Luồng relay
+
+```
+Khách → Zalo → zalo-bridge → OpenClaw agent → guardrail trigger → EscalationCase (mã ca)
+                                                                 ↓
+Dược sĩ ← Zalo ←────────────────────────────────── zalo-bridge send PHARMACIST_ZALO_ID
+   ↓ (reply kèm mã ca)
+Zalo → zalo-bridge → OpenClaw (khớp mã ca) → relay trả lời → Khách
+                                            ↓
+                                     Baserow EscalationCases.status = resolved
+```
+
+### Checklist kiểm thử 6 bước
+
+1. **Gửi tin test trigger leo thang:** Dùng tài khoản Zalo khách test, gửi tin chứa từ khóa cờ đỏ — ví dụ: "nguy hiểm", "cấp cứu", "khó thở", hoặc "không chắc". OpenClaw guardrail tạo EscalationCase thay vì tự trả lời.
+
+2. **Xác nhận EscalationCase tạo trong Baserow:** Mở Baserow → View `escalation-cases-list` → xác nhận có record mới với `case_id` format `ESC-<slug>-<YYYYMMDD>-<seq>` (ví dụ: `ESC-tructam-20260607-1`) và `status=open`.
+
+3. **Xác nhận dược sĩ nhận tin Zalo:** Tài khoản Zalo `PHARMACIST_ZALO_ID` nhận tin từ zalo-bridge có chứa `case_id` trong nội dung.
+
+4. **Dược sĩ reply kèm mã ca:** Dược sĩ reply tin Zalo có chứa `case_id` trong nội dung (ví dụ: "ESC-tructam-20260607-1 Khách dùng thuốc X, không nguy hiểm.").
+
+5. **Xác nhận khách nhận reply:** Tài khoản Zalo khách test nhận được tin reply từ dược sĩ (relay qua zalo-bridge).
+
+6. **Xác nhận EscalationCase resolved:** Mở Baserow → View `escalation-cases-list` → xác nhận record có `status=resolved`.
+
+### Xác nhận mã ca khớp (bắt buộc)
+
+**Mã ca format:** `ESC-<pharmacy_slug>-<YYYYMMDD>-<seq>` (pattern: `/^ESC-([a-z0-9]+)-(\d{8})-(\d+)$/`)
+
+Kết quả kiểm thử chỉ đạt khi `case_id` trong tin gửi dược sĩ **khớp chính xác** với `case_id` trong bảng `EscalationCases` Baserow — không có ký tự thừa, không khác format.
 
 ## Kiểm tra stack healthy
 
