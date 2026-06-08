@@ -105,6 +105,7 @@ Trước khi mở tải thật cho nhà thuốc, xác nhận **3 điều kiện 
   - Xác nhận field `is_complaint_active` tồn tại trong schema customers (Baserow → bảng Customers → kiểm tra column).
   - Xác nhận field `group6_unlocked` tồn tại trong schema customers (Baserow → bảng Customers → kiểm tra column).
   - Xác nhận `PHARMACIST_ZALO_ID` đã điền — complaint escalation path cần ID này để gửi relay dược sĩ.
+  - Xác nhận node `guard-is-group6` tồn tại trong workflow `MC-Handle-InboundReply` (n8n) — Group 6 inbound privacy guard active.
 
 > Chỉ mở tải thật sau khi cả 4 điều kiện trên đều xanh.
 

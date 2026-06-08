@@ -131,6 +131,10 @@ describe("20. Privacy & complaint contract tests (NFR-7)", () => {
         runbook.includes("is_complaint_active") || runbook.includes("group6_unlocked"),
         "item (d) phải nhắc is_complaint_active hoặc group6_unlocked"
       );
+      assert.ok(
+        runbook.includes("guard-is-group6"),
+        "item (d) phải nhắc guard-is-group6 node (AC #12)"
+      );
     });
   });
 
@@ -143,6 +147,50 @@ describe("20. Privacy & complaint contract tests (NFR-7)", () => {
       assert.ok(
         runbook.includes("khuyến mãi") || runbook.includes("promo"),
         "runbook phải mention khuyến mãi hoặc promo trong context targeting"
+      );
+    });
+  });
+
+  describe("20.13 — is_complaint_active và care_group là 2 field độc lập (AC #6)", () => {
+    test("20.13: schema có cả care_group lẫn is_complaint_active — coexist không xung đột", () => {
+      const careGroup = schemaFields.find((x) => x.name === "care_group");
+      const complaintFlag = schemaFields.find((x) => x.name === "is_complaint_active");
+      assert.ok(careGroup, "care_group field missing từ schema");
+      assert.ok(complaintFlag, "is_complaint_active field missing từ schema");
+      assert.notEqual(
+        careGroup.name,
+        complaintFlag.name,
+        "care_group và is_complaint_active phải là 2 field riêng biệt"
+      );
+      assert.equal(complaintFlag.type, "boolean", "is_complaint_active phải boolean (cờ độc lập)");
+      assert.ok(
+        careGroup.type === "number" || careGroup.type === "integer",
+        "care_group phải là numeric type"
+      );
+    });
+  });
+
+  describe("20.14 — Classification jsCode có đủ 5 complaint keywords (AC #7)", () => {
+    test("20.14: jsCode chứa tất cả 5 complaint keywords: khiếu nại, tố cáo, bồi thường, thuốc giả, phản ánh", () => {
+      const classNode = inboundNodes.find((n) => n.id === "detect-escalation-trigger");
+      assert.ok(classNode, "node detect-escalation-trigger không tìm thấy");
+      const code = classNode.parameters?.jsCode ?? "";
+      const requiredKeywords = ["khiếu nại", "tố cáo", "bồi thường", "thuốc giả", "phản ánh"];
+      for (const kw of requiredKeywords) {
+        assert.ok(code.includes(kw), `jsCode thiếu complaint keyword: '${kw}'`);
+      }
+    });
+  });
+
+  describe("20.15 — runbook có SLA bảng trong giờ / ngoài giờ (AC #8)", () => {
+    test("20.15: runbook chứa SLA handling: trong ngày (trong giờ) và sáng hôm sau (ngoài giờ)", () => {
+      assert.ok(
+        runbook.includes("trong ngày") || runbook.includes("Trong ngày"),
+        "runbook phải nêu SLA xử lý trong ngày (trong giờ làm việc)"
+      );
+      assert.ok(
+        runbook.includes("sáng hôm sau") || runbook.includes("ngoài giờ"),
+        "runbook phải nêu SLA ngoài giờ: ghi nhận và phản hồi sáng hôm sau"
       );
     });
   });

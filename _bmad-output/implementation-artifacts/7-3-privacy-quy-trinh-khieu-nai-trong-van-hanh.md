@@ -187,8 +187,51 @@ None.
 - Task 1 complete: Added "Privacy & quy trình khiếu nại trong vận hành" section to `docs/runbook-onboarding.md` with 3 subsections (Group 6 privacy, Group 5 complaint handling with evidence checklist + SLA table, promo targeting rules). Added checklist item (d) to go-live checklist covering NFR-7 fields verification.
 - Task 2 complete: Created `tests/contract/privacy-complaint.test.js` with 12 tests (group 20.1–20.12). All tests pass.
 - Final test count: 866 passing, 0 failing (baseline was 854 → +12 new tests).
+- QA gap-fill audit (bmad-qa-generate-e2e-tests): Identified 3 AC gaps — AC 6 (is_complaint_active independent of care_group), AC 7 (all 5 complaint keywords), AC 8 (SLA content in runbook). Added tests 20.13–20.15. Final count: 869 passing, 0 failing.
 
 ### File List
 
 - `docs/runbook-onboarding.md` — added privacy/complaint section + checklist item (d)
-- `tests/contract/privacy-complaint.test.js` — new file, 12 tests group 20.x
+- `tests/contract/privacy-complaint.test.js` — new file, 15 tests group 20.1–20.15 (20.13–20.15 added by QA gap-fill)
+
+## Senior Developer Review (AI)
+
+**Reviewer:** gabenidolcs (claude-sonnet-4-6) | **Date:** 2026-06-07 | **Outcome:** ✅ APPROVED
+
+### Review Summary
+
+Story 7.3 is the final closure story for Epic 7 — documentation + contract tests only, no new runtime logic. All 12 ACs implemented and verified. Full test suite passes at 869/869.
+
+### Issues Found & Auto-Fixed
+
+| # | Severity | Finding | Fix Applied |
+|---|----------|---------|-------------|
+| 1 | MEDIUM | File List entry said "12 tests group 20.x" — stale after QA added 20.13–20.15 | Updated to "15 tests group 20.1–20.15" |
+| 2 | MEDIUM | `sprint-status.yaml` comment showed `7-3: ready-for-dev` while field was `done` | Comment updated to `7-3: done (review approved)` |
+| 3 | MEDIUM | AC #12 requires "guard-is-group6 active" in go-live checklist item (d) — runbook missing this item; test 20.11 didn't catch it | Added guard-is-group6 step to runbook item (d); strengthened test 20.11 assertion |
+
+### AC Coverage Verdict
+
+All 12 ACs verified against implementation:
+
+- AC #1–#4: Group 6 inbound/proactive flow — guard nodes exist, schema field with correct default ✅
+- AC #5–#7: complaint_serious classification — Priority 1 flag check, Priority 9 keyword check, all 5 keywords present ✅
+- AC #8–#9: SLA and evidence checklist in runbook ✅
+- AC #10: Promo targeting via care_group filter ✅
+- AC #11–#12: Runbook section + go-live checklist item (d) with all 4 required verifications ✅
+
+### Code Quality
+
+- Test file uses existsSync guards for all 4 asset files — safe in stub/stub-less environments ✅
+- All tests use nested `describe > test` (one assertion group per describe) — consistent with project pattern ✅
+- Test 20.7 uses indexOf ordering — acceptable for contract-level verification of jsCode priority ordering ✅
+
+### Security
+
+No runtime code changed. No secrets or env vars introduced in test file. Runbook references `PHARMACIST_ZALO_ID` by name only (already documented in prior stories). ✅
+
+### Final State
+
+- Tests: 869 pass / 0 fail (15 in group 20.x)
+- Files delivered: `docs/runbook-onboarding.md`, `tests/contract/privacy-complaint.test.js`
+- Epic 7 complete — all 7 stories done (review approved)

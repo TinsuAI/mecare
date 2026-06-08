@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-06
-last_updated: 2026-06-07  # 4-4: done (review approved); epic-4-retrospective: done; 5-1: done; 5-2: done (review approved); epic-5-retrospective: done; 6-1: done (review approved); 6-2: done (review approved); 6-3: done (review approved); epic-6: done; epic-6-retrospective: done; epic-7: in-progress; 7-1: done (review approved); 7-2: done (review approved); 7-3: ready-for-dev
+last_updated: 2026-06-07  # 4-4: done (review approved); epic-4-retrospective: done; 5-1: done; 5-2: done (review approved); epic-5-retrospective: done; 6-1: done (review approved); 6-2: done (review approved); 6-3: done (review approved); epic-6: done; epic-6-retrospective: done; epic-7: in-progress; 7-1: done (review approved); 7-2: done (review approved); 7-3: done (review approved)
 project: MeCare
 # 1-4 promoted to ready-for-dev via create-story 2026-06-06
 project_key: NOKEY
