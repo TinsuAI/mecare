@@ -11,6 +11,8 @@ import http from "node:http";
 import { handleSend } from "./send.ts";
 import { getRiskState, recordSignal, resetToNormal } from "./risk-monitor.ts";
 import { startSessionMonitor, stopSessionMonitor, getSessionState, resetSession } from "./session-monitor.ts";
+import { handleAuthRoutes } from "./auth-routes.ts";
+import { initAllSavedSessions } from "./zalo-session-manager.ts";
 
 const VALID_SIGNALS = new Set(["block", "spam_report", "send_error"]);
 
@@ -97,13 +99,34 @@ const server = http.createServer((req, res) => {
   res.end(JSON.stringify({ error: "not_found" }));
 });
 
+// Onboard server — exposed via Cloudflare tunnel on a dedicated domain
+// (mecareapp-onboard.tinsu.ai). Protected by ONBOARD_SECRET token.
+const ONBOARD_PORT = Number(process.env.ONBOARD_PORT ?? 3001);
+const onboardServer = http.createServer(async (req, res) => {
+  if (await handleAuthRoutes(req, res)) return;
+  res.writeHead(404, { "content-type": "application/json" });
+  res.end(JSON.stringify({ error: "not_found" }));
+});
+onboardServer.on("error", (err: NodeJS.ErrnoException) => {
+  if (err.code === "EADDRINUSE") {
+    console.warn(`[zalo-bridge] onboard port ${ONBOARD_PORT} in use — onboarding disabled`);
+  } else {
+    console.error("[zalo-bridge] onboard server error:", err.message);
+  }
+});
+
 startSessionMonitor();
+void initAllSavedSessions();
 
 process.on("SIGTERM", () => {
   stopSessionMonitor();
+  onboardServer.close();
   server.close(() => process.exit(0));
 });
 
 server.listen(PORT, () => {
-  console.log(`[zalo-bridge] stub listening on :${PORT} (healthcheck /healthz)`);
+  console.log(`[zalo-bridge] webhook listening on :${PORT}`);
+});
+onboardServer.listen(ONBOARD_PORT, () => {
+  console.log(`[zalo-bridge] onboard listening on :${ONBOARD_PORT} (mecareapp-onboard.tinsu.ai)`);
 });

@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { baserowFetch } from "./lib/baserow-client.ts";
 
 export type MessageStatus = "pending" | "sent" | "failed" | "queued";
 
@@ -7,11 +8,7 @@ export function makeCustomerRef(pharmacyId: string, customerPhone: string): stri
 }
 
 function baserowBase() {
-  return {
-    url: (process.env.BASEROW_URL ?? "http://baserow:80").replace(/\/$/, ""),
-    token: process.env.BASEROW_TOKEN ?? "",
-    tableId: process.env.MESSAGES_TABLE_ID ?? "",
-  };
+  return { tableId: process.env.MESSAGES_TABLE_ID ?? "" };
 }
 
 export async function createMessageRecord(params: {
@@ -20,13 +17,13 @@ export async function createMessageRecord(params: {
   customer_phone: string;
   content: string;
 }): Promise<number | null> {
-  const { url, token, tableId } = baserowBase();
+  const { tableId } = baserowBase();
   try {
-    const resp = await fetch(
-      `${url}/api/database/rows/table/${tableId}/?user_field_names=true`,
+    const resp = await baserowFetch(
+      `/api/database/rows/table/${tableId}/?user_field_names=true`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Token ${token}` },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           pharmacy_id: params.pharmacy_id,
           customer_ref: makeCustomerRef(params.pharmacy_id, params.customer_phone),
@@ -56,13 +53,13 @@ export async function updateMessageStatus(
   status: MessageStatus,
   errorText?: string
 ): Promise<void> {
-  const { url, token, tableId } = baserowBase();
+  const { tableId } = baserowBase();
   try {
-    await fetch(
-      `${url}/api/database/rows/table/${tableId}/${rowId}/?user_field_names=true`,
+    await baserowFetch(
+      `/api/database/rows/table/${tableId}/${rowId}/?user_field_names=true`,
       {
         method: "PATCH",
-        headers: { "Content-Type": "application/json", Authorization: `Token ${token}` },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           status,
           ...(errorText !== undefined ? { error: errorText } : {}),

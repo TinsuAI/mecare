@@ -1,4 +1,5 @@
 // Story 2.1: Opt-in gate — fail-closed; only friend_status="friended" passes.
+import { baserowFetch } from "./lib/baserow-client.ts";
 
 export type OptInResult =
   | { blocked: true; reason: "opt_in_required"; friend_status: string }
@@ -19,16 +20,14 @@ export async function checkOptIn(
   pharmacyId: string,
   customerPhone: string
 ): Promise<OptInResult> {
-  const baserowUrl = (process.env.BASEROW_URL ?? "http://baserow:80").replace(/\/$/, "");
-  const token = process.env.BASEROW_TOKEN ?? "";
   const tableId = process.env.CUSTOMERS_TABLE_ID ?? "";
 
   let rows: Array<Record<string, unknown>>;
   try {
     const url =
-      `${baserowUrl}/api/database/rows/table/${tableId}/` +
+      `/api/database/rows/table/${tableId}/` +
       `?filter__phone__equal=${encodeURIComponent(customerPhone)}&user_field_names=true`;
-    const resp = await fetch(url, { headers: { Authorization: `Token ${token}` } });
+    const resp = await baserowFetch(url);
     if (!resp.ok) throw new Error(`Baserow HTTP ${resp.status}`);
     const data = (await resp.json()) as { results: typeof rows };
     rows = data.results;

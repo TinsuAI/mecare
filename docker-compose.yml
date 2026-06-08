@@ -125,6 +125,11 @@ services:
     environment:
       # Cổng NỘI BỘ container — app lắng nghe; KHÔNG đổi (healthcheck hardcode :3000)
       ZALO_BRIDGE_PORT: ${ZALO_BRIDGE_PORT:-3000}
+      # Onboard admin server — cổng nội bộ container cho trang onboarding Zalo
+      ONBOARD_PORT: ${ONBOARD_PORT:-3001}
+      # Baserow Pharmacies table ID — dùng để verify onboard_token per-pharmacy
+      PHARMACIES_TABLE_ID: ${PHARMACIES_TABLE_ID:-}
+      BASEROW_PUBLIC_URL: ${BASEROW_PUBLIC_URL:-}
       # Baserow API (opt-in gate — Story 2.1)
       BASEROW_TOKEN: ${BASEROW_TOKEN:-}
       BASEROW_URL: ${BASEROW_URL:-http://baserow:80}
@@ -133,8 +138,10 @@ services:
       # Phiên Zalo cô lập per-tenant (NFR-6) — không trộn state giữa tenant
       - ./zalo-bridge/tenants:/app/tenants
     ports:
-      # ZALO_BRIDGE_HOST_PORT: cổng HOST (Cloudflare tunnel trỏ vào đây) — an toàn đổi
+      # ZALO_BRIDGE_HOST_PORT: cổng HOST (Cloudflare tunnel: mecareapp-webhook.tinsu.ai)
       - "${ZALO_BRIDGE_HOST_PORT:-8003}:3000"
+      # ONBOARD_HOST_PORT: cổng HOST (Cloudflare tunnel: mecareapp-onboard.tinsu.ai)
+      - "${ONBOARD_HOST_PORT:-8004}:3001"
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/healthz || exit 1"]
       interval: 10s

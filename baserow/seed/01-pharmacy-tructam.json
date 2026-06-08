@@ -6,6 +6,7 @@
       "pharmacy_slug": "tructam",
       "persona_name": "Dược Sĩ Hải",
       "zalo_session_ref": "",
+      "onboard_token": "change-me-tructam-onboard-token",
       "monthly_quota": 1000,
       "working_hours": "08:00-21:00"
     }

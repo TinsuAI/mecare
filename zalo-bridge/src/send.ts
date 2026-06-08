@@ -12,6 +12,7 @@ import {
 } from "./throttle.ts";
 import { createMessageRecord, updateMessageStatus, queueDeadLetter } from "./messages-client.ts";
 import { sendViaOpenzca } from "./openzca-client.ts";
+import { getApi, sendZaloMessage } from "./zalo-session-manager.ts";
 
 const REQUIRED_FIELDS = ["pharmacy_id", "customer_phone", "content"] as const;
 
@@ -48,7 +49,7 @@ export async function handleSend(
     const gate = await checkOptIn(pharmacy_id, customer_phone);
     if (gate.blocked) {
       res.writeHead(403, { "content-type": "application/json" });
-      res.end(JSON.stringify({ blocked: true, ...gate }));
+      res.end(JSON.stringify({ ...gate }));
       return;
     }
 
@@ -100,7 +101,9 @@ export async function handleSend(
     while (attempt < MAX_RETRIES && !sendOk) {
       const delay = jitterMs();
       await new Promise<void>((r) => setTimeout(r, delay));
-      const result = await sendViaOpenzca(pharmacy_id, customer_phone, variantContent);
+      const result = getApi(pharmacy_id)
+        ? await sendZaloMessage(pharmacy_id, customer_phone, variantContent)
+        : await sendViaOpenzca(pharmacy_id, customer_phone, variantContent);
       if (result.ok) {
         sendOk = true;
       } else {

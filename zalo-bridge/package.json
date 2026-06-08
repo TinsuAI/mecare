@@ -5,12 +5,16 @@
   "description": "MeCare Zalo bridge — wrap openzca, anti-ban, de-anonymize PII (stub: Story 1.1; logic FR-11..13 ở Epic 2)",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
+    "build": "tsc --noEmit",
+    "start": "tsx src/index.ts",
     "dev": "tsx src/index.ts"
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "tsx": "^4.19.0",
+    "zca-js": "^2.1.2"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
