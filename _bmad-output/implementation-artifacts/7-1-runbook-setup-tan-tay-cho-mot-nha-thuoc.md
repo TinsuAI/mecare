@@ -194,12 +194,73 @@ N/A — implementation straightforward, no debugging needed.
 - "Onboarding tenant mới" extended with steps 5–9: seed, approve, relay config, workspace visibility, pharmacy_id filter (AC1–AC5).
 - New section "Checklist go-live" with 3 mandatory conditions + Story 7.2 link (AC7).
 - Created `tests/contract/runbook.test.js` with tests 18.1–18.10 (10 tests, exceeds ≥9 target).
-- Full suite: 831 pass / 0 fail (up from 821).
+- Full suite after dev: 831 pass / 0 fail (up from 821).
 - `tenant_slug` gotcha documented in seed step per Dev Notes guidance.
+- Post-dev QA gap analysis added 6 tests (18.11–18.16); final suite: 837 pass / 0 fail.
+
+### QA Review — E2E Test Gap Analysis (post-dev)
+
+**Executed:** QA `bmad-qa-generate-e2e-tests` workflow.
+
+**Framework:** Node.js built-in `node:test` (no UI/API — doc + contract tests only).
+
+**Gaps found and auto-applied (6 new tests, 18.11–18.16):**
+
+| Test | AC | Gap |
+|------|----|-----|
+| 18.11 | AC1 | `09-faq-entries-draft.json` seed file not verified |
+| 18.12 | AC1 | `status=draft` post-seed note not verified |
+| 18.13 | AC4 | `FaqEntries` in workspace visibility section not verified |
+| 18.14 | AC6 | `escalation-cases-list` (Story 5.4) in views step not verified |
+| 18.15 | AC6 | `quota-counter-dashboard` (Story 6.2) in views step not verified |
+| 18.16 | AC7 | `Story 7.2` link in go-live checklist not verified |
+
+**Final suite:** 837 pass / 0 fail (16 runbook tests: 18.1–18.16).
 
 ### File List
 
 - `docs/runbook-onboarding.md` — expanded with AC1–AC7 content
-- `tests/contract/runbook.test.js` — new, contract tests 18.1–18.10
+- `tests/contract/runbook.test.js` — new, contract tests 18.1–18.16 (16 tests; 18.11–18.16 added via QA gap analysis)
 - `_bmad-output/implementation-artifacts/sprint-status.yaml` — 7-1 → done
 - `_bmad-output/implementation-artifacts/7-1-runbook-setup-tan-tay-cho-mot-nha-thuoc.md` — tasks checked, status done
+
+## Senior Developer Review (AI)
+
+**Reviewer:** claude-sonnet-4-6 | **Date:** 2026-06-07 | **Outcome:** ✅ APPROVED
+
+### Review Summary
+
+Story 7.1 is a documentation-only story with contract tests. Zero new application code — all scripts, schemas, seed files, and view JSONs pre-existed from Epics 1–6. Review scope: runbook content correctness, test coverage completeness, AC satisfaction.
+
+### AC Verification
+
+| AC | Requirement | Status | Evidence |
+|----|-------------|--------|----------|
+| AC1 | Seed step with `--seed --update-seed`, both seed files, `status=draft` note | ✅ | Runbook step 5 (Onboarding); tests 18.2, 18.3, 18.11, 18.12 |
+| AC2 | Approve step, views 08+09, mandatory pre-go-live condition | ✅ | Runbook step 6 (Onboarding); tests 18.4, 18.5 |
+| AC3 | `PHARMACIST_ZALO_ID` in tenant env with warning | ✅ | Runbook step 7 (Onboarding); test 18.6 |
+| AC4 | Baserow workspace visibility — MessageTemplates + FaqEntries only | ✅ | Runbook step 8 (Onboarding); tests 18.7, 18.13 |
+| AC5 | link_row filter pharmacy_id per tenant for views 08+09 | ✅ | Runbook step 9 (Onboarding); test 18.8 |
+| AC6 | Step 5 Setup stack lists all views incl. 08+09 from Story 6.3 | ✅ | Runbook Setup stack step 5; tests 18.14, 18.15 |
+| AC7 | Go-live checklist — 3 mandatory conditions + Story 7.2 link | ✅ | Runbook "Checklist go-live" section; tests 18.9, 18.10, 18.16 |
+| AC8 | `tests/contract/runbook.test.js` group 18.x, suite ≥830 | ✅ | 16 tests (18.1–18.16); 837 pass / 0 fail |
+
+### Issues Found (2 auto-fixed)
+
+| Severity | Issue | Fix Applied |
+|----------|-------|-------------|
+| MEDIUM | File List said "18.1–18.10" — stale after QA gap-fill added 18.11–18.16 | Updated to "18.1–18.16 (16 tests)" |
+| MEDIUM | Completion Notes said "831 pass / 0 fail" — stale after QA gap-fill | Updated to document both 831 (dev) and 837 (QA final) |
+
+### Code Quality
+
+- Contract test pattern consistent with `baserow-views.test.js` — `existsSync` guard prevents crash on missing file, correct.
+- `readFileSync` at module top-level — acceptable for test files (eager fail-fast); no performance concern.
+- Test 18.4 uses `approve-kichban || approved` fallback — slightly broad but correct given runbook content.
+- No application code changed — no security review scope.
+
+### Change Log
+
+- 2026-06-07: Story created and implemented (dev session)
+- 2026-06-07: QA gap analysis — 6 tests added (18.11–18.16); suite 831→837
+- 2026-06-07: Senior Developer Review — APPROVED; 2 MEDIUM issues auto-fixed

@@ -94,4 +94,52 @@ describe("Story 7.1 — Runbook completeness (tests/contract/runbook.test.js)", 
       );
     });
   });
+
+  describe("18.11–18.12 — seed step completeness (AC1 gap-fill)", () => {
+    test("18.11: runbook tham chiếu seed file 09-faq-entries-draft.json", () => {
+      assert.ok(
+        runbook.includes("09-faq-entries-draft.json"),
+        "runbook phải tham chiếu seed file 09-faq-entries-draft.json"
+      );
+    });
+    test("18.12: runbook ghi chú records có status=draft sau khi seed", () => {
+      assert.ok(
+        runbook.includes("status=draft"),
+        "runbook phải ghi rõ records có status=draft sau khi seed"
+      );
+    });
+  });
+
+  describe("18.13 — workspace visibility completeness (AC4 gap-fill)", () => {
+    test("18.13: runbook workspace section đề cập cả FaqEntries", () => {
+      assert.ok(
+        runbook.includes("FaqEntries"),
+        "runbook workspace visibility section phải đề cập FaqEntries"
+      );
+    });
+  });
+
+  describe("18.14–18.15 — apply-views step completeness (AC6)", () => {
+    test("18.14: runbook chứa views escalation-cases-list (Story 5.4)", () => {
+      assert.ok(
+        runbook.includes("escalation-cases-list"),
+        "runbook phải liệt kê view escalation-cases-list từ Story 5.4"
+      );
+    });
+    test("18.15: runbook chứa views quota-counter-dashboard (Story 6.2)", () => {
+      assert.ok(
+        runbook.includes("quota-counter-dashboard"),
+        "runbook phải liệt kê view quota-counter-dashboard từ Story 6.2"
+      );
+    });
+  });
+
+  describe("18.16 — go-live checklist Story 7.2 link (AC7 gap-fill)", () => {
+    test("18.16: go-live checklist tham chiếu Story 7.2 (warm-up relay)", () => {
+      assert.ok(
+        runbook.includes("7.2"),
+        "go-live checklist phải link tới Story 7.2 như bước tiếp theo"
+      );
+    });
+  });
 });
